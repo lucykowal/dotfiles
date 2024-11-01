@@ -42,6 +42,11 @@ vim.g.have_nerd_font = true
 -- NOTE: You can change these options as you wish!
 --  For more options, you can see `:help option-list`
 
+-- Disable spell checking, but add a toggle keymap to enable.
+vim.opt.spell = false
+vim.opt.spelllang = "en_us"
+vim.keymap.set("n", "<leader>S", ":set spell!<CR>", { desc = "[S]pell check toggle" })
+
 -- Make line numbers default
 vim.opt.number = true
 
