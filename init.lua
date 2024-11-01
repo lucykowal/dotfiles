@@ -624,6 +624,18 @@ require("lazy").setup({
 			end, bufopts, "[F]ormat buffer")
 		end,
 		config = function()
+			-- look for the equinox jar in the homebrew or local install
+			local equinox =
+				vim.fn.glob("/opt/homebrew/Cellar/jdtls/1.41.0/libexec/plugins/org.eclipse.equinox.launcher_*.jar")
+			if equinox == "" then
+				equinox =
+					vim.fn.glob("/usr/local/Cellar/jdtls/1.41.0/libexec/plugins/org.eclipse.equinox.launcher_*.jar")
+			end
+			-- same for config
+			local conf = vim.fn.glob("/opt/homebrew/Cellar/jdtls/1.41.0/libexec/config_mac")
+			if conf == "" then
+				conf = vim.fn.glob("/usr/local/Cellar/jdtls/1.41.0/libexec/config_mac")
+			end
 			require("jdtls").start_or_attach({
 				cmd = {
 					"java", --  NOTE: depends on java being in PATH with correct version
@@ -642,11 +654,11 @@ require("lazy").setup({
 					"-javaagent:" .. vim.fn.glob("~/.config/nvim/eclipse/lombok.jar"),
 
 					"-jar",
-					--  NOTE: set to path of org.eclipse.equinox.launcher_VERSION.jar
-					vim.fn.glob("/opt/homebrew/Cellar/jdtls/1.41.0/libexec/plugins/org.eclipse.equinox.launcher_*.jar"),
+					--  NOTE: set to path of org.eclipse.equinox.launcher_VERSION.jar.
+					equinox,
 					"-configuration",
 					--  NOTE: set to path of JDTLS config, per OS
-					"/opt/homebrew/Cellar/jdtls/1.41.0/libexec/config_mac",
+					conf,
 					"-data",
 					vim.fn.expand("~/.cache/jdtls/workspace/") .. vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h:t"),
 				},
