@@ -636,6 +636,7 @@ require("lazy").setup({
 			if conf == "" then
 				conf = vim.fn.glob("/usr/local/Cellar/jdtls/1.41.0/libexec/config_mac")
 			end
+			local root_dir = require("jdtls.setup").find_root({ ".git", "mvnw", "gradlew" })
 			require("jdtls").start_or_attach({
 				cmd = {
 					"java", --  NOTE: depends on java being in PATH with correct version
@@ -651,7 +652,7 @@ require("lazy").setup({
 					"--add-opens",
 					"java.base/java.lang=ALL-UNNAMED",
 					--  NOTE: you'll wanna install lombok.jar into this location :3
-					"-javaagent:" .. vim.fn.glob("~/.config/nvim/eclipse/lombok.jar"),
+					"-javaagent:" .. vim.fn.expand("~/.config/nvim/eclipse/lombok.jar"),
 
 					"-jar",
 					--  NOTE: set to path of org.eclipse.equinox.launcher_VERSION.jar.
@@ -660,9 +661,9 @@ require("lazy").setup({
 					--  NOTE: set to path of JDTLS config, per OS
 					conf,
 					"-data",
-					vim.fn.expand("~/.cache/jdtls/workspace/") .. vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h:t"),
+					vim.fn.expand("~/.cache/jdtls/workspace/") .. vim.fn.fnamemodify(root_dir, ":p:h:t"),
 				},
-				root_dir = require("jdtls.setup").find_root({ ".git", "mvnw", "gradlew" }),
+				root_dir = root_dir,
 				-- Eclipse JDTLS settings. See https://github.com/eclipse/eclipse.jdt.ls/wiki/Running-the-JAVA-LS-server-from-the-command-line#initialize-request
 				settings = {
 					java = {
