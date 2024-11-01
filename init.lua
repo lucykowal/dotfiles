@@ -587,10 +587,41 @@ require("lazy").setup({
 	{
 		"mfussenegger/nvim-jdtls",
 		ft = { "java" },
+		on_attach = function(_, bufnr)
+			local function nnoremap(rhs, lhs, bufopts, desc)
+				bufopts.desc = desc
+				vim.keymap.set("n", rhs, lhs, bufopts)
+			end
+			local bufopts = { noremap = true, silent = true, buffer = bufnr }
+
+			-- LSP keymaps
+			nnoremap("gD", vim.lsp.buf.declaration, bufopts, "[G]o to [D]eclaration")
+			nnoremap("gd", vim.lsp.buf.definition, bufopts, "[G]o to [d]efinition")
+			nnoremap("gi", vim.lsp.buf.implementation, bufopts, "[G]o to [i]mplementation")
+			nnoremap("K", vim.lsp.buf.hover, bufopts, "Hover text")
+			nnoremap("<C-k>", vim.lsp.buf.signature_help, bufopts, "Show signature")
+			nnoremap("<space>wa", vim.lsp.buf.add_workspace_folder, bufopts, "Add workspace folder")
+			nnoremap("<space>wr", vim.lsp.buf.remove_workspace_folder, bufopts, "Remove workspace folder")
+			nnoremap("<space>wl", function()
+				print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
+			end, bufopts, "List workspace folders")
+			nnoremap("<space>D", vim.lsp.buf.type_definition, bufopts, "Go to type [d]efinition")
+			nnoremap("<space>rn", vim.lsp.buf.rename, bufopts, "[R]e[n]ame")
+			nnoremap("<space>ca", vim.lsp.buf.code_action, bufopts, "[C]ode [a]ctions")
+			vim.keymap.set(
+				"v",
+				"<space>ca",
+				"<ESC><CMD>lua vim.lsp.buf.range_code_action()<CR>",
+				{ noremap = true, silent = true, buffer = bufnr, desc = "Code actions" }
+			)
+			nnoremap("<space>f", function()
+				vim.lsp.buf.format({ async = true })
+			end, bufopts, "[F]ormat buffer")
+		end,
 		config = function()
 			require("jdtls").start_or_attach({
 				cmd = {
-					"java", -- :NOTE: depends on java being in PATH with correct version
+					"java", --  NOTE: depends on java being in PATH with correct version
 					"-Declipse.application=org.eclipse.jdt.ls.core.id1",
 					"-Dosgi.bundles.defaultStartLevel=4",
 					"-Declipse.product=org.eclipse.jdt.ls.core.product",
@@ -602,17 +633,46 @@ require("lazy").setup({
 					"java.base/java.util=ALL-UNNAMED",
 					"--add-opens",
 					"java.base/java.lang=ALL-UNNAMED",
+					--  NOTE: you'll wanna install lombok.jar into this location :3
+					"-javaagent:" .. vim.fn.glob("~/.config/nvim/eclipse/lombok.jar"),
 
 					"-jar",
-					vim.env.JDTLS_EQUINOX_JAR, -- :NOTE: set to path of org.eclipse.equinox.launcher_VERSION.jar
+					--  NOTE: set to path of org.eclipse.equinox.launcher_VERSION.jar
+					vim.fn.glob("/opt/homebrew/Cellar/jdtls/1.41.0/libexec/plugins/org.eclipse.equinox.launcher_*.jar"),
 					"-configuration",
-					vim.env.JDTLS_CONFIG, -- :NOTE: set to path of JDTLS config, per OS
+					--  NOTE: set to path of JDTLS config, per OS
+					"/opt/homebrew/Cellar/jdtls/1.41.0/libexec/config_mac",
 					"-data",
 					vim.fn.expand("~/.cache/jdtls/workspace/") .. vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h:t"),
 				},
 				root_dir = require("jdtls.setup").find_root({ ".git", "mvnw", "gradlew" }),
 				-- Eclipse JDTLS settings. See https://github.com/eclipse/eclipse.jdt.ls/wiki/Running-the-JAVA-LS-server-from-the-command-line#initialize-request
-				settings = { java = {} },
+				settings = {
+					java = {
+						format = {
+							settings = {
+								url = "~/.config/nvim/eclipse/eclipse-java-google-style.xml",
+								profile = "GoogleStyle",
+							},
+						},
+						signtureHelp = { enabled = true },
+						completion = {
+							filteredTypes = {
+								"com.sun.*",
+								"io.micrometer.shaded.*",
+								"java.awt.*",
+								"jdk.*",
+								"sun.*",
+							},
+						},
+						sources = {
+							organizeImports = {
+								starThreshold = 9999,
+								staticStarThreshold = 9999,
+							},
+						},
+					},
+				},
 			})
 		end,
 	},
