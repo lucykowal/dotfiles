@@ -25,6 +25,8 @@ Getting help:
 
 --]]
 
+local popup_width = 0.4
+
 -- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
@@ -294,12 +296,13 @@ require("lazy").setup({
 			require("telescope").setup({
 				-- See `:help telescope.setup()`
 				defaults = {
+					sorting_strategy = "ascending",
 					layout_config = {
 						horizontal = {
 							anchor = "E",
 							prompt_position = "top",
 							mirror = true,
-							width = 0.4,
+							width = popup_width,
 							preview_width = 0.6,
 						},
 					},
@@ -379,38 +382,29 @@ require("lazy").setup({
 			"WhoIsSethDaniel/mason-tool-installer.nvim",
 
 			-- Useful status updates for LSP.
-			-- NOTE: `opts = {}` is the same as calling `require('fidget').setup({})`
-			{ "j-hui/fidget.nvim", opts = {} },
+			{
+				"j-hui/fidget.nvim",
+				opts = {
+					progress = {
+						suppress_on_insert = true,
+						ignore_done_already = true,
+						display = {
+							render_limit = 4,
+							done_ttl = 1,
+						},
+					},
+					notification = {
+						window = {
+							align = "top",
+						},
+					},
+				},
+			},
 
 			-- Allows extra capabilities provided by nvim-cmp
 			"hrsh7th/cmp-nvim-lsp",
 		},
 		config = function()
-			-- Brief aside: **What is LSP?**
-			--
-			-- LSP is an initialism you've probably heard, but might not understand what it is.
-			--
-			-- LSP stands for Language Server Protocol. It's a protocol that helps editors
-			-- and language tooling communicate in a standardized fashion.
-			--
-			-- In general, you have a "server" which is some tool built to understand a particular
-			-- language (such as `gopls`, `lua_ls`, `rust_analyzer`, etc.). These Language Servers
-			-- (sometimes called LSP servers, but that's kind of like ATM Machine) are standalone
-			-- processes that communicate with some "client" - in this case, Neovim!
-			--
-			-- LSP provides Neovim with features like:
-			--  - Go to definition
-			--  - Find references
-			--  - Autocompletion
-			--  - Symbol Search
-			--  - and more!
-			--
-			-- Thus, Language Servers are external tools that must be installed separately from
-			-- Neovim. This is where `mason` and related plugins come into play.
-			--
-			-- If you're wondering about lsp vs treesitter, you can check out the wonderfully
-			-- and elegantly composed help section, `:help lsp-vs-treesitter`
-
 			--  This function gets run when an LSP attaches to a particular buffer.
 			--    That is to say, every time a new file is opened that is associated with
 			--    an lsp (for example, opening `main.rs` is associated with `rust_analyzer`) this
@@ -512,13 +506,13 @@ require("lazy").setup({
 			})
 
 			-- Change diagnostic symbols in the sign column (gutter)
-			-- if vim.g.have_nerd_font then
-			--   local signs = { Error = '', Warn = '', Hint = '', Info = '' }
-			--   for type, icon in pairs(signs) do
-			--     local hl = 'DiagnosticSign' .. type
-			--     vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
-			--   end
-			-- end
+			if vim.g.have_nerd_font then
+				local signs = { Error = "", Warn = "", Hint = "", Info = "" }
+				for type, icon in pairs(signs) do
+					local hl = "DiagnosticSign" .. type
+					vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = hl })
+				end
+			end
 
 			-- LSP servers and clients are able to communicate to each other what features they support.
 			--  By default, Neovim doesn't support everything that is in the LSP specification.
@@ -537,23 +531,10 @@ require("lazy").setup({
 			--  - settings (table): Override the default settings passed when initializing the server.
 			--        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
 			local servers = {
-				-- clangd = {},
-				-- gopls = {},
-				-- pyright = {},
-				-- rust_analyzer = {},
-				-- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
-				--
+				-- See `:help lspconfig-all` for a list of all the pre-configured LSPs
 				-- Some languages (like typescript) have entire language plugins that can be useful:
 				--    https://github.com/pmizio/typescript-tools.nvim
-				--
-				-- But for many setups, the LSP (`ts_ls`) will work just fine
-				-- ts_ls = {},
-				--
-
 				lua_ls = {
-					-- cmd = {...},
-					-- filetypes = { ...},
-					-- capabilities = {},
 					settings = {
 						Lua = {
 							completion = {
@@ -570,9 +551,12 @@ require("lazy").setup({
 			--  To check the current status of installed tools and/or manually install
 			--  other tools, you can run
 			--    :Mason
-			--
-			--  You can press `g?` for help in this menu.
-			require("mason").setup()
+			require("mason").setup({
+				ui = {
+					border = "rounded",
+					width = popup_width,
+				},
+			})
 
 			-- You can add other tools here that you want Mason to install
 			-- for you, so that they are available from within Neovim.
@@ -593,6 +577,41 @@ require("lazy").setup({
 						require("lspconfig")[server_name].setup(server)
 					end,
 				},
+			})
+		end,
+	},
+
+	-- Java LSP plugin
+	-- config based on https://github.com/qmi03/nvim_config/blob/master/lua/plugins/java.lua
+	{
+		"mfussenegger/nvim-jdtls",
+		ft = { "java" },
+		config = function()
+			require("jdtls").start_or_attach({
+				cmd = {
+					"java", -- :NOTE: depends on java being in PATH with correct version
+					"-Declipse.application=org.eclipse.jdt.ls.core.id1",
+					"-Dosgi.bundles.defaultStartLevel=4",
+					"-Declipse.product=org.eclipse.jdt.ls.core.product",
+					"-Dlog.protocol=true",
+					"-Dlog.level=ALL",
+					"-Xmx1g",
+					"--add-modules=ALL-SYSTEM",
+					"--add-opens",
+					"java.base/java.util=ALL-UNNAMED",
+					"--add-opens",
+					"java.base/java.lang=ALL-UNNAMED",
+
+					"-jar",
+					vim.env.JDTLS_EQUINOX_JAR, -- :NOTE: set to path of org.eclipse.equinox.launcher_VERSION.jar
+					"-configuration",
+					vim.env.JDTLS_CONFIG, -- :NOTE: set to path of JDTLS config, per OS
+					"-data",
+					vim.fn.expand("~/.cache/jdtls/workspace/") .. vim.fn.fnamemodify(vim.fn.getcwd(), ":p:h:t"),
+				},
+				root_dir = require("jdtls.setup").find_root({ ".git", "mvnw", "gradlew" }),
+				-- Eclipse JDTLS settings. See https://github.com/eclipse/eclipse.jdt.ls/wiki/Running-the-JAVA-LS-server-from-the-command-line#initialize-request
+				settings = { java = {} },
 			})
 		end,
 	},
@@ -688,6 +707,10 @@ require("lazy").setup({
 						luasnip.lsp_expand(args.body)
 					end,
 				},
+				window = {
+					completion = { config = { border = "rounded" } },
+					documentation = { config = { border = "rounded" } },
+				},
 				completion = { completeopt = "menu,menuone,noinsert" },
 
 				-- For an understanding of why these mappings were
@@ -708,12 +731,6 @@ require("lazy").setup({
 					--  This will auto-import if your LSP supports it.
 					--  This will expand snippets if the LSP sent a snippet.
 					["<C-y>"] = cmp.mapping.confirm({ select = true }),
-
-					-- If you prefer more traditional completion keymaps,
-					-- you can uncomment the following lines
-					--['<CR>'] = cmp.mapping.confirm { select = true },
-					--['<Tab>'] = cmp.mapping.select_next_item(),
-					--['<S-Tab>'] = cmp.mapping.select_prev_item(),
 
 					-- Manually trigger a completion from nvim-cmp.
 					--  Generally you don't need this, because nvim-cmp will display
@@ -756,18 +773,58 @@ require("lazy").setup({
 		end,
 	},
 
-	{ -- You can easily change to a different colorscheme.
-		-- Change the name of the colorscheme plugin below, and then
-		-- change the command in the config to whatever the name of that colorscheme is.
-		--
-		-- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-		"folke/tokyonight.nvim",
+	{
+		-- To see what colorschemes are already installed, you can use `:Telescope colorscheme`.
+		"catppuccin/nvim",
+		name = "catppuccin",
 		priority = 1000, -- Make sure to load this before all the other start plugins.
 		init = function()
+			require("catppuccin").setup({
+				flavour = "latte",
+				color_overrides = {
+					latte = {
+						rosewater = "#cc7983",
+						flamingo = "#bb5d60",
+						pink = "#d54597",
+						mauve = "#a65fd5",
+						red = "#b7242f",
+						maroon = "#db3e68",
+						peach = "#e46f2a",
+						yellow = "#bc8705",
+						green = "#1a8e32",
+						teal = "#00a390",
+						sky = "#089ec0",
+						sapphire = "#0ea0a0",
+						blue = "#017bca",
+						lavender = "#8584f7",
+						text = "#444444",
+						subtext1 = "#555555",
+						subtext0 = "#666666",
+						overlay2 = "#777777",
+						overlay1 = "#888888",
+						overlay0 = "#999999",
+						surface2 = "#aaaaaa",
+						surface1 = "#bbbbbb",
+						surface0 = "#cccccc",
+						base = "#ffffff",
+						mantle = "#ffffff",
+						crust = "#eeeeee",
+					},
+				},
+				styles = {
+					comments = { "italic" },
+				},
+				integrations = {
+					cmp = true,
+					treesitter = true,
+					mason = true,
+					telescope = { enabled = true },
+					mini = { enabled = true },
+					which_key = true,
+				},
+			})
 			-- Load the colorscheme here.
-			-- Like many other themes, this one has different styles, and you could load
-			-- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-			vim.cmd.colorscheme("tokyonight-night")
+			vim.cmd.colorscheme("catppuccin-latte")
 
 			-- You can configure highlights by doing something like:
 			vim.cmd.hi("Comment gui=none")
@@ -800,6 +857,11 @@ require("lazy").setup({
 			-- - sr)'  - [S]urround [R]eplace [)] [']
 			require("mini.surround").setup()
 
+			-- Comment from Normal mode
+			--
+			-- - gcc - Comment line
+			require("mini.comment").setup()
+
 			-- Simple and easy statusline.
 			--  You could remove this setup call if you don't like it,
 			--  and try some other statusline plugin
@@ -815,10 +877,10 @@ require("lazy").setup({
 				return "%2l:%-2v"
 			end
 
-			-- ... and there is more!
-			--  Check out: https://github.com/echasnovski/mini.nvim
+			--  See: https://github.com/echasnovski/mini.nvim
 		end,
 	},
+
 	{ -- Highlight, edit, and navigate code
 		"nvim-treesitter/nvim-treesitter",
 		build = ":TSUpdate",
@@ -837,6 +899,7 @@ require("lazy").setup({
 				"query",
 				"vim",
 				"vimdoc",
+				"java",
 			},
 			-- Autoinstall languages that are not installed
 			auto_install = true,
@@ -856,33 +919,6 @@ require("lazy").setup({
 		--    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
 		--    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
 	},
-
-	-- The following two comments only work if you have downloaded the kickstart repo, not just copy pasted the
-	-- init.lua. If you want these files, they are in the repository, so you can just download them and
-	-- place them in the correct locations.
-
-	-- NOTE: Next step on your Neovim journey: Add/Configure additional plugins for Kickstart
-	--
-	--  Here are some example plugins that I've included in the Kickstart repository.
-	--  Uncomment any of the lines below to enable them (you will need to restart nvim).
-	--
-	-- require 'kickstart.plugins.debug',
-	-- require 'kickstart.plugins.indent_line',
-	-- require 'kickstart.plugins.lint',
-	-- require 'kickstart.plugins.autopairs',
-	-- require 'kickstart.plugins.neo-tree',
-	-- require 'kickstart.plugins.gitsigns', -- adds gitsigns recommend keymaps
-
-	-- NOTE: The import below can automatically add your own plugins, configuration, etc from `lua/custom/plugins/*.lua`
-	--    This is the easiest way to modularize your config.
-	--
-	--  Uncomment the following line and add your plugins to `lua/custom/plugins/*.lua` to get going.
-	-- { import = 'custom.plugins' },
-	--
-	-- For additional information with loading, sourcing and examples see `:help lazy.nvim-🔌-plugin-spec`
-	-- Or use telescope!
-	-- In normal mode type `<space>sh` then write `lazy.nvim-plugin`
-	-- you can continue same window with `<space>sr` which resumes last telescope search
 }, {
 	ui = {
 		-- If you are using a Nerd Font: set icons to an empty table which will use the
