@@ -708,8 +708,15 @@ require("lazy").setup({
 					end,
 				},
 				window = {
-					completion = { config = { border = "rounded" } },
-					documentation = { config = { border = "rounded" } },
+					completion = cmp.config.window.bordered({
+						focusable = false,
+						winblend = 100,
+						border = "rounded",
+					}),
+					documentation = cmp.config.window.bordered({
+						winblend = 0,
+						border = "rounded",
+					}),
 				},
 				completion = { completeopt = "menu,menuone,noinsert" },
 
