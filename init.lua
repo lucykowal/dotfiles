@@ -25,7 +25,7 @@ Getting help:
 
 --]]
 
-local popup_width = 0.4
+local popup_width = 0.5
 
 -- Set <space> as the leader key
 -- See `:help mapleader`
@@ -303,7 +303,7 @@ require("lazy").setup({
 							prompt_position = "top",
 							mirror = true,
 							width = popup_width,
-							preview_width = 0.6,
+							preview_width = 0.5,
 						},
 					},
 					path_display = {
@@ -869,22 +869,35 @@ require("lazy").setup({
 			-- - gcc - Comment line
 			require("mini.comment").setup()
 
-			-- Simple and easy statusline.
-			--  You could remove this setup call if you don't like it,
-			--  and try some other statusline plugin
-			local statusline = require("mini.statusline")
-			-- set use_icons to true if you have a Nerd Font
-			statusline.setup({ use_icons = vim.g.have_nerd_font })
-
-			-- You can configure sections in the statusline by overriding their
-			-- default behavior. For example, here we set the section for
-			-- cursor location to LINE:COLUMN
-			---@diagnostic disable-next-line: duplicate-set-field
-			statusline.section_location = function()
-				return "%2l:%-2v"
+			-- Ranger-like file browser
+			--
+			-- - [] - open
+			require("mini.files").setup({})
+			local minifiles_toggle = function(...)
+				if not MiniFiles.close() then
+					MiniFiles.open(...)
+				end
 			end
+			vim.keymap.set("n", "<leader>a", minifiles_toggle, { desc = "Open file r[a]nger" })
 
 			--  See: https://github.com/echasnovski/mini.nvim
+		end,
+	},
+
+	{ -- buffer line
+		"willothy/nvim-cokeline",
+		dependencies = {
+			"nvim-lua/plenary.nvim",
+			"nvim-tree/nvim-web-devicons",
+		},
+		config = true,
+		init = function()
+			vim.keymap.set("n", "<leader>bp", function()
+				require("cokeline.mappings").pick("focus")
+			end, { desc = "Enter [b]uffer [p]icker" })
+			vim.keymap.set("n", "<leader>bc", "<Plug>(cokeline-pick-close)", { desc = "Enter [b]uffer [c]loser" })
+			vim.keymap.set("n", "<leader>p", "<Plug>(cokeline-focus-prev)", { desc = "To [p]revious buffer" })
+			vim.keymap.set("n", "<leader>n", "<Plug>(cokeline-focus-next)", { desc = "To [n]ext buffer" })
 		end,
 	},
 
