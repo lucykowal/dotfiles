@@ -26,6 +26,7 @@ Getting help:
 --]]
 
 local popup_width = 0.5
+local copilot = os.getenv("COPILOT_ENABLED") -- if not present, nil, which is falsey!
 
 -- Set <space> as the leader key
 -- See `:help mapleader`
@@ -939,6 +940,11 @@ require("lazy").setup({
 		--    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
 		--    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
 	},
+
+	-- Using Lua conditionals to make this only work if var is true!
+	copilot and { -- Co-pilot for work :(
+			"github/copilot.vim",
+		} or nil,
 }, {
 	ui = {
 		-- If you are using a Nerd Font: set icons to an empty table which will use the
