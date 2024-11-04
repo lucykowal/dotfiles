@@ -313,7 +313,7 @@ require("lazy").setup({
 						},
 					},
 					path_display = {
-						shorten = { len = 1, exclude = { 1, 2 } },
+						shorten = { len = 1, exclude = { -1, -2 } },
 					},
 					dynamic_preview_title = true,
 				},
