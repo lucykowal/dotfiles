@@ -22,6 +22,7 @@
 Getting help:
   - :help lua-guide
   - Keymap "<space>sh" to [s]earch the [h]elp documentation,
+  - Keymap "<space>sk" to [s]earch the [k]eybindings
 
 --]]
 
@@ -851,9 +852,10 @@ require("lazy").setup({
 						-- set group index to 0 to skip loading LuaLS completions as lazydev recommends it
 						group_index = 0,
 					},
+					{ name = "copilot" },
 					{ name = "nvim_lsp" },
-					{ name = "luasnip" },
 					{ name = "path" },
+					{ name = "luasnip" },
 				},
 			})
 		end,
@@ -1020,9 +1022,39 @@ require("lazy").setup({
 	},
 
 	-- Using Lua conditionals to make this only work if var is true!
-	copilot and { -- Co-pilot for work :(
-			"github/copilot.vim",
-		} or nil,
+	copilot
+			and { -- Co-pilot for work :(
+				"zbirenbaum/copilot.lua",
+				event = "InsertEnter",
+				config = function()
+					require("copilot").setup({
+						panel = {
+							enabled = false,
+						},
+						suggestion = {
+							enabled = false,
+							auto_trigger = true, --  NOTE: may want to toggle, since this might get annoying.
+							keymap = {
+								accept = "<C-y>",
+								accept_word = false,
+								accept_line = false,
+								next = "<C-n>",
+								prev = "<C-p>",
+								dismiss = "<C-e>",
+							},
+						},
+						copilot_node_command = "node",
+					})
+				end,
+				dependencies = {},
+			}
+		or nil,
+	copilot and {
+		"zbirenbaum/copilot-cmp",
+		config = function()
+			require("copilot_cmp").setup()
+		end,
+	} or nil,
 }, {
 	ui = {
 		-- If you are using a Nerd Font: set icons to an empty table which will use the
