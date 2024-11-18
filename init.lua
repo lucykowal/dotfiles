@@ -1021,6 +1021,26 @@ require("lazy").setup({
 		--    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
 	},
 
+  -- supercollider
+  {
+    "davidgranstrom/scnvim",
+    config = function()
+      local scnvim = require("scnvim")
+      local map = scnvim.map
+      local map_expr = scnvim.map_expr
+
+      scnvim.setup({
+        keymaps = {
+          ['<leader>E'] = map('editor.send_line', {'i', 'n'}),
+          ['<leader>e'] = {
+            map('editor.send_block', {'i', 'n'}),
+            map('editor.send_selection', {'x'})
+          },
+        }
+      })
+    end
+  },
+
 	-- Using Lua conditionals to make this only work if var is true!
 	copilot
 			and { -- Co-pilot for work :(
