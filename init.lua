@@ -29,6 +29,8 @@ Getting help:
 local popup_width = 0.5
 local copilot = os.getenv("COPILOT_ENABLED") -- if not present, nil, which is falsey!
 
+vim.opt.termguicolors = true
+
 -- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
@@ -894,14 +896,14 @@ require("lazy").setup({
 						surface2 = "#aaaaaa",
 						surface1 = "#bbbbbb",
 						surface0 = "#cccccc",
-						base = "#ffffff",
-						mantle = "#ffffff",
+						base = "#fafafa",
+						mantle = "#fafafa",
 						crust = "#eeeeee",
 					},
 				},
-				styles = {
-					comments = { "italic" },
-				},
+				-- styles = {
+				-- 	comments = { "italic" },
+				-- },
 				integrations = {
 					cmp = true,
 					treesitter = true,
