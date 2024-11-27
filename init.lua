@@ -1004,9 +1004,6 @@ require("lazy").setup({
 					bg = bg,
 					fg = fg,
 				},
-				rendering = {
-					max_buffer_width = 30,
-				},
 				pick = {
 					use_filename = false,
 				},
