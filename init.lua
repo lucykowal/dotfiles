@@ -30,6 +30,11 @@ local popup_width = 0.5
 local copilot = os.getenv("COPILOT_ENABLED") -- if not present, nil, which is falsey!
 
 vim.opt.termguicolors = true
+vim.api.nvim_create_autocmd("VimEnter", {
+	callback = function()
+		vim.cmd("highlight Comment gui=italic")
+	end,
+})
 
 -- Set <space> as the leader key
 -- See `:help mapleader`
