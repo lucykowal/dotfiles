@@ -978,14 +978,34 @@ require("lazy").setup({
 			"nvim-lua/plenary.nvim",
 			"nvim-tree/nvim-web-devicons",
 		},
-		config = true,
 		init = function()
+			require("cokeline").setup({
+				buffers = {
+					filter_valid = function(buf)
+						return buf.type == ""
+					end,
+					new_buffers_position = "directory",
+				},
+				rendering = {
+					max_buffer_width = 10,
+				},
+				pick = {
+					use_filename = false,
+				},
+			})
+			local maps = require("cokeline.mappings")
 			vim.keymap.set("n", "<leader>bp", function()
-				require("cokeline.mappings").pick("focus")
+				maps.pick("focus")
 			end, { desc = "Enter [b]uffer [p]icker" })
-			vim.keymap.set("n", "<leader>bc", "<Plug>(cokeline-pick-close)", { desc = "Enter [b]uffer [c]loser" })
-			vim.keymap.set("n", "<leader>p", "<Plug>(cokeline-focus-prev)", { desc = "To [p]revious buffer" })
-			vim.keymap.set("n", "<leader>n", "<Plug>(cokeline-focus-next)", { desc = "To [n]ext buffer" })
+			vim.keymap.set("n", "<leader>n", function()
+				maps.by_step("focus", 1)
+			end, { desc = "To [n]ext buffer" })
+			vim.keymap.set("n", "<leader>p", function()
+				maps.by_step("focus", -1)
+			end, { desc = "To [p]revious buffer" })
+			vim.keymap.set("n", "<leader>x", function()
+				maps.by_index("close", require("cokeline.buffers").get_current().index)
+			end, { desc = "E[x]it buffer" })
 		end,
 	},
 
