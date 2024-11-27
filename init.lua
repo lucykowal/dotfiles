@@ -979,6 +979,20 @@ require("lazy").setup({
 			"nvim-tree/nvim-web-devicons",
 		},
 		init = function()
+			local hlgroups = require("cokeline.hlgroups")
+			local bracket_cond = function(c, o)
+				return function(buf)
+					if buf.is_focused then
+						return c
+					else
+						return o
+					end
+				end
+			end
+			local colors = require("catppuccin.palettes").get_palette("latte")
+			local fg = colors.text
+			local bg = "#fafafa"
+			local red = colors.red
 			require("cokeline").setup({
 				buffers = {
 					filter_valid = function(buf)
@@ -986,11 +1000,44 @@ require("lazy").setup({
 					end,
 					new_buffers_position = "directory",
 				},
+				default_hl = {
+					bg = bg,
+					fg = fg,
+				},
 				rendering = {
-					max_buffer_width = 10,
+					max_buffer_width = 30,
 				},
 				pick = {
 					use_filename = false,
+				},
+				components = {
+					{
+						text = bracket_cond("[ ", "  "),
+					},
+					{
+						text = function(buf)
+							return buf.filename
+						end,
+						fg = function(buf)
+							return buf.diagnostics.errors > 0 and red or fg
+						end,
+						truncation = { direction = "middle" },
+						italic = function(buf)
+							return not buf.is_focused
+						end,
+						undercurl = function(buf)
+							return buf.diagnostics.errors > 0
+						end,
+					},
+					{
+						text = " 󰅖 ",
+						on_click = function(_, _, _, _, buf)
+							buf:delete()
+						end,
+					},
+					{
+						text = bracket_cond("]", " "),
+					},
 				},
 			})
 			local maps = require("cokeline.mappings")
