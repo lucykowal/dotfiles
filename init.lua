@@ -36,6 +36,8 @@ vim.api.nvim_create_autocmd("VimEnter", {
 	end,
 })
 
+vim.cmd("set tabstop=4")
+
 -- Set <space> as the leader key
 -- See `:help mapleader`
 --  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
