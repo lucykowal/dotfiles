@@ -1145,6 +1145,9 @@ require("lazy").setup({
 								dismiss = "<C-e>",
 							},
 						},
+						filetypes = {
+							markdown = true,
+						},
 						copilot_node_command = "node",
 					})
 				end,
