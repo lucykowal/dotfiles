@@ -957,6 +957,25 @@ require("lazy").setup({
 			-- - gcc - Comment line
 			require("mini.comment").setup()
 
+			-- Welcome screen
+			local starter = require("mini.starter")
+			starter.setup({
+				items = {
+					{
+						{ action = "Telescope find_files", name = "Files", section = "Telescope" },
+						{ action = "Telescope live_grep", name = "Live grep", section = "Telescope" },
+						{ action = "Telescope command_history", name = "Command history", section = "Telescope" },
+					},
+				},
+				header = function()
+					local handle = io.popen("fortune")
+					local fortune = handle:read("*a")
+					handle:close()
+					fortune = fortune:gsub("\n", "\n")
+					return "Hi Lucy.\n\n" .. fortune
+				end,
+			})
+
 			-- Ranger-like file browser
 			--
 			-- - [] - open
