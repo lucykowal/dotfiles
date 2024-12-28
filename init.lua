@@ -265,7 +265,7 @@ require("lazy").setup({
 				{ "<leader>s", group = "[S]earch" },
 				{ "<leader>w", group = "[W]orkspace" },
 				{ "<leader>t", group = "[T]oggle" },
-				{ "<leader>h", group = "Git [H]unk", mode = { "n", "v" } },
+				-- { "<leader>h", group = "Git [H]unk", mode = { "n", "v" } },
 			},
 		},
 	},
@@ -1000,7 +1000,6 @@ require("lazy").setup({
 			"nvim-tree/nvim-web-devicons",
 		},
 		init = function()
-			local hlgroups = require("cokeline.hlgroups")
 			local bracket_cond = function(c, o)
 				return function(buf)
 					if buf.is_focused then
@@ -1059,17 +1058,30 @@ require("lazy").setup({
 				},
 			})
 			local maps = require("cokeline.mappings")
+			local bufs = require("cokeline.buffers")
+			local history = require("cokeline.history")
 			vim.keymap.set("n", "<leader>bp", function()
 				maps.pick("focus")
 			end, { desc = "Enter [b]uffer [p]icker" })
-			vim.keymap.set("n", "<leader>n", function()
+
+			vim.keymap.set("n", "<leader>l", function()
 				maps.by_step("focus", 1)
-			end, { desc = "To [n]ext buffer" })
-			vim.keymap.set("n", "<leader>p", function()
+			end, { desc = "To right buffer" })
+
+			vim.keymap.set("n", "<leader>h", function()
 				maps.by_step("focus", -1)
+			end, { desc = "To left buffer" })
+
+			vim.keymap.set("n", "<leader>n", function()
+				maps.by_index("focus", (history:pop() or { index = 0 }).index)
+			end, { desc = "To [n]ext buffer" })
+
+			vim.keymap.set("n", "<leader>p", function()
+				maps.by_index("focus", (history:last() or { index = 0 }).index)
 			end, { desc = "To [p]revious buffer" })
+
 			vim.keymap.set("n", "<leader>x", function()
-				maps.by_index("close", require("cokeline.buffers").get_current().index)
+				maps.by_index("close", bufs.get_current().index)
 			end, { desc = "E[x]it buffer" })
 		end,
 	},
