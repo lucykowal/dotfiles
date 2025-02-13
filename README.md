@@ -20,4 +20,7 @@ Completions:
 
 Files:
 - LEADER + a - Open browser
+
+Copilot:
+- LEADER + c + c - Open Copilot
 ```

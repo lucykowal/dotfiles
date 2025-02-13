@@ -1203,6 +1203,26 @@ require("lazy").setup({
 			require("copilot_cmp").setup()
 		end,
 	} or nil,
+	copilot
+			and {
+				"CopilotC-Nvim/CopilotChat.nvim",
+				dependencies = {
+					{ "github/copilot.vim" }, -- or zbirenbaum/copilot.lua
+					{ "nvim-lua/plenary.nvim", branch = "master" }, -- for curl, log and async functions
+				},
+				build = "make tiktoken", -- Only on MacOS or Linux
+				opts = {
+					-- See Configuration section for options
+				},
+				-- See Commands section for default commands if you want to lazy load on them
+				init = function()
+					local chat = require("CopilotChat")
+					vim.keymap.set("n", "<leader>cc", function()
+						chat.open()
+					end, { desc = "Open [c]opilot [c]hat" })
+				end,
+			}
+		or nil,
 }, {
 	ui = {
 		-- If you are using a Nerd Font: set icons to an empty table which will use the
