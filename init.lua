@@ -315,7 +315,7 @@ require("lazy").setup({
 					sorting_strategy = "ascending",
 					layout_config = {
 						horizontal = {
-							anchor = "E",
+							anchor = "CENTER",
 							prompt_position = "top",
 							mirror = true,
 							width = popup_width,
@@ -1217,10 +1217,19 @@ require("lazy").setup({
 				-- See Commands section for default commands if you want to lazy load on them
 				init = function()
 					local chat = require("CopilotChat")
-					vim.keymap.set("n", "<leader>cc", function()
+					vim.keymap.set("n", "<leader>C", function()
 						chat.open()
-					end, { desc = "Open [c]opilot [c]hat" })
+					end, { desc = "Open [C]opilot chat" })
 				end,
+				config = {
+					window = {
+						layout = "float",
+						relative = "win",
+						border = "rounded",
+						width = popup_width,
+						height = 0.75,
+					},
+				},
 			}
 		or nil,
 }, {
