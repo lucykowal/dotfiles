@@ -162,6 +162,12 @@ if not (vim.uv or vim.loop).fs_stat(lazypath) then
 end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
+-- Set up filetype for shaders
+vim.filetype.add({ extension = { frag = "glsl" } })
+
+-- Workaround for grammarous
+vim.g["grammarous#jar_url"] = "https://languagetool.org/download/archive/LanguageTool-5.9.zip"
+
 -- [[ Configure and install plugins ]]
 --
 --  To check the current status of your plugins, run
@@ -338,6 +344,7 @@ require("lazy").setup({
 			-- Enable Telescope extensions if they are installed
 			pcall(require("telescope").load_extension, "fzf")
 			pcall(require("telescope").load_extension, "ui-select")
+			pcall(require("telescope").load_extension, "dict")
 
 			-- See `:help telescope.builtin`
 			local builtin = require("telescope.builtin")
@@ -865,6 +872,7 @@ require("lazy").setup({
 					{ name = "nvim_lsp" },
 					{ name = "path" },
 					{ name = "luasnip" },
+					{ name = "dictionary", keyword_length = 2 },
 				},
 			})
 		end,
@@ -1166,6 +1174,44 @@ require("lazy").setup({
 		},
 	},
 
+	-- Render markdown
+	{
+		"MeanderingProgrammer/render-markdown.nvim",
+		dependencies = { "nvim-treesitter/nvim-treesitter", "echasnovski/mini.nvim" }, -- if you use the mini.nvim suite
+		---@module 'render-markdown'
+		---@type render.md.UserConfig
+		opts = {},
+	},
+
+	-- Some word-processing plugins
+	-- Dictionary recommendations
+	{
+		"uga-rosa/cmp-dictionary",
+		name = "cmp_dictionary",
+		config = function()
+			require("cmp_dictionary").setup({
+				paths = { "/usr/share/dict/words" },
+				exact_length = 2,
+			})
+		end,
+	},
+	-- Grammar check. Not great, but there aren't many options nowadays
+	{
+		"rhysd/vim-grammarous",
+	},
+	-- Dictionary cmp recommendations
+	{
+		"rudism/telescope-dict.nvim",
+		config = function()
+			vim.keymap.set(
+				"n",
+				"<leader>st",
+				require("telescope").extensions.dict.synonyms,
+				{ desc = "[S]earch [T]hesaurus" }
+			)
+		end,
+	},
+
 	-- Using Lua conditionals to make this only work if var is true!
 	copilot
 			and { -- Co-pilot for work :(
@@ -1253,6 +1299,3 @@ require("lazy").setup({
 		},
 	},
 })
-
--- The line beneath this is called `modeline`. See `:help modeline`
--- vim: ts=2 sts=2 sw=2 et
