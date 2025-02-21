@@ -304,6 +304,9 @@ require("lazy").setup({
 			},
 			{ "nvim-telescope/telescope-ui-select.nvim" },
 
+			-- scope Supercollider
+			{ "davidgranstrom/telescope-scdoc.nvim" },
+
 			-- Useful for getting pretty icons, but requires a Nerd Font.
 			{ "nvim-tree/nvim-web-devicons", enabled = vim.g.have_nerd_font },
 		},
@@ -337,6 +340,9 @@ require("lazy").setup({
 				extensions = {
 					["ui-select"] = {
 						require("telescope.themes").get_dropdown(),
+					},
+					["scdoc"] = {
+						require("telescope").load_extension("scdoc"),
 					},
 				},
 			})
@@ -1024,7 +1030,7 @@ require("lazy").setup({
 			require("cokeline").setup({
 				buffers = {
 					filter_valid = function(buf)
-						return buf.type == ""
+						return buf.type == "" and buf.path:find(vim.fn.getcwd(), 1, true)
 					end,
 					new_buffers_position = "directory",
 				},
@@ -1142,6 +1148,9 @@ require("lazy").setup({
 			local map_expr = scnvim.map_expr
 
 			scnvim.setup({
+				documentation = {
+					cmd = "/opt/homebrew/bin/pandoc",
+				},
 				keymaps = {
 					["<leader>E"] = map("editor.send_line", { "i", "n" }),
 					["<leader>e"] = {
@@ -1159,6 +1168,10 @@ require("lazy").setup({
 					},
 				},
 			})
+
+			-- require("scnvim.help").on_open:replace(function(err, uri, pattern)
+			-- 	print("lookin for " .. uri)
+			-- end)
 		end,
 	},
 
