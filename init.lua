@@ -1273,6 +1273,11 @@ require("lazy").setup({
           width = popup_width,
           height = 0.75,
         },
+        mappings = {
+          complete = {
+            insert = "<C-y>",
+          },
+        },
         -- TODO: pick a model for copilot?
         model = not copilot and "codellama:7b-instruct" or nil,
         providers = not copilot and {
