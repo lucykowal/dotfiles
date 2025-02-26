@@ -842,6 +842,9 @@ require("lazy").setup({
           --  completions whenever it has completion options available.
           ["<C-Space>"] = cmp.mapping.complete({}),
 
+          -- Manually trigger minuet
+          ["<C-x>"] = require("minuet").make_cmp_map(),
+
           -- Think of <c-l> as moving to the right of your snippet expansion.
           --  So if you have a snippet that's like:
           --  function $name($args)
@@ -870,6 +873,7 @@ require("lazy").setup({
             -- set group index to 0 to skip loading LuaLS completions as lazydev recommends it
             group_index = 0,
           },
+          { name = "minuet" },
           { name = "copilot" },
           { name = "nvim_lsp" },
           { name = "path" },
@@ -1253,6 +1257,32 @@ require("lazy").setup({
     "zbirenbaum/copilot-cmp",
     config = function()
       require("copilot_cmp").setup()
+    end,
+  },
+  {
+    "milanglacier/minuet-ai.nvim",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "hrsh7th/nvim-cmp",
+    },
+    config = function()
+      require("minuet").setup({
+        provider = "openai_fim_compatible",
+        context_window = 512,
+        n_completions = 2,
+        provider_options = {
+          openai_fim_compatible = {
+            api_key = "TERM",
+            name = "Ollama",
+            end_point = "http://10.0.0.145:11434/v1/completions",
+            model = "qwen2.5-coder:1.5b-base-q3_K_S",
+            optional = {
+              max_tokens = 56,
+              top_p = 0.9,
+            },
+          },
+        },
+      })
     end,
   },
   {
