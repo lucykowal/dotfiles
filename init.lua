@@ -786,6 +786,7 @@ require("lazy").setup({
         },
       },
       "saadparwaiz1/cmp_luasnip",
+      "tzachar/cmp-ai",
 
       -- Adds other completion capabilities.
       --  nvim-cmp does not ship with all sources by default. They are split
@@ -1249,11 +1250,36 @@ require("lazy").setup({
       })
     end,
     dependencies = {},
-  } or nil,
+  },
   {
     "zbirenbaum/copilot-cmp",
     config = function()
       require("copilot_cmp").setup()
+    end,
+  },
+  {
+    "tzachar/cmp-ai",
+    dependencies = "nvim-lua/plenary.nvim",
+    config = function()
+      local cmp_ai = require("cmp_ai.config")
+      cmp_ai:setup({
+        max_lines = 100,
+        provider = "Ollama",
+        provider_options = {
+          model = "qwen2.5-coder:0.5b-base",
+          base_url = "http://10.0.0.145:11434/api/generate",
+          auto_unload = false,
+          system = "You are a helpful assistant generating concise auto-complete code snippets.",
+          prompt = function(lines_before, lines_after)
+            return "<|fim_prefix|>" .. lines_before .. "<|fim_suffix|>" .. lines_after .. "<|fim_middle|>"
+          end,
+          options = nil,
+        },
+        notify = true,
+        notify_callback = function(msg)
+          vim.notify(msg)
+        end,
+      })
     end,
   },
   {
