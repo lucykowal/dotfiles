@@ -786,7 +786,6 @@ require("lazy").setup({
         },
       },
       "saadparwaiz1/cmp_luasnip",
-      "tzachar/cmp-ai",
 
       -- Adds other completion capabilities.
       --  nvim-cmp does not ship with all sources by default. They are split
@@ -871,7 +870,6 @@ require("lazy").setup({
             -- set group index to 0 to skip loading LuaLS completions as lazydev recommends it
             group_index = 0,
           },
-          { name = "cmp_ai" },
           { name = "copilot" },
           { name = "nvim_lsp" },
           { name = "path" },
@@ -1258,31 +1256,6 @@ require("lazy").setup({
     end,
   },
   {
-    "tzachar/cmp-ai",
-    dependencies = "nvim-lua/plenary.nvim",
-    config = function()
-      local cmp_ai = require("cmp_ai.config")
-      cmp_ai:setup({
-        max_lines = 100,
-        provider = "Ollama",
-        provider_options = {
-          model = "qwen2.5-coder:0.5b-base",
-          base_url = "http://10.0.0.145:11434/api/generate",
-          auto_unload = false,
-          system = "You are a helpful assistant generating concise auto-complete code snippets.",
-          prompt = function(lines_before, lines_after)
-            return "<|fim_prefix|>" .. lines_before .. "<|fim_suffix|>" .. lines_after .. "<|fim_middle|>"
-          end,
-          options = nil,
-        },
-        notify = true,
-        notify_callback = function(msg)
-          vim.notify(msg)
-        end,
-      })
-    end,
-  },
-  {
     "CopilotC-Nvim/CopilotChat.nvim",
     dependencies = {
       { "zbirenbaum/copilot.lua" }, -- or github/copilot.lua
@@ -1332,6 +1305,33 @@ require("lazy").setup({
 
             get_url = function()
               return "http://localhost:11434/api/chat"
+            end,
+          },
+          ollama_ubuntu = {
+            embed = "copilot_embeddings",
+            prepare_input = require("CopilotChat.config.providers").copilot.prepare_input,
+            prepare_output = require("CopilotChat.config.providers").copilot.prepare_output,
+
+            get_models = function(headers)
+              local response, err = require("CopilotChat.utils").curl_get("http://10.0.0.145:11434/api/tags", {
+                headers = headers,
+                json_response = true,
+              })
+
+              if err then
+                error(err)
+              end
+
+              return vim.tbl_map(function(model)
+                return {
+                  id = model.name,
+                  name = model.name,
+                }
+              end, response.body.models)
+            end,
+
+            get_url = function()
+              return "http://10.0.0.145:11434/api/chat"
             end,
           },
         } or nil,
