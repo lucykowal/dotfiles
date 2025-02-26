@@ -1264,6 +1264,36 @@ require("lazy").setup({
     build = "make tiktoken", -- Only on MacOS or Linux
     config = function()
       local chat = require("CopilotChat")
+      -- helper since I run ollama on 2 computers...
+      local ollama_provider = function(host)
+        return {
+          embed = "copilot_embeddings",
+          prepare_input = require("CopilotChat.config.providers").copilot.prepare_input,
+          prepare_output = require("CopilotChat.config.providers").copilot.prepare_output,
+
+          get_models = function(headers)
+            local response, err = require("CopilotChat.utils").curl_get(host .. "/api/tags", {
+              headers = headers,
+              json_response = true,
+            })
+
+            if err then
+              error(err)
+            end
+
+            return vim.tbl_map(function(model)
+              return {
+                id = model.name,
+                name = model.name,
+              }
+            end, response.body.models)
+          end,
+
+          get_url = function()
+            return host .. "/api/chat"
+          end,
+        }
+      end
       chat.setup({
         window = {
           layout = "float",
@@ -1280,60 +1310,8 @@ require("lazy").setup({
         -- TODO: pick a model for copilot?
         model = not copilot and "codellama:7b-instruct" or nil,
         providers = not copilot and {
-          ollama = {
-            embed = "copilot_embeddings",
-            prepare_input = require("CopilotChat.config.providers").copilot.prepare_input,
-            prepare_output = require("CopilotChat.config.providers").copilot.prepare_output,
-
-            get_models = function(headers)
-              local response, err = require("CopilotChat.utils").curl_get("http://localhost:11434/api/tags", {
-                headers = headers,
-                json_response = true,
-              })
-
-              if err then
-                error(err)
-              end
-
-              return vim.tbl_map(function(model)
-                return {
-                  id = model.name,
-                  name = model.name,
-                }
-              end, response.body.models)
-            end,
-
-            get_url = function()
-              return "http://localhost:11434/api/chat"
-            end,
-          },
-          ollama_ubuntu = {
-            embed = "copilot_embeddings",
-            prepare_input = require("CopilotChat.config.providers").copilot.prepare_input,
-            prepare_output = require("CopilotChat.config.providers").copilot.prepare_output,
-
-            get_models = function(headers)
-              local response, err = require("CopilotChat.utils").curl_get("http://10.0.0.145:11434/api/tags", {
-                headers = headers,
-                json_response = true,
-              })
-
-              if err then
-                error(err)
-              end
-
-              return vim.tbl_map(function(model)
-                return {
-                  id = model.name,
-                  name = model.name,
-                }
-              end, response.body.models)
-            end,
-
-            get_url = function()
-              return "http://10.0.0.145:11434/api/chat"
-            end,
-          },
+          ollama = ollama_provider("http://localhost:11434"),
+          ollama_ubuntu = ollama_provider("http://10.0.0.145:11434"),
         } or nil,
       })
       vim.keymap.set("n", "<leader>g", function()
