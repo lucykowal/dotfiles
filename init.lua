@@ -1098,6 +1098,14 @@ require("lazy").setup({
     end,
   },
 
+  { -- Vim movement guide
+    "tris203/precognition.nvim",
+    event = "VeryLazy",
+    config = function()
+      require("precognition").setup({})
+    end,
+  },
+
   { -- Highlight, edit, and navigate code
     "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
