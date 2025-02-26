@@ -28,6 +28,7 @@ Getting help:
 
 local popup_width = 0.5
 local copilot = os.getenv("COPILOT_ENABLED") -- if not present, nil, which is falsey!
+local server = os.getenv("SERVER_ADDR")
 
 vim.opt.termguicolors = true
 vim.api.nvim_create_autocmd("VimEnter", {
@@ -1259,7 +1260,7 @@ require("lazy").setup({
       require("copilot_cmp").setup()
     end,
   },
-  {
+  server and {
     "milanglacier/minuet-ai.nvim",
     dependencies = {
       "nvim-lua/plenary.nvim",
@@ -1274,7 +1275,7 @@ require("lazy").setup({
           openai_fim_compatible = {
             api_key = "TERM",
             name = "Ollama",
-            end_point = "http://10.0.0.145:11434/v1/completions",
+            end_point = server .. ":11434/v1/completions",
             model = "qwen2.5-coder:1.5b-base-q3_K_S",
             optional = {
               max_tokens = 56,
@@ -1284,7 +1285,7 @@ require("lazy").setup({
         },
       })
     end,
-  },
+  } or nil,
   {
     "CopilotC-Nvim/CopilotChat.nvim",
     dependencies = {
@@ -1341,7 +1342,7 @@ require("lazy").setup({
         model = not copilot and "codellama:7b-instruct" or nil,
         providers = not copilot and {
           ollama = ollama_provider("http://localhost:11434"),
-          ollama_ubuntu = ollama_provider("http://10.0.0.145:11434"),
+          ollama_ubuntu = ollama_provider(server .. ":11434"),
         } or nil,
       })
       vim.keymap.set("n", "<leader>g", function()
