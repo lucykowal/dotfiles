@@ -31,6 +31,7 @@
   "render-markdown.nvim": { "branch": "main", "commit": "57fa691b9e374c6539cc0340062dac8f42d4bd8b" },
   "scnvim": { "branch": "main", "commit": "7fcfd73d6d3b4cf6a31f62f07de3e35744962a20" },
   "telescope-dict.nvim": { "branch": "main", "commit": "7220f13f19655b06c94ed8c21ae2e5db01c643fb" },
+  "telescope-frecency.nvim": { "branch": "master", "commit": "871038761e61a621cdf4b24df731f215daabc549" },
   "telescope-fzf-native.nvim": { "branch": "main", "commit": "2a5ceff981501cff8f46871d5402cd3378a8ab6a" },
   "telescope-scdoc.nvim": { "branch": "main", "commit": "e5e13a782829655ca2079705cf4a48d6d9ac6369" },
   "telescope-ui-select.nvim": { "branch": "master", "commit": "6e51d7da30bd139a6950adf2a47fda6df9fa06d2" },

@@ -26,7 +26,8 @@ Getting help:
 
 --]]
 
-local popup_width = 0.5
+local popup_width = 0.8
+local border = "single"
 local copilot = os.getenv("COPILOT_ENABLED") -- if not present, nil, which is falsey!
 local server = os.getenv("SERVER_ADDR")
 
@@ -310,6 +311,30 @@ require("lazy").setup({
 
       -- Useful for getting pretty icons, but requires a Nerd Font.
       { "nvim-tree/nvim-web-devicons", enabled = vim.g.have_nerd_font },
+
+      -- recent/frequent files
+      {
+        "nvim-telescope/telescope-frecency.nvim",
+        -- install the latest stable version
+        version = "*",
+        config = function()
+          vim.keymap.set("n", "<leader>sf", function()
+            require("telescope").extensions.frecency.frecency({ workspace = "CWD" })
+          end, { desc = "[S]earch [F]iles" })
+        end,
+      },
+      -- Dictionary cmp recommendations
+      {
+        "rudism/telescope-dict.nvim",
+        config = function()
+          vim.keymap.set(
+            "n",
+            "<leader>st",
+            require("telescope").extensions.dict.synonyms,
+            { desc = "[S]earch [T]hesaurus" }
+          )
+        end,
+      },
     },
     config = function()
       -- Run :Telescope help_tags
@@ -319,31 +344,53 @@ require("lazy").setup({
 
       -- [[ Configure Telescope ]]
       -- See `:help telescope` and `:help telescope.setup()`
-      require("telescope").setup({
+      local telescope = require("telescope")
+      telescope.setup({
         -- See `:help telescope.setup()`
         defaults = {
           sorting_strategy = "ascending",
+          selection_strategy = "closest",
+          -- see :help telescope.layout
           layout_config = {
             horizontal = {
-              anchor = "CENTER",
+              anchor = "N",
               prompt_position = "top",
-              mirror = true,
-              width = popup_width,
-              preview_width = 0.5,
+              -- mirror = true,
+              width = { popup_width, max = 300, min = 30 },
+              preview_width = { 0.5, max = 30, min = 10 },
             },
           },
           path_display = {
-            shorten = { len = 1, exclude = { -1, -2 } },
+            truncate = 2,
+            shorten = { len = 3, exclude = { -1, -2 } },
           },
+          borderchars = { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
+          -- consider telescope.mappings
+          mappings = {
+            n = {
+              ["q"] = require("telescope.actions").close,
+              ["<C-n>"] = require("telescope.actions").move_selection_next,
+              ["<C-p>"] = require("telescope.actions").move_selection_previous,
+            },
+          },
+          -- require('telescope.actions').cycle_history_next,
           dynamic_preview_title = true,
         },
-        -- pickers = {}
+        pickers = {},
         extensions = {
           ["ui-select"] = {
-            require("telescope.themes").get_dropdown(),
+            require("telescope.themes").get_dropdown({
+              anchor = "N",
+              borderchars = {
+                { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
+                prompt = { "─", "│", " ", "│", "┌", "┐", "│", "│" },
+                results = { "─", "│", "─", "│", "├", "┤", "┘", "└" },
+                preview = { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
+              },
+            }),
           },
-          ["scdoc"] = {
-            require("telescope").load_extension("scdoc"),
+          ["dict"] = {
+            initial_mode = "normal",
           },
         },
       })
@@ -352,12 +399,13 @@ require("lazy").setup({
       pcall(require("telescope").load_extension, "fzf")
       pcall(require("telescope").load_extension, "ui-select")
       pcall(require("telescope").load_extension, "dict")
+      pcall(require("telescope").load_extension, "frecency")
+      pcall(require("telescope").load_extension, "scdoc")
 
       -- See `:help telescope.builtin`
       local builtin = require("telescope.builtin")
       vim.keymap.set("n", "<leader>sh", builtin.help_tags, { desc = "[S]earch [H]elp" })
       vim.keymap.set("n", "<leader>sk", builtin.keymaps, { desc = "[S]earch [K]eymaps" })
-      vim.keymap.set("n", "<leader>sf", builtin.find_files, { desc = "[S]earch [F]iles" })
       vim.keymap.set("n", "<leader>ss", builtin.builtin, { desc = "[S]earch [S]elect Telescope" })
       vim.keymap.set("n", "<leader>sw", builtin.grep_string, { desc = "[S]earch current [W]ord" })
       vim.keymap.set("n", "<leader>sg", builtin.live_grep, { desc = "[S]earch by [G]rep" })
@@ -578,7 +626,7 @@ require("lazy").setup({
       --    :Mason
       require("mason").setup({
         ui = {
-          border = "rounded",
+          border = border,
           width = popup_width,
         },
       })
@@ -810,11 +858,11 @@ require("lazy").setup({
           completion = cmp.config.window.bordered({
             focusable = false,
             winblend = 100,
-            border = "rounded",
+            border = border,
           }),
           documentation = cmp.config.window.bordered({
             winblend = 0,
-            border = "rounded",
+            border = border,
           }),
         },
         completion = { completeopt = "menu,menuone,noinsert" },
@@ -1072,10 +1120,6 @@ require("lazy").setup({
       local maps = require("cokeline.mappings")
       local bufs = require("cokeline.buffers")
       local history = require("cokeline.history")
-      vim.keymap.set("n", "<leader>bp", function()
-        maps.pick("focus")
-      end, { desc = "Enter [b]uffer [p]icker" })
-
       vim.keymap.set("n", "<leader>l", function()
         maps.by_step("focus", 1)
       end, { desc = "To right buffer" })
@@ -1160,7 +1204,7 @@ require("lazy").setup({
           float = {
             enabled = true,
             config = {
-              border = "rounded",
+              border = border,
               anchor = "SE",
             },
           },
@@ -1209,18 +1253,6 @@ require("lazy").setup({
   -- Grammar check. Not great, but there aren't many options nowadays
   {
     "rhysd/vim-grammarous",
-  },
-  -- Dictionary cmp recommendations
-  {
-    "rudism/telescope-dict.nvim",
-    config = function()
-      vim.keymap.set(
-        "n",
-        "<leader>st",
-        require("telescope").extensions.dict.synonyms,
-        { desc = "[S]earch [T]hesaurus" }
-      )
-    end,
   },
 
   { -- Co-pilot for work :(
@@ -1328,7 +1360,7 @@ require("lazy").setup({
         window = {
           layout = "float",
           relative = "win",
-          border = "rounded",
+          border = border,
           width = popup_width,
           height = 0.75,
         },
@@ -1351,6 +1383,7 @@ require("lazy").setup({
   },
 }, {
   ui = {
+    border = border,
     -- If you are using a Nerd Font: set icons to an empty table which will use the
     -- default lazy.nvim defined Nerd Font icons, otherwise define a unicode icons table
     icons = vim.g.have_nerd_font and {} or {
