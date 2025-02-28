@@ -38,7 +38,9 @@ vim.api.nvim_create_autocmd("VimEnter", {
   end,
 })
 
-vim.cmd("set tabstop=4")
+vim.o.tabstop = 4
+vim.o.ead = "ver"
+vim.o.ea = false
 
 -- Set <space> as the leader key
 -- See `:help mapleader`
@@ -356,8 +358,9 @@ require("lazy").setup({
               anchor = "N",
               prompt_position = "top",
               -- mirror = true,
+              height = 0.75,
               width = { popup_width, max = 300, min = 30 },
-              preview_width = { 0.5, max = 30, min = 10 },
+              preview_width = { 0.5, max = 40, min = 10 },
             },
           },
           path_display = {
@@ -1146,7 +1149,9 @@ require("lazy").setup({
     "tris203/precognition.nvim",
     event = "VeryLazy",
     config = function()
-      require("precognition").setup({})
+      require("precognition").setup({
+        startVisible = false,
+      })
     end,
   },
 
@@ -1243,6 +1248,7 @@ require("lazy").setup({
     dependencies = { "nvim-treesitter/nvim-treesitter", "echasnovski/mini.nvim" }, -- if you use the mini.nvim suite
     ---@module 'render-markdown'
     ---@type render.md.UserConfig
+    ft = { "markdown", "codecompanion" },
     opts = {},
   },
 
@@ -1325,6 +1331,64 @@ require("lazy").setup({
       end
     end,
   },
+  -- plugin is kinda annoying, back to copilot chat for now.
+  -- {
+  --   "olimorris/codecompanion.nvim",
+  --   config = function()
+  --     require("codecompanion").setup({
+  --       strategies = {
+  --         chat = {
+  --           adapter = "copilot",
+  --         },
+  --       },
+  --       display = {
+  --         action_palette = { provider = "telescope" },
+  --         chat = {
+  --           intro_message = "Hi Lucy, how can I help? Press ? for options",
+  --           -- start_in_insert_mode = true,
+  --           window = {
+  --             layout = "float",
+  --             position = "top",
+  --             border = border,
+  --             width = popup_width,
+  --             height = 0.75,
+  --           },
+  --         },
+  --       },
+  --     })
+  --     local group = vim.api.nvim_create_augroup("CodeCompanionHooks", {})
+  --     -- Modify buffer
+  --     vim.api.nvim_create_autocmd({ "User" }, {
+  --       pattern = "CodeCompanionChatOpened",
+  --       group = group,
+  --       callback = function(request)
+  --         local bufnr = request.data.bufnr
+  --         local win_id = vim.fn.bufwinid(bufnr)
+  --         vim.api.nvim_win_set_config(
+  --           vim.fn.win_id2win(win_id),
+  --           vim.tbl_deep_extend("keep", vim.api.nvim_win_get_config(win_id), { { anchor = "N" } })
+  --         )
+  --       end,
+  --     })
+  --     -- Format the buffer after the inline request has completed
+  --     vim.api.nvim_create_autocmd({ "User" }, {
+  --       pattern = "CodeCompanionInline*",
+  --       group = group,
+  --       callback = function(request)
+  --         if request.match == "CodeCompanionInlineFinished" then
+  --           require("conform").format({ bufnr = request.buf })
+  --         end
+  --       end,
+  --     })
+  --   end,
+  --   keys = {
+  --     { "<leader>g", "<cmd>CodeCompanionChat toggle<cr>", desc = "Open Code Companion Chat" },
+  --   },
+  --   dependencies = {
+  --     "nvim-lua/plenary.nvim",
+  --     "nvim-treesitter/nvim-treesitter",
+  --   },
+  -- },
   {
     "CopilotC-Nvim/CopilotChat.nvim",
     dependencies = {
@@ -1371,6 +1435,10 @@ require("lazy").setup({
           border = border,
           width = popup_width,
           height = 0.75,
+          row = 1,
+        },
+        shared = {
+          auto_insert_mode = true,
         },
         mappings = {
           complete = {
