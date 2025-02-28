@@ -872,6 +872,28 @@ require("lazy").setup({
           telescope = { enabled = true },
           mini = { enabled = true },
           which_key = true,
+          gitsigns = true,
+          render_markdown = true,
+          native_lsp = {
+            enabled = true,
+            virtual_text = {
+              errors = { "italic" },
+              hints = { "italic" },
+              warnings = { "italic" },
+              information = { "italic" },
+              ok = { "italic" },
+            },
+            underlines = {
+              errors = { "underline" },
+              hints = { "underline" },
+              warnings = { "underline" },
+              information = { "underline" },
+              ok = { "underline" },
+            },
+            inlay_hints = {
+              background = true,
+            },
+          },
         },
       })
       -- Load the colorscheme here.
@@ -957,6 +979,27 @@ require("lazy").setup({
     end,
   },
 
+  {
+    "akinsho/toggleterm.nvim",
+    version = "*",
+    opts = { --[[ things you want to change go here]]
+      open_mapping = [[<c-\>]],
+      shade_terminals = false,
+      direction = "float",
+      float_opts = {
+        border = border,
+        row = 1,
+        height = function()
+          return math.floor(vim.o.lines * 0.75)
+        end,
+        width = function()
+          return math.floor(vim.o.columns * popup_width)
+        end,
+        title_pos = "center",
+      },
+    },
+  },
+
   { -- Highlight, edit, and navigate code
     "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
@@ -999,6 +1042,7 @@ require("lazy").setup({
   -- supercollider
   {
     "davidgranstrom/scnvim",
+    ft = { "supercollider" },
     config = function()
       local scnvim = require("scnvim")
       local map = scnvim.map
@@ -1037,6 +1081,7 @@ require("lazy").setup({
     "S1M0N38/love2d.nvim",
     cmd = "LoveRun",
     opts = {},
+    ft = "lua",
     keys = {
       { "<leader>v", ft = "lua", dev = "LÖVE" },
       { "<leader>vv", "<cmd>LoveRun<cr>", ft = "lua", desc = "Run LÖVE" },
