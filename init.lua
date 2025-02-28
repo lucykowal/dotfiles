@@ -342,11 +342,19 @@ require("lazy").setup({
       -- [[ Configure Telescope ]]
       -- See `:help telescope` and `:help telescope.setup()`
       local telescope = require("telescope")
+      local vimgrep_arguments = {
+        unpack(require("telescope.config").values.vimgrep_arguments),
+        "--hidden",
+        "--glob",
+        "!**/.git/*",
+      }
+
       telescope.setup({
         -- See `:help telescope.setup()`
         defaults = {
           sorting_strategy = "ascending",
           selection_strategy = "closest",
+          vimgrep_arguments = vimgrep_arguments,
           -- see :help telescope.layout
           layout_config = {
             horizontal = {
@@ -362,6 +370,7 @@ require("lazy").setup({
             truncate = 2,
             shorten = { len = 3, exclude = { -1, -2 } },
           },
+          initial_mode = "normal",
           borderchars = { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
           -- consider telescope.mappings
           mappings = {
@@ -374,7 +383,11 @@ require("lazy").setup({
           -- require('telescope.actions').cycle_history_next,
           dynamic_preview_title = true,
         },
-        pickers = {},
+        pickers = {
+          find_files = {
+            find_command = { "rg", "--files", "--hidden", "--glob", "!**/.git/*" },
+          },
+        },
         extensions = {
           ["ui-select"] = {
             require("telescope.themes").get_dropdown({
@@ -576,6 +589,24 @@ require("lazy").setup({
           end
         end,
       })
+
+      -- custom float style (global)
+      local orig_open_floating_preview = vim.lsp.util.open_floating_preview
+      function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
+        local border = {
+          { "┌", "FloatBorder" },
+          { "─", "FloatBorder" },
+          { "┐", "FloatBorder" },
+          { "│", "FloatBorder" },
+          { "┘", "FloatBorder" },
+          { "─", "FloatBorder" },
+          { "└", "FloatBorder" },
+          { "│", "FloatBorder" },
+        }
+        opts = opts or {}
+        opts.border = opts.border or border
+        return orig_open_floating_preview(contents, syntax, opts, ...)
+      end
 
       -- Change diagnostic symbols in the sign column (gutter)
       if vim.g.have_nerd_font then
@@ -838,6 +869,8 @@ require("lazy").setup({
         custom_highlights = function(colors)
           return {
             NormalFloat = { bg = colors.base },
+            FloatBorder = { fg = colors.text },
+            FloatTitle = { fg = colors.text },
           }
         end,
         styles = {
@@ -852,6 +885,7 @@ require("lazy").setup({
           which_key = true,
           gitsigns = true,
           render_markdown = true,
+          fidget = true,
           native_lsp = {
             enabled = true,
             virtual_text = {
@@ -867,9 +901,6 @@ require("lazy").setup({
               warnings = { "underline" },
               information = { "underline" },
               ok = { "underline" },
-            },
-            inlay_hints = {
-              background = true,
             },
           },
         },
@@ -1270,9 +1301,8 @@ require("lazy").setup({
             insert = "<C-y>",
           },
         },
-        -- TODO: pick a model for copilot?
-        model = not copilot and "codellama:7b-instruct" or nil,
-        providers = not copilot and {
+        model = server and "codellama:7b-instruct" or "claude-3.7-sonnet",
+        providers = server and {
           ollama = ollama_provider("http://localhost:11434"),
           ollama_ubuntu = ollama_provider(server .. ":11434"),
         } or nil,
