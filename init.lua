@@ -32,11 +32,6 @@ local copilot = os.getenv("COPILOT_ENABLED") -- if not present, nil, which is fa
 local server = os.getenv("SERVER_ADDR")
 
 vim.opt.termguicolors = true
-vim.api.nvim_create_autocmd("VimEnter", {
-  callback = function()
-    vim.cmd("highlight Comment gui=italic")
-  end,
-})
 
 vim.o.tabstop = 4
 vim.o.ead = "ver"
@@ -484,6 +479,7 @@ require("lazy").setup({
 
       -- Allows extra capabilities provided by nvim-cmp
       "hrsh7th/cmp-nvim-lsp",
+      "nvim-java/nvim-java",
     },
     config = function()
       --  This function gets run when an LSP attaches to a particular buffer.
@@ -654,113 +650,8 @@ require("lazy").setup({
           end,
         },
       })
-    end,
-  },
 
-  -- Java LSP plugin
-  -- config based on https://github.com/qmi03/nvim_config/blob/master/lua/plugins/java.lua
-  {
-    "mfussenegger/nvim-jdtls",
-    ft = { "java" },
-    on_attach = function(_, bufnr)
-      local function nnoremap(rhs, lhs, bufopts, desc)
-        bufopts.desc = desc
-        vim.keymap.set("n", rhs, lhs, bufopts)
-      end
-      local bufopts = { noremap = true, silent = true, buffer = bufnr }
-
-      -- LSP keymaps
-      nnoremap("gD", vim.lsp.buf.declaration, bufopts, "[G]o to [D]eclaration")
-      nnoremap("gd", vim.lsp.buf.definition, bufopts, "[G]o to [d]efinition")
-      nnoremap("gi", vim.lsp.buf.implementation, bufopts, "[G]o to [i]mplementation")
-      nnoremap("K", vim.lsp.buf.hover, bufopts, "Hover text")
-      nnoremap("<C-k>", vim.lsp.buf.signature_help, bufopts, "Show signature")
-      nnoremap("<space>wa", vim.lsp.buf.add_workspace_folder, bufopts, "Add workspace folder")
-      nnoremap("<space>wr", vim.lsp.buf.remove_workspace_folder, bufopts, "Remove workspace folder")
-      nnoremap("<space>wl", function()
-        print(vim.inspect(vim.lsp.buf.list_workspace_folders()))
-      end, bufopts, "List workspace folders")
-      nnoremap("<space>D", vim.lsp.buf.type_definition, bufopts, "Go to type [d]efinition")
-      nnoremap("<space>rn", vim.lsp.buf.rename, bufopts, "[R]e[n]ame")
-      nnoremap("<space>ca", vim.lsp.buf.code_action, bufopts, "[C]ode [a]ctions")
-      vim.keymap.set(
-        "v",
-        "<space>ca",
-        "<ESC><CMD>lua vim.lsp.buf.range_code_action()<CR>",
-        { noremap = true, silent = true, buffer = bufnr, desc = "Code actions" }
-      )
-      nnoremap("<space>f", function()
-        vim.lsp.buf.format({ async = true })
-      end, bufopts, "[F]ormat buffer")
-    end,
-    config = function()
-      -- look for the equinox jar in the homebrew or local install
-      local equinox =
-        vim.fn.glob("/opt/homebrew/Cellar/jdtls/1.41.0/libexec/plugins/org.eclipse.equinox.launcher_*.jar")
-      if equinox == "" then
-        equinox = vim.fn.glob("/usr/local/Cellar/jdtls/1.41.0/libexec/plugins/org.eclipse.equinox.launcher_*.jar")
-      end
-      -- same for config
-      local conf = vim.fn.glob("/opt/homebrew/Cellar/jdtls/1.41.0/libexec/config_mac")
-      if conf == "" then
-        conf = vim.fn.glob("/usr/local/Cellar/jdtls/1.41.0/libexec/config_mac")
-      end
-      local root_dir = require("jdtls.setup").find_root({ ".git", "mvnw", "gradlew" })
-      require("jdtls").start_or_attach({
-        cmd = {
-          "java", --  NOTE: depends on java being in PATH with correct version
-          "-Declipse.application=org.eclipse.jdt.ls.core.id1",
-          "-Dosgi.bundles.defaultStartLevel=4",
-          "-Declipse.product=org.eclipse.jdt.ls.core.product",
-          "-Dlog.protocol=true",
-          "-Dlog.level=ALL",
-          "-Xmx1g",
-          "--add-modules=ALL-SYSTEM",
-          "--add-opens",
-          "java.base/java.util=ALL-UNNAMED",
-          "--add-opens",
-          "java.base/java.lang=ALL-UNNAMED",
-          --  NOTE: you'll wanna install lombok.jar into this location :3
-          "-javaagent:" .. vim.fn.expand("~/.config/nvim/eclipse/lombok.jar"),
-
-          "-jar",
-          --  NOTE: set to path of org.eclipse.equinox.launcher_VERSION.jar.
-          equinox,
-          "-configuration",
-          --  NOTE: set to path of JDTLS config, per OS
-          conf,
-          "-data",
-          vim.fn.expand("~/.cache/jdtls/workspace/") .. vim.fn.fnamemodify(root_dir, ":p:h:t"),
-        },
-        root_dir = root_dir,
-        -- Eclipse JDTLS settings. See https://github.com/eclipse/eclipse.jdt.ls/wiki/Running-the-JAVA-LS-server-from-the-command-line#initialize-request
-        settings = {
-          java = {
-            format = {
-              settings = {
-                url = "~/.config/nvim/eclipse/eclipse-java-google-style.xml",
-                profile = "GoogleStyle",
-              },
-            },
-            signtureHelp = { enabled = true },
-            completion = {
-              filteredTypes = {
-                "com.sun.*",
-                "io.micrometer.shaded.*",
-                "java.awt.*",
-                "jdk.*",
-                "sun.*",
-              },
-            },
-            sources = {
-              organizeImports = {
-                starThreshold = 9999,
-                staticStarThreshold = 9999,
-              },
-            },
-          },
-        },
-      })
+      require("lspconfig").jdtls.setup({})
     end,
   },
 
@@ -941,39 +832,39 @@ require("lazy").setup({
     init = function()
       require("catppuccin").setup({
         flavour = "latte",
-        color_overrides = {
-          latte = {
-            rosewater = "#cc7983",
-            flamingo = "#bb5d60",
-            pink = "#d54597",
-            mauve = "#a65fd5",
-            red = "#b7242f",
-            maroon = "#db3e68",
-            peach = "#e46f2a",
-            yellow = "#bc8705",
-            green = "#1a8e32",
-            teal = "#00a390",
-            sky = "#089ec0",
-            sapphire = "#0ea0a0",
-            blue = "#017bca",
-            lavender = "#8584f7",
-            text = "#444444",
-            subtext1 = "#555555",
-            subtext0 = "#666666",
-            overlay2 = "#777777",
-            overlay1 = "#888888",
-            overlay0 = "#999999",
-            surface2 = "#aaaaaa",
-            surface1 = "#bbbbbb",
-            surface0 = "#cccccc",
-            base = "#fafafa",
-            mantle = "#fafafa",
-            crust = "#eeeeee",
-          },
-        },
-        -- styles = {
-        -- 	comments = { "italic" },
+        -- color_overrides = {
+        --   latte = {
+        --     rosewater = "#cc7983",
+        --     flamingo = "#bb5d60",
+        --     pink = "#d54597",
+        --     mauve = "#a65fd5",
+        --     red = "#b7242f",
+        --     maroon = "#db3e68",
+        --     peach = "#e46f2a",
+        --     yellow = "#bc8705",
+        --     green = "#1a8e32",
+        --     teal = "#00a390",
+        --     sky = "#089ec0",
+        --     sapphire = "#0ea0a0",
+        --     blue = "#017bca",
+        --     lavender = "#8584f7",
+        --     text = "#444444",
+        --     subtext1 = "#555555",
+        --     subtext0 = "#666666",
+        --     overlay2 = "#777777",
+        --     overlay1 = "#888888",
+        --     overlay0 = "#999999",
+        --     surface2 = "#aaaaaa",
+        --     surface1 = "#bbbbbb",
+        --     surface0 = "#cccccc",
+        --     base = "#fafafa",
+        --     mantle = "#fafafa",
+        --     crust = "#eeeeee",
+        --   },
         -- },
+        styles = {
+          comments = { "italic" },
+        },
         integrations = {
           cmp = true,
           treesitter = true,
@@ -987,7 +878,7 @@ require("lazy").setup({
       vim.cmd.colorscheme("catppuccin-latte")
 
       -- You can configure highlights by doing something like:
-      vim.cmd.hi("Comment gui=none")
+      -- vim.cmd.hi("Comment gui=none")
     end,
   },
 
@@ -1053,95 +944,6 @@ require("lazy").setup({
       vim.keymap.set("n", "<leader>a", minifiles_toggle, { desc = "Open file r[a]nger" })
 
       --  See: https://github.com/echasnovski/mini.nvim
-    end,
-  },
-
-  { -- buffer line
-    "willothy/nvim-cokeline",
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-      "nvim-tree/nvim-web-devicons",
-    },
-    init = function()
-      local bracket_cond = function(c, o)
-        return function(buf)
-          if buf.is_focused then
-            return c
-          else
-            return o
-          end
-        end
-      end
-      local colors = require("catppuccin.palettes").get_palette("latte")
-      local fg = colors.text
-      local bg = "#fafafa"
-      local red = colors.red
-      require("cokeline").setup({
-        buffers = {
-          filter_valid = function(buf)
-            return buf.type == "" and buf.path:find(vim.fn.getcwd(), 1, true)
-          end,
-          new_buffers_position = "directory",
-        },
-        default_hl = {
-          bg = bg,
-          fg = fg,
-        },
-        pick = {
-          use_filename = false,
-        },
-        components = {
-          {
-            text = bracket_cond("[ ", "  "),
-          },
-          {
-            text = function(buf)
-              return buf.filename
-            end,
-            fg = function(buf)
-              return buf.diagnostics.errors > 0 and red or fg
-            end,
-            truncation = { direction = "middle" },
-            italic = function(buf)
-              return not buf.is_focused
-            end,
-            undercurl = function(buf)
-              return buf.diagnostics.errors > 0
-            end,
-          },
-          {
-            text = " 󰅖 ",
-            on_click = function(_, _, _, _, buf)
-              buf:delete()
-            end,
-          },
-          {
-            text = bracket_cond("]", " "),
-          },
-        },
-      })
-      local maps = require("cokeline.mappings")
-      local bufs = require("cokeline.buffers")
-      local history = require("cokeline.history")
-      vim.keymap.set("n", "<leader>l", function()
-        maps.by_step("focus", 1)
-      end, { desc = "To right buffer" })
-
-      vim.keymap.set("n", "<leader>h", function()
-        maps.by_step("focus", -1)
-      end, { desc = "To left buffer" })
-
-      vim.keymap.set("n", "<leader>n", function()
-        maps.by_index("focus", (history:pop() or { index = 0 }).index)
-      end, { desc = "To [n]ext buffer" })
-
-      vim.keymap.set("n", "<leader>p", function()
-        maps.by_index("focus", (history:last() or { index = 0 }).index)
-      end, { desc = "To [p]revious buffer" })
-
-      vim.keymap.set("n", "<leader>x", function()
-        maps.by_index("close", bufs.get_current().index)
-      end, { desc = "E[x]it buffer" })
     end,
   },
 
