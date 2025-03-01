@@ -1,135 +1,58 @@
---[[
-
-=====================================================================
-=====================================================================
-========                                    .-----.          ========
-========         .----------------------.   | === |          ========
-========         |.-""""""""""""""""""-.|   |-----|          ========
-========         ||                    ||   | === |          ========
-========         ||   KICKSTART.NVIM   ||   |-----|          ========
-========         ||   kowalk           ||   | === |          ========
-========         ||                    ||   |-----|          ========
-========         ||:Tutor              ||   |:::::|          ========
-========         |'-..................-'|   |____o|          ========
-========         `"")----------------(""`   ___________      ========
-========        /::::::::::|  |::::::::::\  \ no mouse \     ========
-========       /:::========|  |==hjkl==:::\  \ required \    ========
-========      '""""""""""""'  '""""""""""""'  '""""""""""'   ========
-========                                                     ========
-=====================================================================
-=====================================================================
-
-Getting help:
-  - :help lua-guide
-  - Keymap "<space>sh" to [s]earch the [h]elp documentation,
-  - Keymap "<space>sk" to [s]earch the [k]eybindings
-
---]]
+-- ==================
+-- lucy's nvim config
+-- ==================
 
 local popup_width = 0.8
 local border = "single"
-local copilot = os.getenv("COPILOT_ENABLED") -- if not present, nil, which is falsey!
-local server = os.getenv("SERVER_ADDR")
+local ollama_host = vim.env.SERVER_ADDR
 
-vim.opt.termguicolors = true
-
-vim.o.tabstop = 4
-vim.o.ead = "ver"
-vim.o.ea = false
-
--- Set <space> as the leader key
--- See `:help mapleader`
---  NOTE: Must happen before plugins are loaded (otherwise wrong leader will be used)
 vim.g.mapleader = " "
 vim.g.maplocalleader = " "
-
--- Set to true if you have a Nerd Font installed and selected in the terminal
 vim.g.have_nerd_font = true
 
 -- [[ Setting options ]]
 -- See `:help vim.opt`
--- NOTE: You can change these options as you wish!
---  For more options, you can see `:help option-list`
 
 -- Disable spell checking, but add a toggle keymap to enable.
-vim.opt.spell = false
-vim.opt.spelllang = "en_us"
+vim.o.spell = false
+vim.o.spelllang = "en_us"
 vim.keymap.set("n", "<leader>S", ":set spell!<CR>", { desc = "[S]pell check toggle" })
 
--- Make line numbers default
-vim.opt.number = true
+-- Enable true color support
+vim.o.termguicolors = true
 
--- Enable mouse mode, can be useful for resizing splits for example!
-vim.opt.mouse = "a"
+-- Window options
+vim.o.ead = "ver"
+vim.o.ea = false
+vim.o.splitright = true
+vim.o.splitbelow = true
 
--- Don't show the mode, since it's already in the status line
-vim.opt.showmode = false
-
--- Sync clipboard between OS and Neovim.
---  Schedule the setting after `UiEnter` because it can increase startup-time.
---  See `:help 'clipboard'`
+-- QoL/UX options
+vim.o.mouse = "a"
+vim.o.showmode = false
+vim.o.ignorecase = true
+vim.o.smartcase = true
+vim.o.timeoutlen = 300 -- for mapped sequences
+vim.o.updatetime = 250
+vim.o.undofile = true
 vim.schedule(function()
-  vim.opt.clipboard = "unnamedplus"
+  vim.o.clipboard = "unnamedplus"
 end)
 
--- Enable break indent
-vim.opt.breakindent = true
-
--- Save undo history
-vim.opt.undofile = true
-
--- Case-insensitive searching UNLESS \C or one or more capital letters in the search term
-vim.opt.ignorecase = true
-vim.opt.smartcase = true
-
--- Keep signcolumn on by default
-vim.opt.signcolumn = "yes"
-
--- Decrease update time
-vim.opt.updatetime = 250
-
--- Decrease mapped sequence wait time
--- Displays which-key popup sooner
-vim.opt.timeoutlen = 300
-
--- Configure how new splits should be opened
-vim.opt.splitright = true
-vim.opt.splitbelow = true
-
--- Sets how neovim will display certain whitespace characters in the editor.
---  See `:help 'list'`
---  and `:help 'listchars'`
-vim.opt.list = true
-vim.opt.listchars = { tab = "» ", trail = "·", nbsp = "␣", extends = "→", precedes = "←" }
-
--- Preview substitutions live, as you type!
-vim.opt.inccommand = "split"
-
--- Show which line your cursor is on
+-- UI
+vim.o.number = true
+vim.o.signcolumn = "yes"
+vim.o.breakindent = true
+vim.o.inccommand = "split"
+vim.o.list = true
+vim.opt.listchars = { tab = "| ", trail = "·", nbsp = "␣", extends = "→", precedes = "←" }
 vim.opt.cursorline = true
-
--- Minimal number of screen lines to keep above and below the cursor.
-vim.opt.scrolloff = 20
+vim.o.scrolloff = 30
 
 -- [[ Basic Keymaps ]]
---  See `:help vim.keymap.set()`
-
--- Clear highlights on search when pressing <Esc> in normal mode
---  See `:help hlsearch`
-vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
-
--- Diagnostic keymaps
+vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>") -- Clear highlights on <Esc>
 vim.keymap.set("n", "<leader>q", vim.diagnostic.setloclist, { desc = "Open diagnostic [Q]uickfix list" })
-
--- Exit terminal mode in the builtin terminal with a Esc Esc
--- NOTE: This won't work in all terminal emulators/tmux/etc. Try your own mapping
--- or just use <C-\><C-n> to exit terminal mode
 vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
-
--- Keybinds to make split navigation easier.
---  Use CTRL+<hjkl> to switch between windows
---
---  See `:help wincmd` for a list of all window commands
 vim.keymap.set("n", "<C-h>", "<C-w><C-h>", { desc = "Move focus to the left window" })
 vim.keymap.set("n", "<C-l>", "<C-w><C-l>", { desc = "Move focus to the right window" })
 vim.keymap.set("n", "<C-j>", "<C-w><C-j>", { desc = "Move focus to the lower window" })
@@ -1166,7 +1089,7 @@ require("lazy").setup({
       "hrsh7th/nvim-cmp",
     },
     config = function()
-      if server then
+      if ollama_host then
         require("minuet").setup({
           provider = "openai_fim_compatible",
           context_window = 512,
@@ -1175,7 +1098,7 @@ require("lazy").setup({
             openai_fim_compatible = {
               api_key = "TERM",
               name = "Ollama",
-              end_point = server .. ":11434/v1/completions",
+              end_point = ollama_host .. ":11434/v1/completions",
               model = "qwen2.5-coder:1.5b-base-q3_K_S",
               optional = {
                 max_tokens = 56,
@@ -1301,10 +1224,10 @@ require("lazy").setup({
             insert = "<C-y>",
           },
         },
-        model = server and "codellama:7b-instruct" or "claude-3.7-sonnet",
-        providers = server and {
+        model = ollama_host and "codellama:7b-instruct" or "claude-3.7-sonnet",
+        providers = ollama_host and {
           ollama = ollama_provider("http://localhost:11434"),
-          ollama_ubuntu = ollama_provider(server .. ":11434"),
+          ollama_ubuntu = ollama_provider(ollama_host .. ":11434"),
         } or nil,
       })
       vim.keymap.set("n", "<leader>g", function()
