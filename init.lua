@@ -216,9 +216,6 @@ require("lazy").setup({
           initial_mode = "normal",
           borderchars = { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
           mappings = { -- See `:help telescope.actions`
-            i = {
-              ["<esc>"] = require("telescope.actions").close,
-            },
             n = {
               ["q"] = require("telescope.actions").close,
               ["<C-n>"] = require("telescope.actions").move_selection_next,
@@ -591,6 +588,76 @@ require("lazy").setup({
     end,
   },
 
+  -- TODO: debug, integrate
+  { -- supercollider
+    "davidgranstrom/scnvim",
+    ft = { "supercollider" },
+    config = function()
+      local scnvim = require("scnvim")
+      local map = scnvim.map
+      local map_expr = scnvim.map_expr
+
+      scnvim.setup({
+        documentation = {
+          cmd = "/opt/homebrew/bin/pandoc",
+        },
+        keymaps = {
+          ["<leader>E"] = map("editor.send_line", { "i", "n" }),
+          ["<leader>e"] = {
+            map("editor.send_block", { "i", "n" }),
+            map("editor.send_selection", { "x" }),
+          },
+        },
+        postwin = {
+          float = {
+            enabled = true,
+            config = {
+              border = border,
+              anchor = "SE",
+            },
+          },
+        },
+      })
+
+      -- require("scnvim.help").on_open:replace(function(err, uri, pattern)
+      -- 	print("lookin for " .. uri)
+      -- end)
+    end,
+  },
+
+  { -- for love2d
+    "S1M0N38/love2d.nvim",
+    cmd = "LoveRun",
+    opts = {},
+    config = function()
+      vim.keymap.set("n", "<leader>vv", "<cmd>LoveRun<cr>", { ft = "lua", desc = "Run LOVE" })
+      vim.keymap.set("n", "<leader>vs", "<cmd>LoveRun<cr>", { ft = "lua", desc = "Stop LOVE" })
+    end,
+  },
+
+  { -- render markdown
+    "MeanderingProgrammer/render-markdown.nvim",
+    dependencies = { "nvim-treesitter/nvim-treesitter", "echasnovski/mini.nvim" },
+    ---@module 'render-markdown'
+    ---@type render.md.UserConfig
+    ft = { "markdown", "codecompanion" },
+    opts = {
+      preset = "lazy",
+    },
+  },
+
+  { -- dictionary recommendations
+    "uga-rosa/cmp-dictionary",
+    name = "cmp_dictionary",
+    ft = { "markdown", "codecompanion" },
+    config = function()
+      require("cmp_dictionary").setup({
+        paths = { "/usr/share/dict/words" },
+        exact_length = 2,
+      })
+    end,
+  },
+
   { -- theme
     "catppuccin/nvim",
     name = "catppuccin",
@@ -653,27 +720,22 @@ require("lazy").setup({
   { -- collection of various small independent plugins/modules
     "echasnovski/mini.nvim",
     config = function()
-      -- Better Around/Inside textobjects
-      --
-      -- Examples:
+      -- around/inside i.e.
       --  - va)  - [V]isually select [A]round [)]paren
       --  - yinq - [Y]ank [I]nside [N]ext [Q]uote
       --  - ci'  - [C]hange [I]nside [']quote
       require("mini.ai").setup({ n_lines = 500 })
 
-      -- Add/delete/replace surroundings (brackets, quotes, etc.)
-      --
+      -- add/delete/replace surroundings (brackets, quotes, etc.)
       -- - saiw) - [S]urround [A]dd [I]nner [W]ord [)]Paren
       -- - sd'   - [S]urround [D]elete [']quotes
       -- - sr)'  - [S]urround [R]eplace [)] [']
       require("mini.surround").setup()
 
-      -- Comment from Normal mode
-      --
-      -- - gcc - Comment line
+      -- - gcc - comment line
       require("mini.comment").setup()
 
-      -- Welcome screen
+      -- welcome screen
       local starter = require("mini.starter")
       starter.setup({
         items = {
@@ -684,7 +746,7 @@ require("lazy").setup({
           },
         },
         header = function()
-          local handle = io.popen("fortune")
+          local handle = io.popen("fortune") or {}
           local fortune = handle:read("*a")
           handle:close()
           fortune = fortune:gsub("\n", "\n")
@@ -693,8 +755,7 @@ require("lazy").setup({
       })
 
       -- Ranger-like file browser
-      --
-      -- - [] - open
+      -- TODO: keep?
       require("mini.files").setup({})
       local minifiles_toggle = function(...)
         if not MiniFiles.close() then
@@ -702,25 +763,13 @@ require("lazy").setup({
         end
       end
       vim.keymap.set("n", "<leader>a", minifiles_toggle, { desc = "Open file r[a]nger" })
-
-      --  See: https://github.com/echasnovski/mini.nvim
     end,
   },
 
-  { -- Vim movement guide
-    "tris203/precognition.nvim",
-    event = "VeryLazy",
-    config = function()
-      require("precognition").setup({
-        startVisible = false,
-      })
-    end,
-  },
-
-  {
+  { -- terminal float
     "akinsho/toggleterm.nvim",
     version = "*",
-    opts = { --[[ things you want to change go here]]
+    opts = {
       open_mapping = [[<c-\>]],
       shade_terminals = false,
       direction = "float",
@@ -738,7 +787,7 @@ require("lazy").setup({
     },
   },
 
-  { -- Highlight, edit, and navigate code
+  { -- highlight, edit, and navigate code
     "nvim-treesitter/nvim-treesitter",
     build = ":TSUpdate",
     main = "nvim-treesitter.configs", -- Sets main module to use for opts
@@ -758,103 +807,16 @@ require("lazy").setup({
         "vimdoc",
         "java",
       },
-      -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
         enable = true,
-        -- Some languages depend on vim's regex highlighting system (such as Ruby) for indent rules.
-        --  If you are experiencing weird indenting issues, add the language to
-        --  the list of additional_vim_regex_highlighting and disabled languages for indent.
         additional_vim_regex_highlighting = { "ruby" },
       },
       indent = { enable = true, disable = { "ruby" } },
     },
-    -- There are additional nvim-treesitter modules that you can use to interact
-    -- with nvim-treesitter. You should go explore a few and see what interests you:
-    --
-    --    - Incremental selection: Included, see `:help nvim-treesitter-incremental-selection-mod`
-    --    - Show your current context: https://github.com/nvim-treesitter/nvim-treesitter-context
-    --    - Treesitter + textobjects: https://github.com/nvim-treesitter/nvim-treesitter-textobjects
   },
 
-  -- supercollider
-  {
-    "davidgranstrom/scnvim",
-    ft = { "supercollider" },
-    config = function()
-      local scnvim = require("scnvim")
-      local map = scnvim.map
-      local map_expr = scnvim.map_expr
-
-      scnvim.setup({
-        documentation = {
-          cmd = "/opt/homebrew/bin/pandoc",
-        },
-        keymaps = {
-          ["<leader>E"] = map("editor.send_line", { "i", "n" }),
-          ["<leader>e"] = {
-            map("editor.send_block", { "i", "n" }),
-            map("editor.send_selection", { "x" }),
-          },
-        },
-        postwin = {
-          float = {
-            enabled = true,
-            config = {
-              border = border,
-              anchor = "SE",
-            },
-          },
-        },
-      })
-
-      -- require("scnvim.help").on_open:replace(function(err, uri, pattern)
-      -- 	print("lookin for " .. uri)
-      -- end)
-    end,
-  },
-
-  -- for love lua dev
-  {
-    "S1M0N38/love2d.nvim",
-    cmd = "LoveRun",
-    opts = {},
-    ft = "lua",
-    keys = {
-      { "<leader>v", ft = "lua", dev = "LÖVE" },
-      { "<leader>vv", "<cmd>LoveRun<cr>", ft = "lua", desc = "Run LÖVE" },
-      { "<leader>vs", "<cmd>LoveStop<cr>", ft = "lua", desc = "Stop LÖVE" },
-    },
-  },
-
-  -- Render markdown
-  {
-    "MeanderingProgrammer/render-markdown.nvim",
-    dependencies = { "nvim-treesitter/nvim-treesitter", "echasnovski/mini.nvim" }, -- if you use the mini.nvim suite
-    ---@module 'render-markdown'
-    ---@type render.md.UserConfig
-    ft = { "markdown", "codecompanion" },
-    opts = {},
-  },
-
-  -- Some word-processing plugins
-  -- Dictionary recommendations
-  {
-    "uga-rosa/cmp-dictionary",
-    name = "cmp_dictionary",
-    config = function()
-      require("cmp_dictionary").setup({
-        paths = { "/usr/share/dict/words" },
-        exact_length = 2,
-      })
-    end,
-  },
-  -- Grammar check. Not great, but there aren't many options nowadays
-  {
-    "rhysd/vim-grammarous",
-  },
-
-  { -- Co-pilot for work :(
+  { -- co-pilot
     "zbirenbaum/copilot.lua",
     event = "InsertEnter",
     config = function()
@@ -864,7 +826,7 @@ require("lazy").setup({
         },
         suggestion = {
           enabled = false,
-          auto_trigger = true, --  NOTE: may want to toggle, since this might get annoying.
+          auto_trigger = true,
           keymap = {
             accept = "<C-y>",
             accept_word = false,
@@ -888,93 +850,34 @@ require("lazy").setup({
       require("copilot_cmp").setup()
     end,
   },
-  {
+
+  { -- local completions
     "milanglacier/minuet-ai.nvim",
     dependencies = {
       "nvim-lua/plenary.nvim",
       "hrsh7th/nvim-cmp",
     },
-    config = function()
-      if ollama_host then
-        require("minuet").setup({
-          provider = "openai_fim_compatible",
-          context_window = 512,
-          n_completions = 2,
-          provider_options = {
-            openai_fim_compatible = {
-              api_key = "TERM",
-              name = "Ollama",
-              end_point = ollama_host .. ":11434/v1/completions",
-              model = "qwen2.5-coder:1.5b-base-q3_K_S",
-              optional = {
-                max_tokens = 56,
-                top_p = 0.9,
-              },
-            },
+    cond = ollama_host ~= nil,
+    opt = {
+      provider = "openai_fim_compatible",
+      context_window = 512,
+      n_completions = 2,
+      provider_options = {
+        openai_fim_compatible = {
+          api_key = "TERM",
+          name = "Ollama",
+          end_point = ollama_host .. ":11434/v1/completions",
+          model = "qwen2.5-coder:1.5b-base-q3_K_S",
+          optional = {
+            max_tokens = 56,
+            top_p = 0.9,
           },
-        })
-      end
-    end,
+        },
+      },
+    },
   },
-  -- plugin is kinda annoying, back to copilot chat for now.
-  -- {
-  --   "olimorris/codecompanion.nvim",
-  --   config = function()
-  --     require("codecompanion").setup({
-  --       strategies = {
-  --         chat = {
-  --           adapter = "copilot",
-  --         },
-  --       },
-  --       display = {
-  --         action_palette = { provider = "telescope" },
-  --         chat = {
-  --           intro_message = "Hi Lucy, how can I help? Press ? for options",
-  --           -- start_in_insert_mode = true,
-  --           window = {
-  --             layout = "float",
-  --             position = "top",
-  --             border = border,
-  --             width = popup_width,
-  --             height = 0.75,
-  --           },
-  --         },
-  --       },
-  --     })
-  --     local group = vim.api.nvim_create_augroup("CodeCompanionHooks", {})
-  --     -- Modify buffer
-  --     vim.api.nvim_create_autocmd({ "User" }, {
-  --       pattern = "CodeCompanionChatOpened",
-  --       group = group,
-  --       callback = function(request)
-  --         local bufnr = request.data.bufnr
-  --         local win_id = vim.fn.bufwinid(bufnr)
-  --         vim.api.nvim_win_set_config(
-  --           vim.fn.win_id2win(win_id),
-  --           vim.tbl_deep_extend("keep", vim.api.nvim_win_get_config(win_id), { { anchor = "N" } })
-  --         )
-  --       end,
-  --     })
-  --     -- Format the buffer after the inline request has completed
-  --     vim.api.nvim_create_autocmd({ "User" }, {
-  --       pattern = "CodeCompanionInline*",
-  --       group = group,
-  --       callback = function(request)
-  --         if request.match == "CodeCompanionInlineFinished" then
-  --           require("conform").format({ bufnr = request.buf })
-  --         end
-  --       end,
-  --     })
-  --   end,
-  --   keys = {
-  --     { "<leader>g", "<cmd>CodeCompanionChat toggle<cr>", desc = "Open Code Companion Chat" },
-  --   },
-  --   dependencies = {
-  --     "nvim-lua/plenary.nvim",
-  --     "nvim-treesitter/nvim-treesitter",
-  --   },
-  -- },
-  {
+
+  { -- chat with copilot
     "CopilotC-Nvim/CopilotChat.nvim",
     dependencies = {
       { "zbirenbaum/copilot.lua" }, -- or github/copilot.lua
@@ -1041,6 +944,8 @@ require("lazy").setup({
       end, { desc = "Open AI chat" })
     end,
   },
+
+  -- end plugins
 }, {
   ui = {
     border = border,
