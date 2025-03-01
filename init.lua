@@ -734,6 +734,13 @@ require("lazy").setup({
       -- - sr)'  - [S]urround [R]eplace [)] [']
       require("mini.surround").setup()
 
+      -- move selection or line up/down
+      -- - <M-hjkl> to move, where M is Alt
+      require("mini.move").setup()
+
+      -- autopairs
+      require("mini.pairs").setup()
+
       -- - gcc - comment line
       require("mini.comment").setup()
 
@@ -941,10 +948,12 @@ require("lazy").setup({
             insert = "<C-a>",
           },
         },
-        model = ollama_host and "codellama:7b-instruct" or "claude-3.7-sonnet",
+        model = "claude-3.7-sonnet",
         providers = ollama_host and {
           ollama = ollama_provider("http://localhost:11434"),
           ollama_ubuntu = ollama_provider(ollama_host .. ":11434"),
+          github_models = nil,
+          copilot_embeddings = nil,
         } or {
           github_models = nil,
           copilot_embeddings = nil,
