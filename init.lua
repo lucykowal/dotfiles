@@ -76,6 +76,7 @@ vim.api.nvim_create_autocmd("TextYankPost", {
 vim.api.nvim_create_autocmd("BufWinEnter", {
   desc = "Force help windows to the right",
   group = vim.api.nvim_create_augroup("help-win-right", { clear = true }),
+  pattern = "*/doc/*",
   callback = function(ev)
     local rtp = vim.o.runtimepath
     local files = vim.fn.globpath(rtp, "doc/*", true, 1)
@@ -220,6 +221,7 @@ require("lazy").setup({
               ["q"] = require("telescope.actions").close,
               ["<C-n>"] = require("telescope.actions").move_selection_next,
               ["<C-p>"] = require("telescope.actions").move_selection_previous,
+              ["<C-y"] = require("telescope.actions").select_default,
             },
           },
           dynamic_preview_title = true,
@@ -640,7 +642,7 @@ require("lazy").setup({
     dependencies = { "nvim-treesitter/nvim-treesitter", "echasnovski/mini.nvim" },
     ---@module 'render-markdown'
     ---@type render.md.UserConfig
-    ft = { "markdown", "codecompanion" },
+    ft = { "markdown", "copilot-chat" },
     opts = {
       preset = "lazy",
     },
@@ -649,7 +651,7 @@ require("lazy").setup({
   { -- dictionary recommendations
     "uga-rosa/cmp-dictionary",
     name = "cmp_dictionary",
-    ft = { "markdown", "codecompanion" },
+    ft = { "markdown", "copilot-chat" },
     config = function()
       require("cmp_dictionary").setup({
         paths = { "/usr/share/dict/words" },
@@ -880,8 +882,8 @@ require("lazy").setup({
   { -- chat with copilot
     "CopilotC-Nvim/CopilotChat.nvim",
     dependencies = {
-      { "zbirenbaum/copilot.lua" }, -- or github/copilot.lua
-      { "nvim-lua/plenary.nvim", branch = "master" }, -- for curl, log and async functions
+      { "zbirenbaum/copilot.lua" },
+      { "nvim-lua/plenary.nvim", branch = "master" },
     },
     build = "make tiktoken", -- Only on MacOS or Linux
     config = function()
@@ -900,7 +902,8 @@ require("lazy").setup({
             })
 
             if err then
-              error(err)
+              vim.notify(err, vim.log.levels.ERROR)
+              response = { body = { models = {} } }
             end
 
             return vim.tbl_map(function(model)
@@ -918,30 +921,73 @@ require("lazy").setup({
       end
       chat.setup({
         window = {
-          layout = "float",
-          relative = "win",
-          border = border,
-          width = popup_width,
-          height = 0.75,
-          row = 1,
+          layout = "vertical",
+          width = 0.4,
+
+          -- relative = "editor",
+          -- border = border,
+          -- width = popup_width,
+          -- height = 0.75,
+          -- row = 1,
         },
-        shared = {
-          auto_insert_mode = true,
-        },
+        highlight_headers = false,
+        insert_at_end = true,
         mappings = {
           complete = {
             insert = "<C-y>",
+          },
+          accept_diff = {
+            normal = "<C-a>",
+            insert = "<C-a>",
           },
         },
         model = ollama_host and "codellama:7b-instruct" or "claude-3.7-sonnet",
         providers = ollama_host and {
           ollama = ollama_provider("http://localhost:11434"),
           ollama_ubuntu = ollama_provider(ollama_host .. ":11434"),
-        } or nil,
+        } or {
+          github_models = nil,
+          copilot_embeddings = nil,
+        },
       })
+
+      -- vim.api.nvim_create_autocmd("BufWinEnter", {
+      --   pattern = "copilot-*",
+      --   callback = function(ev)
+      --     -- buf, id?
+      --     local wins = vim.api.nvim_list_wins()
+      --     -- if more than 2 windows
+      --     if #wins > 2 then
+      --       -- close new copilot window
+      --       local max_win = 0
+      --       local max_col = 0
+      --       for _, win in ipairs(wins) do
+      --         if vim.api.nvim_win_get_buf(win) == ev.buf then
+      --           vim.api.nvim_win_close(win, false)
+      --         else
+      --           local _, c = vim.api.nvim_win_get_config(win)
+      --           if c and c > max_col then
+      --             max_col = c
+      --             max_win = win
+      --           end
+      --         end
+      --         -- put in existing window
+      --         vim.api.nvim_win_set_buf(max_win, ev.buf)
+      --       end
+      --     end
+      --     vim.opt_local.relativenumber = false
+      --     vim.opt_local.number = false
+      --   end,
+      -- })
+
       vim.keymap.set("n", "<leader>g", function()
         chat.open()
       end, { desc = "Open AI chat" })
+
+      vim.keymap.set("n", "<leader>ccp", function()
+        local actions = require("CopilotChat.actions")
+        require("CopilotChat.integrations.telescope").pick(actions.prompt_actions())
+      end, { desc = "CopilotChat - Prompt actions" })
     end,
   },
 
