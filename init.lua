@@ -67,9 +67,22 @@ vim.keymap.set("n", "<CS-K>", "<C-w>K", { desc = "Move window to the far bottom"
 --  See `:help lua-guide-autocommands`
 vim.api.nvim_create_autocmd("TextYankPost", {
   desc = "Highlight when yanking (copying) text",
-  group = vim.api.nvim_create_augroup("kickstart-highlight-yank", { clear = true }),
+  group = vim.api.nvim_create_augroup("highlight-yank", { clear = true }),
   callback = function()
     vim.highlight.on_yank()
+  end,
+})
+
+vim.api.nvim_create_autocmd("BufWinEnter", {
+  desc = "Force help windows to the right",
+  group = vim.api.nvim_create_augroup("help-win-right", { clear = true }),
+  callback = function(ev)
+    local rtp = vim.o.runtimepath
+    local files = vim.fn.globpath(rtp, "doc/*", true, 1)
+    if ev.file and vim.list_contains(files, ev.file) then
+      vim.cmd.wincmd("L")
+      vim.cmd("vert resize " .. math.max(90, math.min(60, math.floor(vim.o.columns * 0.4))))
+    end
   end,
 })
 
@@ -205,11 +218,6 @@ require("lazy").setup({
           mappings = { -- See `:help telescope.actions`
             i = {
               ["<esc>"] = require("telescope.actions").close,
-              ["<CR>"] = function(bufnr)
-                local a, b = require("telescope.actions").select_default(bufnr)
-                require("CopilotChat").close()
-                return a, b
-              end,
             },
             n = {
               ["q"] = require("telescope.actions").close,
