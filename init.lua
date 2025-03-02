@@ -77,6 +77,7 @@ vim.api.nvim_create_autocmd("BufWinEnter", {
     local files = vim.fn.globpath(rtp, "doc/*", true, 1)
     if ev.file and vim.list_contains(files, ev.file) then
       -- entered a help file
+      vim.api.nvim_set_option_value("filetype", "help", { scope = "local" })
       if vim.api.nvim_win_get_config(0).width > vim.o.columns * 0.5 then
         -- big enough to push right
         vim.cmd.wincmd("L")
@@ -88,6 +89,7 @@ vim.api.nvim_create_autocmd("BufWinEnter", {
 
 -- filetypes
 vim.filetype.add({ extension = { frag = "glsl" } })
+vim.filetype.add({ extension = { sc = "supercollider" } })
 
 -- lazy
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"

@@ -17,7 +17,6 @@ return { -- telescope, incredibly powerful fuzzy finder
     { "nvim-tree/nvim-web-devicons", enabled = vim.g.have_nerd_font },
 
     { -- supercollider docs
-      -- TODO: make sure this works
       "davidgranstrom/telescope-scdoc.nvim",
     },
 
@@ -56,6 +55,9 @@ return { -- telescope, incredibly powerful fuzzy finder
         initial_mode = "normal",
         borderchars = { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
         mappings = { -- See `:help telescope.actions`
+          i = {
+            ["<C-y"] = require("telescope.actions").select_default,
+          },
           n = {
             ["q"] = require("telescope.actions").close,
             ["<C-n>"] = require("telescope.actions").move_selection_next,
@@ -91,6 +93,7 @@ return { -- telescope, incredibly powerful fuzzy finder
             },
           }),
         },
+        ["scdoc"] = {},
       },
     })
 

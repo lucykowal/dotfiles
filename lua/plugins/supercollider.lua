@@ -1,10 +1,4 @@
 -- supercollider
--- TODO: debug and integrate
-
--- fixing help?
--- require("scnvim.help").on_open:replace(function(err, uri, pattern)
--- 	print("lookin for " .. uri)
--- end)
 
 return { -- supercollider
   "davidgranstrom/scnvim",
@@ -12,7 +6,6 @@ return { -- supercollider
   config = function()
     local scnvim = require("scnvim")
     local map = scnvim.map
-    local map_expr = scnvim.map_expr
 
     scnvim.setup({
       documentation = {
@@ -26,18 +19,17 @@ return { -- supercollider
         },
       },
       postwin = {
-        float = {
-          enabled = true,
-          config = {
-            border = border,
-            anchor = "SE",
-          },
-        },
+        size = require("settings").window.width,
       },
     })
 
-    -- require("scnvim.help").on_open:replace(function(err, uri, pattern)
-    -- 	print("lookin for " .. uri)
-    -- end)
+    vim.api.nvim_set_keymap(
+      "n",
+      "<leader>sc",
+      "<cmd>Telescope scdoc<CR>",
+      { desc = "[S]earch Super[C]ollider documentation" }
+    )
+
+    -- TODO: autocommand on open/close to open/close server?
   end,
 }
