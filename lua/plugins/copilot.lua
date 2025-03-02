@@ -201,17 +201,6 @@ return {
         chat.open()
       end, { desc = "[G]oto Copilot" })
 
-      -- vim.api.nvim_create_autocmd("BufWinLeave", {
-      --   callback = function(event)
-      --     local b = event.buf
-      --     if vim.api.nvim_get_option_value("filetype", { buf = b }) == "copilot-chat" then
-      --       vim.notify("copilot identified! prepare to die " .. b)
-      --       -- vim.cmd.wincmd("q")
-      --       vim.api.nvim_win_close(0, false)
-      --     end
-      --   end,
-      -- })
-
       vim.keymap.set("n", "<leader>ccp", function()
         local actions = require("CopilotChat.actions")
         require("CopilotChat.integrations.telescope").pick(actions.prompt_actions())

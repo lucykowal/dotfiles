@@ -68,19 +68,23 @@ vim.api.nvim_create_autocmd("TextYankPost", {
   end,
 })
 
--- vim.api.nvim_create_autocmd("BufWinEnter", {
---   desc = "Force help windows to the right",
---   group = vim.api.nvim_create_augroup("help-win-right", { clear = true }),
---   pattern = "*/doc/*",
---   callback = function(ev)
---     local rtp = vim.o.runtimepath
---     local files = vim.fn.globpath(rtp, "doc/*", true, 1)
---     if ev.file and vim.list_contains(files, ev.file) then
---       vim.cmd.wincmd("L")
---       vim.cmd("vert resize " .. math.max(90, math.min(60, math.floor(vim.o.columns * 0.4))))
---     end
---   end,
--- })
+vim.api.nvim_create_autocmd("BufWinEnter", {
+  desc = "Force help windows to the right",
+  group = vim.api.nvim_create_augroup("help-win-right", { clear = true }),
+  pattern = "*/doc/*",
+  callback = function(ev)
+    local rtp = vim.o.runtimepath
+    local files = vim.fn.globpath(rtp, "doc/*", true, 1)
+    if ev.file and vim.list_contains(files, ev.file) then
+      -- entered a help file
+      if vim.api.nvim_win_get_config(0).width > vim.o.columns * 0.5 then
+        -- big enough to push right
+        vim.cmd.wincmd("L")
+        vim.cmd("vert resize " .. math.max(90, math.min(60, math.floor(vim.o.columns * 0.4))))
+      end
+    end
+  end,
+})
 
 -- filetypes
 vim.filetype.add({ extension = { frag = "glsl" } })
