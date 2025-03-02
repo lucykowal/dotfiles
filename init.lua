@@ -525,6 +525,8 @@ require("lazy").setup({
       "saadparwaiz1/cmp_luasnip",
       "hrsh7th/cmp-nvim-lsp",
       "hrsh7th/cmp-path",
+      "hrsh7th/cmp-cmdline",
+      "hrsh7th/cmp-buffer",
     },
     config = function()
       -- See `:help cmp`
@@ -533,6 +535,9 @@ require("lazy").setup({
       luasnip.config.setup({})
 
       cmp.setup({
+        performance = {
+          max_view_entries = 20,
+        },
         snippet = {
           expand = function(args)
             luasnip.lsp_expand(args.body)
@@ -566,14 +571,7 @@ require("lazy").setup({
           },
           { name = "copilot" },
           { name = "nvim_lsp" },
-          { name = "minuet", max_item_count = 2 },
-          { name = "path" },
           { name = "luasnip" },
-          {
-            name = "dictionary",
-            keyword_length = 2,
-            max_item_count = 5,
-          },
         },
         window = {
           completion = cmp.config.window.bordered({
@@ -586,6 +584,38 @@ require("lazy").setup({
             border = border,
           }),
         },
+      })
+      local writing_sources = {
+        { name = "path" },
+        {
+          name = "dictionary",
+          keyword_length = 2,
+          max_item_count = 5,
+        },
+      }
+      cmp.setup.filetype("html", {
+        sources = writing_sources,
+      })
+      cmp.setup.filetype("markdown", {
+        sources = writing_sources,
+      })
+      cmp.setup.filetype("copilot-chat", {
+        sources = writing_sources,
+      })
+      cmp.setup.cmdline("/", {
+        mapping = cmp.mapping.preset.cmdline(),
+        sources = {
+          { name = "buffer" },
+        },
+        matching = { disallow_symbol_nonprefix_matching = false },
+      })
+      cmp.setup.cmdline(":", {
+        mapping = cmp.mapping.preset.cmdline(),
+        sources = {
+          { name = "path" },
+          { name = "cmdline" },
+        },
+        matching = { disallow_symbol_nonprefix_matching = false },
       })
     end,
   },
@@ -926,6 +956,33 @@ require("lazy").setup({
           end,
         }
       end
+
+      -- register cmp source
+      local copilot = require("CopilotChat")
+      local cmp = require("cmp")
+      local comp_tbl = copilot.complete_info()
+      local source = {
+        get_keyword_pattern = function()
+          return comp_tbl.pattern
+        end,
+        get_trigger_characters = function()
+          return comp_tbl.triggers
+        end,
+        complete = function(_, _, callback)
+          copilot.complete_items(function(items)
+            local mapped_items = vim.tbl_map(function(i)
+              return { label = i.word, kind = cmp.lsp.CompletionItemKind.Reference }
+            end, items)
+            callback(mapped_items)
+          end)
+        end,
+        execute = function(_, item, callback)
+          callback(item)
+          vim.api.nvim_set_option_value("buflisted", false, { buf = 0 })
+        end,
+      }
+      cmp.register_source("copilot-chat", source)
+
       chat.setup({
         window = {
           layout = "vertical",
@@ -939,9 +996,19 @@ require("lazy").setup({
         },
         highlight_headers = false,
         insert_at_end = true,
+        chat_autocomplete = false,
         mappings = {
           complete = {
             insert = "<C-y>",
+            callback = function(_)
+              require("cmp").complete({
+                config = {
+                  sources = {
+                    { name = "copilot-chat" },
+                  },
+                },
+              })
+            end,
           },
           accept_diff = {
             normal = "<C-a>",
