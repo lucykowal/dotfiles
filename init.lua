@@ -987,12 +987,6 @@ require("lazy").setup({
         window = {
           layout = "vertical",
           width = 0.4,
-
-          -- relative = "editor",
-          -- border = border,
-          -- width = popup_width,
-          -- height = 0.75,
-          -- row = 1,
         },
         highlight_headers = false,
         insert_at_end = true,
@@ -1026,35 +1020,6 @@ require("lazy").setup({
           copilot_embeddings = nil,
         },
       })
-
-      -- vim.api.nvim_create_autocmd("BufWinEnter", {
-      --   pattern = "copilot-*",
-      --   callback = function(ev)
-      --     -- buf, id?
-      --     local wins = vim.api.nvim_list_wins()
-      --     -- if more than 2 windows
-      --     if #wins > 2 then
-      --       -- close new copilot window
-      --       local max_win = 0
-      --       local max_col = 0
-      --       for _, win in ipairs(wins) do
-      --         if vim.api.nvim_win_get_buf(win) == ev.buf then
-      --           vim.api.nvim_win_close(win, false)
-      --         else
-      --           local _, c = vim.api.nvim_win_get_config(win)
-      --           if c and c > max_col then
-      --             max_col = c
-      --             max_win = win
-      --           end
-      --         end
-      --         -- put in existing window
-      --         vim.api.nvim_win_set_buf(max_win, ev.buf)
-      --       end
-      --     end
-      --     vim.opt_local.relativenumber = false
-      --     vim.opt_local.number = false
-      --   end,
-      -- })
 
       vim.keymap.set("n", "<leader>g", function()
         chat.open()
