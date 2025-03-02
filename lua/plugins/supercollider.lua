@@ -18,10 +18,25 @@ return { -- supercollider
           map("editor.send_selection", { "x" }),
         },
       },
-      postwin = {
-        size = require("settings").window.width,
-      },
     })
+
+    -- use telescope instead of qflist
+    ---@diagnostic disable-next-line: undefined-field
+    require("scnvim.help").on_select:replace(function(err, results)
+      if err then
+        vim.notify(err, vim.log.levels.ERROR)
+      end
+      vim.ui.select(results, {
+        prompt = "SCDOC",
+        format_item = function(i)
+          return i.text
+        end,
+      }, function(choice)
+        require("scnvim.help").on_open(nil, choice.filename, choice.text)
+      end)
+    end)
+
+    -- TODO: replace on_open?
 
     vim.api.nvim_set_keymap(
       "n",
@@ -30,6 +45,14 @@ return { -- supercollider
       { desc = "[S]earch Super[C]ollider documentation" }
     )
 
-    -- TODO: autocommand on open/close to open/close server?
+    vim.api.nvim_create_autocmd("BufEnter", {
+      once = true,
+      callback = function()
+        vim.cmd("SCNvimStart")
+        vim.api.nvim_create_autocmd("ExitPre", {
+          command = "SCNvimStop",
+        })
+      end,
+    })
   end,
 }
