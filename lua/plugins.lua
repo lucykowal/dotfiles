@@ -1,4 +1,5 @@
 -- plugins.lua: plugin specs
+local settings = require("settings")
 
 -- all plugins/*.lua get merged with this return spec
 return {
@@ -75,17 +76,7 @@ return {
       open_mapping = [[<c-\>]],
       shade_terminals = false,
       direction = "float",
-      float_opts = {
-        border = "single", -- TODO: extract window config
-        row = 1,
-        height = function()
-          return math.floor(vim.o.lines * 0.75)
-        end,
-        width = function()
-          return math.floor(vim.o.columns * 0.8)
-        end,
-        title_pos = "center",
-      },
+      float_opts = vim.tbl_extend("force", settings.window, {}),
     },
   },
 }

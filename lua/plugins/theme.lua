@@ -11,16 +11,16 @@ return {
         latte = {},
       },
       custom_highlights = function(colors)
+        local sep = {
+          fg = colors.surface2,
+          bg = colors.base,
+          style = { "bold" },
+        }
         return {
-          NormalFloat = { bg = colors.base },
-          FloatBorder = { fg = colors.text },
-          FloatTitle = { fg = colors.text },
-          TodoBgTODO = {
-            bg = colors.blue,
-            fg = colors.base,
-            style = { "bold" },
-          },
-          TodoFgTODO = { fg = colors.blue },
+          NormalFloat = sep,
+          FloatBorder = sep,
+          FloatTitle = sep,
+          WinSeparator = sep,
         }
       end,
       styles = {

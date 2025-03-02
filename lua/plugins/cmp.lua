@@ -1,6 +1,5 @@
 -- cmp autocomplete
-
-local ollama_host = vim.env.SERVER_ADDR -- TODO: extract
+local settings = require("settings")
 
 return { -- autocomplete
   "hrsh7th/nvim-cmp",
@@ -88,14 +87,14 @@ return { -- autocomplete
         { name = "luasnip" },
       },
       window = {
-        completion = cmp.config.window.bordered({ -- TODO: extract window config
+        completion = cmp.config.window.bordered({
           focusable = false,
           winblend = 100,
-          border = "single",
+          border = settings.window.border,
         }),
         documentation = cmp.config.window.bordered({
           winblend = 0,
-          border = "single",
+          border = settings.window.border,
         }),
       },
     })

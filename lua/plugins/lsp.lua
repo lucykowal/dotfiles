@@ -1,3 +1,5 @@
+local settings = require("settings")
+
 return {
   -- Main LSP Configuration
   "neovim/nvim-lspconfig",
@@ -26,9 +28,9 @@ return {
           view = {
             stack_upwards = false,
           },
-          window = { -- TODO: extract window config
-            winblend = 0,
-            border = "single",
+          window = {
+            winblend = settings.window.winblend,
+            border = settings.window.border,
             x_padding = 1,
             align = "top",
           },
@@ -156,9 +158,11 @@ return {
 
     -- see :Mason to manage
     require("mason").setup({
-      ui = { -- TODO: extract window config
-        border = "single",
-        width = 0.8,
+      ui = {
+        border = settings.window.border,
+        backdrop = 100,
+        width = settings.window.width,
+        height = settings.window.height,
       },
     })
 

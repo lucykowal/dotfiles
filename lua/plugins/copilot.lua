@@ -1,5 +1,10 @@
 -- co-pilot and related plugins
-local ollama_host = vim.env.SERVER_ADDR -- TODO: extract
+local settings = require("settings")
+
+local state = {
+  -- bufnr of buf chat kicked out of window, or nil if new window made
+  replaced_bufnr = nil,
+}
 
 -- helper to get an ollama config for any URL
 local ollama_provider = function(host)
@@ -94,7 +99,7 @@ return {
       "nvim-lua/plenary.nvim",
       "hrsh7th/nvim-cmp",
     },
-    cond = ollama_host ~= nil,
+    cond = settings.ollama_host ~= nil,
     opt = {
       provider = "openai_fim_compatible",
       context_window = 512,
@@ -103,7 +108,7 @@ return {
         openai_fim_compatible = {
           api_key = "TERM",
           name = "Ollama",
-          end_point = ollama_host .. ":11434/v1/completions",
+          end_point = settings.ollama_host .. ":11434/v1/completions",
           model = "qwen2.5-coder:1.5b-base-q3_K_S",
           optional = {
             max_tokens = 56,
@@ -126,8 +131,8 @@ return {
 
       chat.setup({
         window = {
-          layout = "vertical",
-          width = 0.4,
+          layout = "replace",
+          -- width = 0.4,
         },
         highlight_headers = false,
         insert_at_end = true,
@@ -145,15 +150,28 @@ return {
               })
             end,
           },
+          close = {
+            callback = function()
+              chat.close()
+              if state.replaced_bufnr then
+                -- we replaced a buf, get it back
+                vim.api.nvim_win_set_buf(0, state.replaced_bufnr)
+                vim.cmd.wincmd("w")
+              else
+                -- we made a new window, so close it now.
+                vim.api.nvim_win_close(0, false)
+              end
+            end,
+          },
           accept_diff = {
             normal = "<C-a>",
             insert = "<C-a>",
           },
         },
         model = "claude-3.7-sonnet",
-        providers = ollama_host and {
+        providers = settings.ollama_host and {
           ollama = ollama_provider("http://localhost:11434"),
-          ollama_ubuntu = ollama_provider(ollama_host .. ":11434"),
+          ollama_ubuntu = ollama_provider(settings.ollama_host .. ":11434"),
           github_models = nil,
           copilot_embeddings = nil,
         } or {
@@ -163,8 +181,36 @@ return {
       })
 
       vim.keymap.set("n", "<leader>g", function()
+        -- get editor windows
+        local wins = vim.api.nvim_list_wins()
+        wins = vim.tbl_filter(function(w)
+          local conf = vim.api.nvim_win_get_config(w)
+          return not conf.external and conf.relative == ""
+        end, wins)
+        if #wins == 1 then
+          -- only 1 window? open a new one for copilot.
+          state.replaced_bufnr = nil
+          vim.api.nvim_open_win(0, true, { split = "right", win = 0 })
+        elseif #wins > 1 then
+          -- more than one? go to next for copilot to use.
+          vim.cmd.wincmd("w")
+          state.replaced_bufnr = vim.api.nvim_get_current_buf()
+        end
+        -- go to right
+        vim.cmd.wincmd("L")
         chat.open()
-      end, { desc = "Open AI chat" })
+      end, { desc = "[G]oto Copilot" })
+
+      -- vim.api.nvim_create_autocmd("BufWinLeave", {
+      --   callback = function(event)
+      --     local b = event.buf
+      --     if vim.api.nvim_get_option_value("filetype", { buf = b }) == "copilot-chat" then
+      --       vim.notify("copilot identified! prepare to die " .. b)
+      --       -- vim.cmd.wincmd("q")
+      --       vim.api.nvim_win_close(0, false)
+      --     end
+      --   end,
+      -- })
 
       vim.keymap.set("n", "<leader>ccp", function()
         local actions = require("CopilotChat.actions")

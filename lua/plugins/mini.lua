@@ -41,15 +41,5 @@ return { -- collection of various small independent plugins/modules
         return "Hi Lucy.\n\n" .. fortune
       end,
     })
-
-    -- Ranger-like file browser
-    -- TODO: keep?
-    require("mini.files").setup({})
-    local minifiles_toggle = function(...)
-      if not MiniFiles.close() then
-        MiniFiles.open(...)
-      end
-    end
-    vim.keymap.set("n", "<leader>a", minifiles_toggle, { desc = "Open file r[a]nger" })
   end,
 }

@@ -1,4 +1,6 @@
-return { -- Telescope, incredibly powerful fuzzy finder
+local settings = require("settings")
+
+return { -- telescope, incredibly powerful fuzzy finder
   "nvim-telescope/telescope.nvim",
   event = "VimEnter",
   branch = "0.1.x",
@@ -30,7 +32,8 @@ return { -- Telescope, incredibly powerful fuzzy finder
       end,
     },
   },
-  config = function() -- See `:help telescope` and `:help telescope.setup()`
+  config = function()
+    -- see `:help telescope` and `:help telescope.setup()`
     local telescope = require("telescope")
 
     telescope.setup({
@@ -38,12 +41,12 @@ return { -- Telescope, incredibly powerful fuzzy finder
         sorting_strategy = "ascending",
         selection_strategy = "closest",
         layout_config = {
-          horizontal = { -- TODO: extract window config
+          horizontal = {
             anchor = "N",
             prompt_position = "top",
-            height = 0.75,
-            width = { 0.8, max = 300, min = 30 },
-            preview_width = { 0.5, max = 40, min = 10 },
+            height = settings.window.height,
+            width = settings.window.width,
+            preview_width = { 0.5, max = 40, min = 16 },
           },
         },
         path_display = {
@@ -91,12 +94,13 @@ return { -- Telescope, incredibly powerful fuzzy finder
       },
     })
 
-    -- Enable Telescope extensions if they are installed
+    -- enable extensions if they are installed
     pcall(telescope.load_extension, "fzf")
     pcall(telescope.load_extension, "ui-select")
     pcall(telescope.load_extension, "frecency")
     pcall(telescope.load_extension, "scdoc")
 
+    -- keymaps
     local builtin = require("telescope.builtin")
     vim.keymap.set("n", "<leader>sh", builtin.help_tags, { desc = "[S]earch [H]elp" })
     vim.keymap.set("n", "<leader>sk", builtin.keymaps, { desc = "[S]earch [K]eymaps" })
