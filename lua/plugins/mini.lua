@@ -41,5 +41,26 @@ return { -- collection of various small independent plugins/modules
         return "Hi Lucy.\n\n" .. fortune
       end,
     })
+
+    -- statusline
+    local function get_line(accent)
+      return function()
+        local git = MiniStatusline.section_git({ trunc_width = 40 })
+        local filename = MiniStatusline.section_filename({ trunc_width = 100 })
+        local diagnostics = MiniStatusline.section_diagnostics({ 80 })
+        local location = "%l %c"
+
+        return MiniStatusline.combine_groups({
+          { hl = accent, strings = { git, filename } },
+          { hl = "MiniStatuslineFileinfo", strings = { "%<", "%=", diagnostics, location } },
+        })
+      end
+    end
+    require("mini.statusline").setup({
+      content = {
+        active = get_line("MiniStatuslineFilename"),
+        inactive = get_line("MiniStatuslineInactive"),
+      },
+    })
   end,
 }

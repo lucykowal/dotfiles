@@ -17,10 +17,28 @@ return {
           style = { "bold" },
         }
         return {
-          NormalFloat = sep,
+          NormalFloat = {
+            bg = colors.base,
+          },
           FloatBorder = sep,
           FloatTitle = sep,
           WinSeparator = sep,
+
+          StatusLine = sep,
+          StatusLineNC = sep,
+          MiniStatuslineFilename = {
+            fg = colors.base,
+            bg = colors.surface2,
+            style = { "bold" },
+          }, -- active
+          MiniStatuslineInactive = {
+            fg = colors.surface2,
+            bg = colors.base,
+          }, -- inactive
+          MiniStatuslineFileinfo = {
+            fg = colors.surface2,
+            bg = colors.base,
+          }, -- common to both
         }
       end,
       styles = {

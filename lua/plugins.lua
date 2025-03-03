@@ -77,6 +77,14 @@ return {
       shade_terminals = false,
       direction = "float",
       float_opts = vim.tbl_extend("force", settings.window, {}),
+      highlights = {
+        NormalFloat = {
+          link = "NormalFloat",
+        },
+        FloatBorder = {
+          link = "FloatBorder",
+        },
+      },
     },
   },
 }

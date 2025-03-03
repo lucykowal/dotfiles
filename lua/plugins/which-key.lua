@@ -7,6 +7,7 @@ return {
     filter = function(mapping)
       return mapping.desc and mapping.desc ~= ""
     end,
+
     spec = {
       { "<leader>c", group = "[C]ode", mode = { "n", "x" } },
       { "<leader>d", group = "[D]ocument" },
@@ -17,6 +18,7 @@ return {
       { "<leader>v", group = "Love2D" },
     },
     win = { -- see `:help api-win_config`
+      no_overlap = false,
       height = 10,
       row = vim.o.lines - 10,
       width = vim.o.columns,
