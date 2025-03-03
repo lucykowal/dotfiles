@@ -87,4 +87,22 @@ return {
       },
     },
   },
+  { -- improved quickfix
+    "stevearc/quicker.nvim",
+    event = "UIEnter",
+    config = function()
+      require("quicker").setup({
+        edit = {
+          enabled = false,
+        },
+        constrain_cursor = false,
+      })
+      vim.keymap.set("n", "<leader>qf", function()
+        require("quicker").toggle()
+      end, { desc = "Toggle [Q]uick[F]ix" })
+      vim.keymap.set("n", "<leader>qd", function()
+        require("quicker").toggle({ loclist = true })
+      end, { desc = "Toggle [Q]uickfix [D]iagnostics" })
+    end,
+  },
 }

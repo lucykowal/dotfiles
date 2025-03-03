@@ -15,6 +15,8 @@ return {
       { "<leader>s", group = "[S]earch" },
       { "<leader>w", group = "[W]orkspace" },
       { "<leader>t", group = "[T]oggle" },
+      { "<leader>q", group = "[Q]uickfix" },
+      { "<leader>f", group = "[F]iles" },
       { "<leader>v", group = "Love2D" },
     },
     win = { -- see `:help api-win_config`
