@@ -108,7 +108,7 @@ return {
         openai_fim_compatible = {
           api_key = "TERM",
           name = "Ollama",
-          end_point = settings.ollama_host .. ":11434/v1/completions",
+          end_point = (settings.ollama_host or "") .. ":11434/v1/completions",
           model = "qwen2.5-coder:1.5b-base-q3_K_S",
           optional = {
             max_tokens = 56,

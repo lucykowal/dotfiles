@@ -38,7 +38,17 @@ return {
       },
     },
     "hrsh7th/cmp-nvim-lsp",
-    "nvim-java/nvim-java",
+    {
+      "nvim-java/nvim-java",
+      opts = {
+        jdtls = {
+          version = "v1.44.0",
+        },
+        jdk = {
+          version = "21.0.4",
+        },
+      },
+    },
   },
   config = function()
     vim.api.nvim_create_autocmd("LspAttach", {
