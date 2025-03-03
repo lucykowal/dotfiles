@@ -89,13 +89,13 @@ return {
   },
   { -- improved quickfix
     "stevearc/quicker.nvim",
-    event = "UIEnter",
+    event = "FileType qf",
     config = function()
       require("quicker").setup({
         edit = {
           enabled = false,
         },
-        constrain_cursor = false,
+        constrain_cursor = true,
       })
       vim.keymap.set("n", "<leader>qf", function()
         require("quicker").toggle()

@@ -1,5 +1,61 @@
 local settings = require("settings")
 
+local function get_jdtls_cmd()
+  local jdtls = require("jdtls")
+  local dap = require("jdtls.dap")
+  local jdtls_setup = require("jdtls.setup")
+  local home = os.getenv("HOME")
+
+  local root_markers = { ".git", "mvnw", "gradlew", "pom.xml", "build.gradle" }
+  local root_dir = jdtls_setup.find_root(root_markers)
+
+  local project_name = vim.fn.fnamemodify(root_dir, ":p:h:t")
+  local workspace_dir = home .. "/.cache/jdtls/workspace" .. project_name
+
+  local mason_packages = require("mason.settings").current.install_root_dir
+
+  local jdtls_path = mason_packages .. "/jdtls"
+  local jdebug_path = mason_packages .. "/java-debug-adapter"
+  local jtest_path = mason_packages .. "/java-test"
+
+  local config_type = "/config_mac" .. (vim.uv.os_uname().machine == "x86_64" and "" or "_arm")
+  local config_path = jdtls_path .. config_type
+  local lombok_path = mason_packages .. "/lombok-nightly"
+
+  local jar_path = jdtls_path .. "/plugins/org.eclipse.equinox.launcher_1.6.900.v20240613-2009.jar"
+
+  local bundles = {
+    vim.fn.glob(jdebug_path .. "/extension/server/com.microsoft.java.debug.plugin-*.jar", true),
+  }
+  vim.list_extend(bundles, vim.split(vim.fn.glob(jtest_path .. "/extension/server/*.jar", true), "\n"))
+
+  return {
+    "/Users/hwbp/Library/Java/JavaVirtualMachines/corretto-21.0.4/Contents/Home/bin/java",
+
+    "-Declipse.application=org.eclipse.jdt.ls.core.id1",
+    "-Dosgi.bundles.defaultStartLevel=4",
+    "-Declipse.product=org.eclipse.jdt.ls.core.product",
+    "-Dlog.protocol=true",
+    "-Dlog.level=ALL",
+    "-Xmx1g",
+    "-javaagent:" .. lombok_path,
+    "--add-modules=ALL-SYSTEM",
+    "--add-opens",
+    "java.base/java.util=ALL-UNNAMED",
+    "--add-opens",
+    "java.base/java.lang=ALL-UNNAMED",
+
+    "-jar",
+    jar_path,
+
+    "-configuration",
+    config_path,
+
+    "-data",
+    workspace_dir,
+  }
+end
+
 return {
   -- Main LSP Configuration
   "neovim/nvim-lspconfig",
@@ -38,17 +94,7 @@ return {
       },
     },
     "hrsh7th/cmp-nvim-lsp",
-    {
-      "nvim-java/nvim-java",
-      opts = {
-        jdtls = {
-          version = "v1.44.0",
-        },
-        jdk = {
-          version = "21.0.4",
-        },
-      },
-    },
+    "mfussenegger/nvim-jdtls",
   },
   config = function()
     vim.api.nvim_create_autocmd("LspAttach", {
@@ -150,7 +196,46 @@ return {
           },
         },
       },
-      jdtls = {},
+      jdtls = {
+        cmd = get_jdtls_cmd(),
+        settings = {
+          java = {
+            references = {
+              includeDecompiledSources = true,
+            },
+            format = {
+              enabled = false,
+            },
+            eclipse = {
+              downloadSources = true,
+            },
+            maven = {
+              downloadSources = true,
+            },
+            signatureHelp = {
+              enabled = true,
+            },
+            filteredTypes = {
+              "com.sun.*",
+              "io.micrometer.shaded.*",
+              "java.awt.*",
+              "sun.*",
+            },
+            importOrder = {
+              "java",
+              "javax",
+              "com",
+              "org",
+            },
+          },
+          sources = {
+            organizeImports = {
+              starThreshold = 9999,
+              staticStarThreshold = 9999,
+            },
+          },
+        },
+      },
       gopls = {},
       yamlls = { -- NOTE: requires `yarn`
         settings = {
@@ -174,6 +259,10 @@ return {
         width = settings.window.width,
         height = settings.window.height,
       },
+      registries = {
+        "github:mason-org/mason-registry",
+        "github:nvim-java/mason-registry",
+      },
     })
 
     -- tools beyond lspconfig for mason to install
@@ -182,6 +271,9 @@ return {
       "stylua",
       "google-java-format",
       "prettier",
+      "java-debug-adapter",
+      "java-test",
+      "lombok-nightly",
     })
     require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 
