@@ -1,6 +1,8 @@
 # nvim
 
-My modified version of [kickstart](https://github.com/nvim-lua/kickstart.nvim) for neovim. Prioritizes the readability of the buffer above all else, by configuring most pop up windows to open non-obtrusively to the side.
+My modified version of [kickstart](https://github.com/nvim-lua/kickstart.nvim)
+for neovim. Prioritizes the readability of the buffer above all else, by
+configuring most pop up windows to open non-obtrusively to the side.
 
 ### Key Map Cheatsheet
 
