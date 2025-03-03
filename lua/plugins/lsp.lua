@@ -1,18 +1,17 @@
 local settings = require("settings")
 
-local function get_jdtls_cmd()
-  local jdtls = require("jdtls")
-  local dap = require("jdtls.dap")
-  local jdtls_setup = require("jdtls.setup")
-  local home = os.getenv("HOME")
-
+local function get_jdtls_root()
   local root_markers = { ".git", "mvnw", "gradlew", "pom.xml", "build.gradle" }
-  local root_dir = jdtls_setup.find_root(root_markers)
+  return vim.fs.root(0, root_markers)
+end
 
-  local project_name = vim.fn.fnamemodify(root_dir, ":p:h:t")
+local function get_jdtls_cmd()
+  local home = vim.fn.getenv("HOME")
+
+  local project_name = vim.fn.fnamemodify(get_jdtls_root(), ":p:h:t")
   local workspace_dir = home .. "/.cache/jdtls/workspace" .. project_name
 
-  local mason_packages = require("mason.settings").current.install_root_dir
+  local mason_packages = require("mason.settings").current.install_root_dir .. "/packages"
 
   local jdtls_path = mason_packages .. "/jdtls"
   local jdebug_path = mason_packages .. "/java-debug-adapter"
@@ -20,7 +19,7 @@ local function get_jdtls_cmd()
 
   local config_type = "/config_mac" .. (vim.uv.os_uname().machine == "x86_64" and "" or "_arm")
   local config_path = jdtls_path .. config_type
-  local lombok_path = mason_packages .. "/lombok-nightly"
+  local lombok_path = mason_packages .. "/lombok-nightly/lombok.jar"
 
   local jar_path = jdtls_path .. "/plugins/org.eclipse.equinox.launcher_1.6.900.v20240613-2009.jar"
 
@@ -30,7 +29,8 @@ local function get_jdtls_cmd()
   vim.list_extend(bundles, vim.split(vim.fn.glob(jtest_path .. "/extension/server/*.jar", true), "\n"))
 
   return {
-    "/Users/hwbp/Library/Java/JavaVirtualMachines/corretto-21.0.4/Contents/Home/bin/java",
+    -- NOTE: you must set $JAVA_HOME to `/usr/libexec/java_home -v 21`
+    vim.fn.getenv("JAVA_HOME") .. "/bin/java",
 
     "-Declipse.application=org.eclipse.jdt.ls.core.id1",
     "-Dosgi.bundles.defaultStartLevel=4",
@@ -198,6 +198,7 @@ return {
       },
       jdtls = {
         cmd = get_jdtls_cmd(),
+        root_dir = get_jdtls_root(),
         settings = {
           java = {
             references = {
@@ -284,6 +285,9 @@ return {
           -- set capabilities with force to use above `server` configs
           server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
           require("lspconfig")[server_name].setup(server)
+        end,
+        ["jdtls"] = function(_)
+          require("jdtls").start_or_attach(servers.jdtls)
         end,
       },
     })
