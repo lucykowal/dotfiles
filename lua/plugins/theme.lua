@@ -27,8 +27,8 @@ return {
           StatusLine = sep,
           StatusLineNC = sep,
           MiniStatuslineFilename = {
-            fg = colors.base,
-            bg = colors.surface2,
+            bg = colors.base,
+            fg = colors.surface2,
             style = { "bold" },
           }, -- active
           MiniStatuslineInactive = {

@@ -51,7 +51,7 @@ return { -- collection of various small independent plugins/modules
         local location = "%l %c"
 
         return MiniStatusline.combine_groups({
-          { hl = accent, strings = { git, filename } },
+          { hl = accent, strings = { git, filename, "│" } },
           { hl = "MiniStatuslineFileinfo", strings = { "%<", "%=", diagnostics, location } },
         })
       end

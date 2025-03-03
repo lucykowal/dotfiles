@@ -180,6 +180,7 @@ return {
         },
       })
 
+      -- more customized open panel logic
       vim.keymap.set("n", "<leader>g", function()
         -- get editor windows
         local wins = vim.api.nvim_list_wins()
