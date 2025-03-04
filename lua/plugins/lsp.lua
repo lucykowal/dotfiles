@@ -67,6 +67,9 @@ return {
     "williamboman/mason-lspconfig.nvim",
     "WhoIsSethDaniel/mason-tool-installer.nvim",
 
+    "mfussenegger/nvim-dap",
+    "jay-babu/mason-nvim-dap.nvim",
+
     { -- Status updates, notifications
       "j-hui/fidget.nvim",
       event = "UIEnter",
@@ -199,6 +202,8 @@ return {
       jdtls = {
         cmd = get_jdtls_cmd(),
         root_dir = get_jdtls_root(),
+        filetypes = { "java" },
+        handlers = require("lspconfig.configs.jdtls").default_config.handlers,
         settings = {
           java = {
             references = {
@@ -287,9 +292,16 @@ return {
           require("lspconfig")[server_name].setup(server)
         end,
         ["jdtls"] = function(_)
-          require("jdtls").start_or_attach(servers.jdtls)
+          -- no-op, use autocommand instead for java
         end,
       },
+    })
+
+    vim.api.nvim_create_autocmd("FileType", {
+      pattern = "java",
+      callback = function()
+        require("jdtls").start_or_attach(servers.jdtls)
+      end,
     })
   end,
 }
