@@ -43,6 +43,7 @@ vim.o.list = true
 vim.opt.listchars = { tab = "| ", trail = "·", nbsp = "␣", extends = "→", precedes = "←" }
 vim.opt.cursorline = true
 vim.o.scrolloff = 30
+vim.o.shortmess = "ltToOCFI"
 
 -- keymaps
 -- see `:help vim.keymap`
