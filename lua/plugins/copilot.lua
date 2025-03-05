@@ -136,6 +136,7 @@ return {
       { "zbirenbaum/copilot.lua" },
       { "nvim-lua/plenary.nvim", branch = "master" },
     },
+    keys = { "<leader>g", nil },
     build = "make tiktoken", -- Only on MacOS or Linux
     config = function()
       local chat = require("CopilotChat")

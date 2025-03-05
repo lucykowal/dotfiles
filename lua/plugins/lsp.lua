@@ -112,8 +112,8 @@ return {
         map("gr", require("telescope.builtin").lsp_references, "[G]oto [R]eferences")
         map("gI", require("telescope.builtin").lsp_implementations, "[G]oto [I]mplementation")
         map("<leader>D", require("telescope.builtin").lsp_type_definitions, "Type [D]efinition")
-        map("<leader>ds", require("telescope.builtin").lsp_document_symbols, "[D]ocument [S]ymbols")
-        map("<leader>ws", require("telescope.builtin").lsp_dynamic_workspace_symbols, "[W]orkspace [S]ymbols")
+        map("<leader>cd", require("telescope.builtin").lsp_document_symbols, "[C]ode [D]ocument symbols")
+        map("<leader>cw", require("telescope.builtin").lsp_dynamic_workspace_symbols, "[C]ode [W]orkspace symbols")
         map("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
 
         -- Usually apply to errors
@@ -252,9 +252,9 @@ return {
       },
       cssls = {}, -- NOTE: requires `npm`
       html = {},
-      harper_ls = { -- check grammar
-        filetypes = { "markdown" },
-      },
+      -- harper_ls = { -- check grammar
+      --   filetypes = nil,
+      -- },
     }
 
     -- see :Mason to manage
