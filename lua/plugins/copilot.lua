@@ -1,11 +1,6 @@
 -- co-pilot and related plugins
 local settings = require("settings")
 
-local state = {
-  -- bufnr of buf chat kicked out of window, or nil if new window made
-  replaced_bufnr = nil,
-}
-
 -- helper to get an ollama config for any URL
 local ollama_provider = function(host)
   return {
@@ -163,19 +158,6 @@ return {
               })
             end,
           },
-          close = {
-            callback = function()
-              chat.close()
-              if state.replaced_bufnr then
-                -- we replaced a buf, get it back
-                vim.api.nvim_win_set_buf(0, state.replaced_bufnr)
-                vim.cmd.wincmd("w")
-              else
-                -- we made a new window, so close it now.
-                vim.api.nvim_win_close(0, false)
-              end
-            end,
-          },
           accept_diff = {
             normal = "<C-a>",
             insert = "<C-a>",
@@ -195,24 +177,29 @@ return {
 
       -- more customized open panel logic
       vim.keymap.set("n", "<leader>g", function()
-        -- get editor windows
-        local wins = vim.api.nvim_list_wins()
-        wins = vim.tbl_filter(function(w)
-          local conf = vim.api.nvim_win_get_config(w)
-          return not conf.external and conf.relative == ""
-        end, wins)
-        if #wins == 1 then
-          -- only 1 window? open a new one for copilot.
-          state.replaced_bufnr = nil
-          vim.api.nvim_open_win(0, true, { split = "right", win = 0 })
-        elseif #wins > 1 then
-          -- more than one? go to next for copilot to use.
-          vim.cmd.wincmd("w")
-          state.replaced_bufnr = vim.api.nvim_get_current_buf()
-        end
-        -- go to right
-        vim.cmd.wincmd("L")
-        chat.open()
+        -- -- get editor windows
+        -- local wins = vim.api.nvim_list_wins()
+        -- wins = vim.tbl_filter(function(w)
+        --   local conf = vim.api.nvim_win_get_config(w)
+        --   return not conf.external and conf.relative == ""
+        -- end, wins)
+        -- if #wins == 1 then
+        --   -- only 1 window? open a new one for copilot.
+        --   state.replaced_bufnr = nil
+        --   vim.api.nvim_open_win(0, true, { split = "right", win = 0 })
+        -- elseif #wins > 1 then
+        --   -- more than one? go to next for copilot to use.
+        --   vim.cmd.wincmd("w")
+        --   state.replaced_bufnr = vim.api.nvim_get_current_buf()
+        -- end
+        -- -- go to right
+        -- vim.cmd.wincmd("L")
+        chat.open({
+          window = {
+            layout = vim.api.nvim_win_get_width(0) * 0.4 > vim.api.nvim_win_get_height(0) and "vertical"
+              or "horizontal",
+          },
+        })
       end, { desc = "[G]oto Copilot" })
 
       vim.keymap.set("n", "<leader>ccp", function()
