@@ -252,9 +252,9 @@ return {
       },
       cssls = {}, -- NOTE: requires `npm`
       html = {},
-      -- harper_ls = { -- check grammar
-      --   filetypes = nil,
-      -- },
+      harper_ls = { -- check grammar
+        filetypes = "markdown",
+      },
     }
 
     -- see :Mason to manage
