@@ -3,7 +3,7 @@
 return {
   "catppuccin/nvim",
   name = "catppuccin",
-  priority = 1000,
+  priority = 999,
   config = function()
     require("catppuccin").setup({
       flavour = "latte",
@@ -23,6 +23,11 @@ return {
           FloatBorder = sep,
           FloatTitle = sep,
           WinSeparator = sep,
+
+          SnacksInputNormal = { link = "NormalFloat" },
+          SnacksInputBorder = { link = "FloatBorder" },
+          SnacksInputTitle = { link = "FloatTitle" },
+          SnacksInputIcon = sep,
 
           StatusLine = sep,
           StatusLineNC = sep,
@@ -54,6 +59,10 @@ return {
         gitsigns = true,
         render_markdown = true,
         fidget = true,
+        snacks = { -- TODO: fix
+          enabled = false,
+          indent_scope_color = "text",
+        },
         native_lsp = {
           enabled = true,
           virtual_text = {
