@@ -59,6 +59,10 @@ vim.keymap.set("n", "<leader>dl", function()
   end)
 end, { desc = "Set [D]iagnostic [L]evel" })
 
+vim.keymap.set("n", "<leader>dd", function()
+  vim.diagnostic.enable(not vim.diagnostic.is_enabled())
+end, { desc = "Toggle [D]iagnostics [D]" })
+
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
 vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
 vim.keymap.set("n", "<C-h>", "<C-w><C-h>", { desc = "Move focus to the left window" })
