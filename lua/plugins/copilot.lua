@@ -176,7 +176,7 @@ return {
       })
 
       -- more customized open panel logic
-      vim.keymap.set("n", "<leader>g", function()
+      vim.keymap.set({ "n", "v" }, "<leader>g", function()
         chat.open({
           window = {
             layout = vim.api.nvim_win_get_width(0) * 0.4 > vim.api.nvim_win_get_height(0) and "vertical"

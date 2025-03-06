@@ -42,13 +42,30 @@ return { -- telescope, incredibly powerful fuzzy finder
       defaults = {
         sorting_strategy = "ascending",
         selection_strategy = "closest",
+        layout_strategy = "flex",
         layout_config = {
           horizontal = {
+            prompt_position = "top",
+            preview_width = { 0.5, max = 40, min = 16 },
+          },
+          vertical = {
+            prompt_position = "top",
+            preview_height = { 0.5, max = 30, min = 10 },
+          },
+          flex = {
             anchor = "N",
             prompt_position = "top",
             height = settings.window.height,
             width = settings.window.width,
-            preview_width = { 0.5, max = 40, min = 16 },
+            flip_columns = 160,
+            horizontal = {
+              prompt_position = "top",
+              preview_width = { 0.5, max = 40, min = 16 },
+            },
+            vertical = {
+              prompt_position = "top",
+              preview_height = { 0.5, max = 30, min = 10 },
+            },
           },
         },
         path_display = {
@@ -72,7 +89,7 @@ return { -- telescope, incredibly powerful fuzzy finder
       },
       pickers = {
         find_files = {
-          find_command = { "rg", "--files", "--hidden", "--glob", "!**/.git/*" },
+          find_command = { "rg", "--files", "--hidden" },
         },
         buffers = {
           mappings = {
@@ -130,13 +147,5 @@ return { -- telescope, incredibly powerful fuzzy finder
         prompt_title = "Live Grep in Open Files",
       })
     end, { desc = "[S]earch [/] in Open Files" })
-
-    vim.keymap.set("n", "<leader>fb", telescope.extensions.file_browser.file_browser, { desc = "[F]ile [B]rowser" })
-    vim.keymap.set("n", "<leader>ff", function()
-      telescope.extensions.file_browser.file_browser({
-        path = vim.fn.expand("%:p:h"),
-        select_buffer = true,
-      })
-    end, { desc = "[F]ile browser at [F]ile" })
   end,
 }

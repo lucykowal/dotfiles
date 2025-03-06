@@ -17,7 +17,7 @@ vim.keymap.set("n", "<leader>S", ":set spell!<CR>", { desc = "[S]pell check togg
 vim.o.termguicolors = true
 
 -- window options
-vim.o.ead = "ver"
+vim.o.ead = "both"
 vim.o.ea = true
 vim.o.splitright = true
 vim.o.splitbelow = true
@@ -76,7 +76,7 @@ vim.keymap.set("n", "<CS-K>", "<C-w>K", { desc = "Move window to the far bottom"
 
 -- autocommands
 -- see `:help lua-guide-autocommands`
-vim.api.nvim_create_autocmd("TextYankPost", {
+vim.api.nvim_create_autocmd("TextYankPost", { -- yank highlight
   desc = "Highlight when yanking (copying) text",
   group = vim.api.nvim_create_augroup("highlight-yank", { clear = true }),
   callback = function()
@@ -84,7 +84,7 @@ vim.api.nvim_create_autocmd("TextYankPost", {
   end,
 })
 
-vim.api.nvim_create_autocmd("BufWinEnter", {
+vim.api.nvim_create_autocmd("BufWinEnter", { -- help window placement
   desc = "Force help windows to the right",
   group = vim.api.nvim_create_augroup("help-win-right", { clear = true }),
   pattern = "*/doc/*",
@@ -92,13 +92,21 @@ vim.api.nvim_create_autocmd("BufWinEnter", {
     local rtp = vim.o.runtimepath
     local files = vim.fn.globpath(rtp, "doc/*", true, 1)
     if ev.file and vim.list_contains(files, ev.file) then
-      -- entered a help file
+      -- entered a *new* help file
       vim.api.nvim_set_option_value("filetype", "help", { scope = "local" })
-      if vim.api.nvim_win_get_config(0).width > vim.o.columns * 0.5 then
-        -- big enough to push right
-        vim.cmd.wincmd("L")
-        vim.cmd("vert resize " .. math.max(90, math.min(60, math.floor(vim.o.columns * 0.4))))
+      vim.bo.buftype = "help"
+
+      -- allow quitting help windows with `q`
+      vim.keymap.set({ "n", "v" }, "q", "<cmd>quit<CR>", { desc = "Quit", buffer = true })
+
+      -- try to push to far right
+      vim.cmd.wincmd("L")
+
+      -- if not very wide, push to bottom
+      if vim.api.nvim_win_get_config(0).width < 80 then
+        vim.cmd.wincmd("J")
       end
+      vim.cmd.wincmd("=")
     end
   end,
 })
