@@ -56,20 +56,24 @@ return {
           SnacksInputTitle = { link = "FloatTitle" },
           SnacksInputIcon = sep,
 
-          StatusLine = sep,
+          StatusLine = vim.tbl_deep_extend("force", sep, {
+            style = { "underline" },
+          }),
           StatusLineNC = sep,
           MiniStatuslineFilename = {
             bg = colors.base,
             fg = colors.surface2,
-            style = { "bold" },
+            style = { "bold", "underline" },
           }, -- active
           MiniStatuslineInactive = {
             fg = colors.surface2,
             bg = colors.base,
+            style = { "underline" },
           }, -- inactive
           MiniStatuslineFileinfo = {
             fg = colors.surface2,
             bg = colors.base,
+            style = { "underline" },
           }, -- common to both
         }
       end,

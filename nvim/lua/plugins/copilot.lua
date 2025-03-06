@@ -147,7 +147,7 @@ return {
         chat_autocomplete = false,
         mappings = {
           complete = {
-            insert = "<C-y>",
+            insert = "<C-space>",
             callback = function(_)
               require("cmp").complete({
                 config = {
