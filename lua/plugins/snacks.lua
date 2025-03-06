@@ -6,20 +6,7 @@ return {
     bigfile = { enabled = false },
     dashboard = { enabled = false },
     explorer = { enabled = false },
-    indent = {
-      indent = {
-        enabled = true,
-        only_scope = true,
-        only_window = true,
-      },
-      animate = {
-        enabled = false,
-      },
-      scope = {
-        enabled = true,
-        only_current = true,
-      },
-    },
+    indent = { enabled = false },
     input = {
       enabled = true,
     },

@@ -59,8 +59,8 @@ return {
         gitsigns = true,
         render_markdown = true,
         fidget = true,
-        snacks = { -- TODO: fix
-          enabled = false,
+        snacks = {
+          enabled = true,
           indent_scope_color = "text",
         },
         native_lsp = {

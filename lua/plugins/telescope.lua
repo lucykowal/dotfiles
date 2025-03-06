@@ -99,6 +99,7 @@ return { -- telescope, incredibly powerful fuzzy finder
         },
         buffers = {
           show_all_buffers = false,
+          ignore_current_buffer = true,
           sort_lastused = true,
           sort_mru = true,
           mappings = {
