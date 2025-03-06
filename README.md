@@ -1,28 +1,17 @@
-# nvim
+# lucy's dotfiles
 
-My modified version of [kickstart](https://github.com/nvim-lua/kickstart.nvim)
-for neovim. Prioritizes the readability of the buffer above all else, by
-configuring most pop up windows to open non-obtrusively to the side.
+### neovim
 
-### Key Map Cheatsheet
+a distant relative of [kickstart](https://github.com/nvim-lua/kickstart.nvim)
+with many mutations.
 
-Some default & customized key maps, so that I don't forget!
+based on a split-heavy post-IDE workflow. perma-zen mode & fuzzy finders. i'm
+very particular about my tools. i need a level of consistency, so that's what
+i've tried to set up here. expect consistent ui and ux where ever possible.
+copilot integration for chat and completions, supercollider support,
 
-```
-LEADER = SPACE
+**to-do**:
 
-Telescope (INSERT mode):
-- CTRL + / - See available key binds
-
-Completions:
-- CTRL + n - Next suggestion
-- CTRL + p - Previous suggestion
-- CTRL + y - Accept suggestion
-- CTRL + e - Reject suggestion
-
-Files:
-- LEADER + a - Open browser
-
-Copilot:
-- LEADER + C - Open Copilot
-```
+- fix copilot `#` suggestions
+- improve handling of supercollider help buffers
+- evaluate value of floating terminal v.s. built-in `:term`
