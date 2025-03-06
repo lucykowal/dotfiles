@@ -22,7 +22,6 @@ copilot integration for chat and completions, supercollider support,
 
 **to-do**:
 
-- fix copilot `#` suggestions
 - improve handling of supercollider help buffers
 - evaluate value of floating terminal v.s. built-in `:term`
 - spell/grammar fixes: toggle spell and tie to harper
