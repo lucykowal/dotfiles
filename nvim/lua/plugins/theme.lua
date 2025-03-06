@@ -1,5 +1,25 @@
 -- theme config
 
+local function darken(color, factor)
+  factor = factor or 0.95
+  return require("catppuccin.utils.colors").darken(require("catppuccin.palettes.latte")[color], factor, "#000000")
+end
+
+local function get_colors()
+  return {
+    base = darken("base"),
+    crust = darken("crust"),
+    mantle = darken("mantle"),
+    surface0 = darken("surface0"),
+    surface1 = darken("surface1"),
+    surface2 = darken("surface2"),
+  }
+end
+
+vim.api.nvim_create_user_command("ColorCompile", function()
+  vim.fn.setreg("l", vim.inspect(get_colors()))
+end, {})
+
 return {
   "catppuccin/nvim",
   name = "catppuccin",
@@ -8,7 +28,14 @@ return {
     require("catppuccin").setup({
       flavour = "latte",
       color_overrides = {
-        latte = {},
+        latte = {
+          base = "#E3E5E9",
+          crust = "#D1D5DC",
+          mantle = "#DBDDE3",
+          surface0 = "#C2C6CF",
+          surface1 = "#B3B6C2",
+          surface2 = "#A3A7B5",
+        },
       },
       custom_highlights = function(colors)
         local sep = {
