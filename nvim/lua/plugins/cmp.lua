@@ -98,7 +98,7 @@ return { -- autocomplete
     })
 
     -- custom cmp confs
-    local path_dict_fts = { "html", "markdown", "copilot-chat" }
+    local path_dict_fts = { "html", "markdown" }
     for _, ft in ipairs(path_dict_fts) do
       cmp.setup.filetype(ft, {
         sources = {

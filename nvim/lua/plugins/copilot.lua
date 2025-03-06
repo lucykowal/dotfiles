@@ -46,19 +46,32 @@ local function register_cmp()
       return comp_tbl.triggers
     end,
     complete = function(_, _, callback)
-      copilot.complete_items(function(items)
-        local mapped_items = vim.tbl_map(function(i)
-          return { label = i.word, kind = cmp.lsp.CompletionItemKind.Reference }
-        end, items)
-        callback(mapped_items)
-      end)
+      local items = copilot.complete_items()
+      local mapped_items = vim.tbl_map(function(i)
+        return { label = i.word, kind = cmp.lsp.CompletionItemKind.Reference }
+      end, items)
+      callback(mapped_items)
     end,
     execute = function(_, item, callback)
       callback(item)
-      vim.api.nvim_set_option_value("buflisted", false, { buf = 0 })
+      -- vim.api.nvim_set_option_value("buflisted", false, { buf = 0 })
     end,
   }
   cmp.register_source("copilot-chat", source)
+  cmp.setup.filetype("copilot-chat", {
+    sources = {
+      { name = "path" },
+      {
+        name = "dictionary",
+        keyword_length = 2,
+        max_item_count = 5,
+      },
+      {
+        name = "copilot-chat",
+        keyword_length = 0,
+      },
+    },
+  })
 end
 
 return {
@@ -147,7 +160,7 @@ return {
         chat_autocomplete = false,
         mappings = {
           complete = {
-            insert = "<C-y>",
+            insert = "<Tab>",
             callback = function(_)
               require("cmp").complete({
                 config = {
@@ -164,15 +177,18 @@ return {
           },
         },
         model = "claude-3.7-sonnet",
-        providers = settings.ollama_host and {
-          ollama = ollama_provider("http://localhost:11434"),
-          ollama_ubuntu = ollama_provider(settings.ollama_host .. ":11434"),
-          github_models = nil,
-          copilot_embeddings = nil,
-        } or {
-          github_models = nil,
-          copilot_embeddings = nil,
-        },
+        providers = settings.ollama_host
+            and {
+              ollama = ollama_provider("http://localhost:11434"),
+              -- TODO: Add on command
+              -- ollama_ubuntu = ollama_provider(settings.ollama_host .. ":11434"),
+              github_models = nil,
+              copilot_embeddings = nil,
+            }
+          or {
+            github_models = nil,
+            copilot_embeddings = nil,
+          },
       })
 
       -- more customized open panel logic
@@ -187,6 +203,7 @@ return {
 
       vim.keymap.set("n", "<leader>ccp", function()
         local actions = require("CopilotChat.actions")
+        -- TODO: update per deprecation
         require("CopilotChat.integrations.telescope").pick(actions.prompt_actions())
       end, { desc = "CopilotChat - Prompt actions" })
     end,

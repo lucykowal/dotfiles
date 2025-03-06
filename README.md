@@ -1,28 +1,43 @@
-# nvim
+# lucy's dotfiles
 
-My modified version of [kickstart](https://github.com/nvim-lua/kickstart.nvim)
-for neovim. Prioritizes the readability of the buffer above all else, by
-configuring most pop up windows to open non-obtrusively to the side.
+everything is catppuccin latte. i'd explore other themes but i like how
+catppuccin has pretty reliable ready-to-go configs for almost everything.
 
-### Key Map Cheatsheet
+### neovim
 
-Some default & customized key maps, so that I don't forget!
-
+```shell
+stow -t ~/.config/nvim -S nvim
 ```
-LEADER = SPACE
 
-Telescope (INSERT mode):
-- CTRL + / - See available key binds
+a distant relative of [kickstart](https://github.com/nvim-lua/kickstart.nvim)
+with many mutations.
 
-Completions:
-- CTRL + n - Next suggestion
-- CTRL + p - Previous suggestion
-- CTRL + y - Accept suggestion
-- CTRL + e - Reject suggestion
+some external tools needed. in general `:checkhealth` helps identify any missing
+programs.
 
-Files:
-- LEADER + a - Open browser
+based on a split-heavy post-IDE workflow. perma-zen mode & fuzzy finders. i'm
+very particular about my tools. i need a level of consistency, so that's what
+i've tried to set up here. expect consistent ui and ux where ever possible.
+copilot integration for chat and completions, supercollider support,
 
-Copilot:
-- LEADER + C - Open Copilot
+**to-do**:
+
+- improve handling of supercollider help buffers
+- evaluate value of floating terminal v.s. built-in `:term`
+- spell/grammar fixes: toggle spell and tie to harper
+
+### zsh
+
+```shell
+stow -t ~ -S zsh
 ```
+
+i use zsh because it is default.
+
+### alacritty
+
+```shell
+stow -t ~/.config/alacritty -S alacritty
+```
+
+current terminal emulator. kiss.
