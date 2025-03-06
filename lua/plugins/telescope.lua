@@ -6,20 +6,23 @@ return { -- telescope, incredibly powerful fuzzy finder
   branch = "0.1.x",
   dependencies = {
     "nvim-lua/plenary.nvim",
-    {
+    { -- faster fuzzy find
       "nvim-telescope/telescope-fzf-native.nvim",
       build = "make",
       cond = function()
         return vim.fn.executable("make") == 1
       end,
     },
-    { "nvim-telescope/telescope-ui-select.nvim" },
+    { -- file browser
+      "nvim-telescope/telescope-file-browser.nvim",
+    },
+    { -- replace ui-select
+      "nvim-telescope/telescope-ui-select.nvim",
+    },
     { "nvim-tree/nvim-web-devicons", enabled = vim.g.have_nerd_font },
-
     { -- supercollider docs
       "davidgranstrom/telescope-scdoc.nvim",
     },
-
     { -- recent/frequent files
       "nvim-telescope/telescope-frecency.nvim",
       -- install the latest stable version
@@ -39,13 +42,30 @@ return { -- telescope, incredibly powerful fuzzy finder
       defaults = {
         sorting_strategy = "ascending",
         selection_strategy = "closest",
+        layout_strategy = "flex",
         layout_config = {
           horizontal = {
+            prompt_position = "top",
+            preview_width = { 0.5, max = 40, min = 16 },
+          },
+          vertical = {
+            prompt_position = "top",
+            preview_height = { 0.5, max = 30, min = 10 },
+          },
+          flex = {
             anchor = "N",
             prompt_position = "top",
-            height = settings.window.height,
-            width = settings.window.width,
-            preview_width = { 0.5, max = 40, min = 16 },
+            height = settings.window.height(),
+            width = settings.window.width(),
+            flip_columns = 160,
+            horizontal = {
+              prompt_position = "top",
+              preview_width = { 0.5, max = 40, min = 16 },
+            },
+            vertical = {
+              prompt_position = "top",
+              preview_height = { 0.5, max = 30, min = 10 },
+            },
           },
         },
         path_display = {
@@ -57,21 +77,31 @@ return { -- telescope, incredibly powerful fuzzy finder
         mappings = { -- See `:help telescope.actions`
           i = {
             ["<C-y"] = require("telescope.actions").select_default,
+            ["<C-s>"] = require("telescope.actions").select_horizontal,
+            ["<C-j>"] = require("telescope.actions").cycle_history_next,
+            ["<C-k>"] = require("telescope.actions").cycle_history_prev,
           },
           n = {
             ["q"] = require("telescope.actions").close,
             ["<C-n>"] = require("telescope.actions").move_selection_next,
             ["<C-p>"] = require("telescope.actions").move_selection_previous,
-            ["<C-y"] = require("telescope.actions").select_default,
+            ["<C-y>"] = require("telescope.actions").select_default,
+            ["<C-s>"] = require("telescope.actions").select_horizontal,
+            ["<C-j>"] = require("telescope.actions").cycle_history_next,
+            ["<C-k>"] = require("telescope.actions").cycle_history_prev,
           },
         },
         dynamic_preview_title = true,
       },
       pickers = {
         find_files = {
-          find_command = { "rg", "--files", "--hidden", "--glob", "!**/.git/*" },
+          find_command = { "rg", "--files", "--hidden" },
         },
         buffers = {
+          show_all_buffers = false,
+          ignore_current_buffer = true,
+          sort_lastused = true,
+          sort_mru = true,
           mappings = {
             n = {
               ["d"] = require("telescope.actions").delete_buffer + require("telescope.actions").move_to_top,
@@ -93,6 +123,19 @@ return { -- telescope, incredibly powerful fuzzy finder
             },
           }),
         },
+        ["fidget"] = require("telescope.themes").get_dropdown({
+          use_previewer = false,
+          wrap_text = true,
+          layout_config = {
+            anchor = "N",
+          },
+          borderchars = {
+            { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
+            prompt = { "─", "│", " ", "│", "┌", "┐", "│", "│" },
+            results = { "─", "│", "─", "│", "├", "┤", "┘", "└" },
+            preview = { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
+          },
+        }),
         ["scdoc"] = {},
       },
     })
@@ -100,8 +143,10 @@ return { -- telescope, incredibly powerful fuzzy finder
     -- enable extensions if they are installed
     pcall(telescope.load_extension, "fzf")
     pcall(telescope.load_extension, "ui-select")
+    pcall(telescope.load_extension, "file_browser")
     pcall(telescope.load_extension, "frecency")
     pcall(telescope.load_extension, "scdoc")
+    pcall(telescope.load_extension, "fidget")
 
     -- keymaps
     local builtin = require("telescope.builtin")
@@ -126,5 +171,7 @@ return { -- telescope, incredibly powerful fuzzy finder
         prompt_title = "Live Grep in Open Files",
       })
     end, { desc = "[S]earch [/] in Open Files" })
+
+    vim.keymap.set("n", "<leader>sn", telescope.extensions.fidget.fidget, { desc = "[S]earch [N]otifications" })
   end,
 }
