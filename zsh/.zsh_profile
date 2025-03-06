@@ -8,6 +8,7 @@ export GOPATH=$HOME/go
 
 # java config
 export JAVA_HOME='usr/libexec/java_home -v 21'
+export GRADLE_USER_HOME="$HOME/.gradle"
 
 # unixy config
 export VISUAL=nvim
