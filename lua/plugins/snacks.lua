@@ -24,9 +24,7 @@ return {
       enabled = true,
     },
     picker = { enabled = false },
-    notifier = {
-      enabled = false,
-    },
+    notifier = { enabled = false },
     quickfile = { enabled = false },
     scope = { enabled = false },
     scroll = { enabled = false },
@@ -34,7 +32,11 @@ return {
     words = { enabled = false },
     styles = {
       input = {
+        row = require("settings").window.row,
         border = require("settings").window.border,
+        b = {
+          completion = true,
+        },
       },
     },
   },

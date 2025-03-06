@@ -72,6 +72,8 @@ return {
 
     { -- Status updates, notifications
       "j-hui/fidget.nvim",
+      -- NOTE: check for updates once this PR is merged:
+      commit = "749744e2434ff60254c90651c18226d95decc796",
       event = "UIEnter",
       opts = {
         progress = {
@@ -90,6 +92,7 @@ return {
           window = {
             winblend = settings.window.winblend,
             border = settings.window.border,
+            max_width = settings.window.width(),
             x_padding = 1,
             align = "top",
           },
@@ -262,8 +265,8 @@ return {
       ui = {
         border = settings.window.border,
         backdrop = 100,
-        width = settings.window.width,
-        height = settings.window.height,
+        width = settings.window.width(),
+        height = settings.window.height(),
       },
       registries = {
         "github:mason-org/mason-registry",

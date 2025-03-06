@@ -55,8 +55,8 @@ return { -- telescope, incredibly powerful fuzzy finder
           flex = {
             anchor = "N",
             prompt_position = "top",
-            height = settings.window.height,
-            width = settings.window.width,
+            height = settings.window.height(),
+            width = settings.window.width(),
             flip_columns = 160,
             horizontal = {
               prompt_position = "top",
@@ -77,12 +77,18 @@ return { -- telescope, incredibly powerful fuzzy finder
         mappings = { -- See `:help telescope.actions`
           i = {
             ["<C-y"] = require("telescope.actions").select_default,
+            ["<C-s>"] = require("telescope.actions").select_horizontal,
+            ["<C-j>"] = require("telescope.actions").cycle_history_next,
+            ["<C-k>"] = require("telescope.actions").cycle_history_prev,
           },
           n = {
             ["q"] = require("telescope.actions").close,
             ["<C-n>"] = require("telescope.actions").move_selection_next,
             ["<C-p>"] = require("telescope.actions").move_selection_previous,
-            ["<C-y"] = require("telescope.actions").select_default,
+            ["<C-y>"] = require("telescope.actions").select_default,
+            ["<C-s>"] = require("telescope.actions").select_horizontal,
+            ["<C-j>"] = require("telescope.actions").cycle_history_next,
+            ["<C-k>"] = require("telescope.actions").cycle_history_prev,
           },
         },
         dynamic_preview_title = true,
@@ -92,6 +98,9 @@ return { -- telescope, incredibly powerful fuzzy finder
           find_command = { "rg", "--files", "--hidden" },
         },
         buffers = {
+          show_all_buffers = false,
+          sort_lastused = true,
+          sort_mru = true,
           mappings = {
             n = {
               ["d"] = require("telescope.actions").delete_buffer + require("telescope.actions").move_to_top,
@@ -113,6 +122,19 @@ return { -- telescope, incredibly powerful fuzzy finder
             },
           }),
         },
+        ["fidget"] = require("telescope.themes").get_dropdown({
+          use_previewer = false,
+          wrap_text = true,
+          layout_config = {
+            anchor = "N",
+          },
+          borderchars = {
+            { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
+            prompt = { "─", "│", " ", "│", "┌", "┐", "│", "│" },
+            results = { "─", "│", "─", "│", "├", "┤", "┘", "└" },
+            preview = { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
+          },
+        }),
         ["scdoc"] = {},
       },
     })
@@ -123,6 +145,7 @@ return { -- telescope, incredibly powerful fuzzy finder
     pcall(telescope.load_extension, "file_browser")
     pcall(telescope.load_extension, "frecency")
     pcall(telescope.load_extension, "scdoc")
+    pcall(telescope.load_extension, "fidget")
 
     -- keymaps
     local builtin = require("telescope.builtin")
@@ -147,5 +170,7 @@ return { -- telescope, incredibly powerful fuzzy finder
         prompt_title = "Live Grep in Open Files",
       })
     end, { desc = "[S]earch [/] in Open Files" })
+
+    vim.keymap.set("n", "<leader>sn", telescope.extensions.fidget.fidget, { desc = "[S]earch [N]otifications" })
   end,
 }
