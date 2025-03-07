@@ -176,7 +176,7 @@ return {
             insert = "<C-a>",
           },
         },
-        model = "claude-3.7-sonnet",
+        model = "claude-3.5-sonnet",
         providers = settings.ollama_host
             and {
               ollama = ollama_provider("http://localhost:11434"),

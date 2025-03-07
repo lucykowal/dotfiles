@@ -134,4 +134,8 @@ require("lazy").setup("plugins", {
     -- default lazy.nvim defined Nerd Font icons, otherwise define a unicode icons table
     icons = vim.g.have_nerd_font and {},
   },
+  dev = {
+    path = "~/Documents/code/lua/nvim",
+    fallback = true,
+  },
 })

@@ -5,6 +5,21 @@ local function get_jdtls_root()
   return vim.fs.root(0, root_markers)
 end
 
+if false then
+  local co = coroutine.running()
+  local cb = function() end
+  if co then
+    cb = function(i)
+      coroutine.resume(co, i)
+    end
+  end
+  cb = vim.schedule_wrap(cb)
+  vim.ui.select({ "a", "b", "c" }, { prompt = "Select one" }, cb)
+  if co then
+    print(coroutine.yield(co))
+  end
+end
+
 local function get_jdtls_cmd()
   local home = vim.fn.getenv("HOME")
 
@@ -100,7 +115,10 @@ return {
       },
     },
     "hrsh7th/cmp-nvim-lsp",
-    "mfussenegger/nvim-jdtls",
+    {
+      "lucykowal/nvim-jdtls-ui",
+      dev = true,
+    },
   },
   config = function()
     vim.api.nvim_create_autocmd("LspAttach", {
@@ -303,7 +321,30 @@ return {
     vim.api.nvim_create_autocmd("FileType", {
       pattern = "java",
       callback = function()
-        require("jdtls").start_or_attach(servers.jdtls)
+        require("jdtls").start_or_attach(servers.jdtls, {
+          ui = {
+            pick_one = function(items, prompt, label_fn)
+              local co = coroutine.running()
+              local cb = function() end
+              if co then
+                cb = function(i)
+                  coroutine.resume(co, i)
+                end
+              end
+              cb = vim.schedule_wrap(cb)
+              vim.ui.select(items, { prompt = prompt, label_fn = label_fn }, cb)
+              if co then
+                return coroutine.yield(co)
+              end
+              return nil
+            end,
+            pick_one_async = function(items, prompt, label_fn, cb)
+              vim.ui.select(items, { prompt = prompt, label_fn = label_fn }, function()
+                cb()
+              end)
+            end,
+          },
+        })
       end,
     })
   end,

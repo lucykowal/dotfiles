@@ -1,3 +1,16 @@
+vim.api.nvim_create_autocmd("VimResized", {
+  callback = function()
+    require("which-key").setup({
+      win = {
+        no_overlap = false,
+        row = vim.o.lines,
+        width = vim.o.columns,
+        border = { "─", "─", "─", "", "", "", "", "" },
+      },
+    })
+  end,
+})
+
 -- shows key bindings in a popup window
 return {
   "folke/which-key.nvim",
@@ -25,11 +38,8 @@ return {
     },
     win = { -- see `:help api-win_config`
       no_overlap = false,
-      height = 10,
-      row = vim.o.lines - 10,
+      row = vim.o.lines,
       width = vim.o.columns,
-      padding = { 0, 0 },
-      -- clockwise from top left
       border = { "─", "─", "─", "", "", "", "", "" },
     },
     layout = {

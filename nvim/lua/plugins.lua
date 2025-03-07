@@ -35,6 +35,9 @@ return {
         -- Load luvit types when the `vim.uv` word is found
         { path = "luvit-meta/library", words = { "vim%.uv" } },
       },
+      enabled = function(root_dir)
+        return not vim.uv.fs_stat(root_dir .. "/.luarc.json")
+      end,
     },
   },
   { "Bilal2453/luvit-meta", lazy = true },
@@ -72,6 +75,9 @@ return {
     ---@type render.md.UserConfig
     ft = { "markdown", "copilot-chat" },
     opts = {
+      link = {
+        render_modes = { "n" },
+      },
       preset = "lazy",
     },
   },
