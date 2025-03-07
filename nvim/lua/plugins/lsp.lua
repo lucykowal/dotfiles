@@ -92,7 +92,7 @@ return {
           window = {
             winblend = settings.window.winblend,
             border = settings.window.border,
-            max_width = settings.window.width(),
+            max_width = math.floor(settings.window.width() * 0.5),
             x_padding = 1,
             align = "top",
           },
