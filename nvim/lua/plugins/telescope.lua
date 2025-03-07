@@ -72,6 +72,7 @@ return { -- telescope, incredibly powerful fuzzy finder
           truncate = 2,
           shorten = { len = 3, exclude = { -1, -2 } },
         },
+        results_title = false,
         initial_mode = "normal",
         borderchars = { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
         mappings = { -- See `:help telescope.actions`
