@@ -1,6 +1,6 @@
 # prompt settings
 setopt PROMPT_SUBST
-PROMPT="[%F{#ea76cb}%2~%f] => "
+PROMPT="[%B%F{#ea76cb}%2~%f%b] => "
 RPROMPT=""
 
 # go config
@@ -16,3 +16,6 @@ export EDITOR=nvim
 
 # brew config
 export HOMEBREW_NO_ENV_HINTS=1
+
+# completion
+autoload -U compinit; compinit
