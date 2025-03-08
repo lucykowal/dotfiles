@@ -34,6 +34,8 @@ stow -t ~ -S zsh
 
 i use zsh because it is default.
 
+i use completions via `compsys`.
+
 ### alacritty
 
 ```shell

@@ -9,3 +9,5 @@ size = 16
 [window]
 option_as_alt = "Both"
 decorations = "Buttonless"
+dynamic_padding = true
+resize_increments = true
