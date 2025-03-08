@@ -1,7 +1,15 @@
 # lucy's dotfiles
 
 everything is catppuccin latte. i'd explore other themes but i like how
-catppuccin has pretty reliable ready-to-go configs for almost everything.
+catppuccin has pretty reliable ready-to-go configs for almost everything. i have
+made some changes, though. the background is dimmed slightly, using the `colors`
+module from the `catppuccin` neovim plugin. overriding in neovim and tmux
+doesn't require changing the plugins, but i did have to modify the alacritty
+theme.
+
+the following commands assume you've put this repository in your home directory,
+`~/dotfiles`. if that's not the case, specify home as the target with `-t ~`,
+for example, `stow -t ~ nvim`.
 
 ### neovim
 
@@ -46,7 +54,7 @@ current terminal emulator. kiss.
 ### tmux
 
 ```shell
-stow -S tmux
+stow -t ~ tmux
 ```
 
 i'm using the [catppuccin theme](https://github.com/catppuccin/tmux). normally
