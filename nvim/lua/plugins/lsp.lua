@@ -107,7 +107,7 @@ return {
           window = {
             winblend = settings.window.winblend,
             border = settings.window.border,
-            max_width = settings.window.width(),
+            max_width = math.floor(settings.window.width() * 0.5),
             x_padding = 1,
             align = "top",
           },
@@ -274,7 +274,7 @@ return {
       cssls = {}, -- NOTE: requires `npm`
       html = {},
       harper_ls = { -- check grammar
-        filetypes = "markdown",
+        filetypes = { "markdown" },
       },
     }
 
@@ -311,6 +311,20 @@ return {
           -- set capabilities with force to use above `server` configs
           server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
           require("lspconfig")[server_name].setup(server)
+        end,
+        ["harper_ls"] = function(_)
+          local server = servers["harper_ls"]
+          server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
+          require("lspconfig").harper_ls.setup(server)
+          -- like normal, but bump the diagnostic level
+          local nss = vim.diagnostic.get_namespaces()
+          local ns = nil
+          for i, d in ipairs(nss) do
+            if vim.startswith(d.name, "vim.lsp.harper_ls") then
+              ns = i
+            end
+          end
+          vim.diagnostic.config({ virtual_text = { severity = vim.diagnostic.severity.ERROR } }, ns)
         end,
         ["jdtls"] = function(_)
           -- no-op, use autocommand instead for java
