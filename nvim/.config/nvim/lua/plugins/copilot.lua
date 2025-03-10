@@ -152,7 +152,16 @@ return {
 
       chat.setup({
         window = {
-          layout = "replace",
+          layout = "float",
+          relative = "win",
+          col = math.floor(vim.api.nvim_win_get_config(0).width * 0.6),
+          -- function()
+          --   return math.floor(vim.api.nvim_win_get_config(0).width * 0.6)
+          -- end,
+          width = 0.4,
+          height = 0.9,
+          row = 1,
+          anchor = "NE",
           -- width = 0.4,
         },
         highlight_headers = false,
@@ -193,12 +202,31 @@ return {
 
       -- more customized open panel logic
       vim.keymap.set({ "n", "v" }, "<leader>g", function()
-        chat.open({
-          window = {
-            layout = vim.api.nvim_win_get_width(0) * 0.4 > vim.api.nvim_win_get_height(0) and "vertical"
-              or "horizontal",
-          },
-        })
+        if vim.api.nvim_win_get_config(0).width * 0.4 > 60 then
+          chat.open({
+            window = {
+              layout = "float",
+              relative = "win",
+              row = 1,
+              col = math.floor(vim.api.nvim_win_get_config(0).width * 0.6),
+              width = math.floor(vim.api.nvim_win_get_config(0).width * 0.4),
+              height = vim.api.nvim_win_get_config(0).height - 2,
+              anchor = "NE",
+            },
+          })
+        else
+          chat.open({
+            window = {
+              layout = "float",
+              relative = "win",
+              row = math.floor(vim.api.nvim_win_get_config(0).height * 0.6),
+              col = 1,
+              width = vim.api.nvim_win_get_config(0).width - 2,
+              height = math.floor(vim.api.nvim_win_get_config(0).height * 0.4),
+              anchor = "NE",
+            },
+          })
+        end
       end, { desc = "[G]oto Copilot" })
 
       vim.keymap.set("n", "<leader>ccp", function()

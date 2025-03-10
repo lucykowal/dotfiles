@@ -53,12 +53,6 @@ vim.diagnostic.config({
 
 -- keymaps
 -- see `:help vim.keymap`
-vim.keymap.set("n", "<leader>dl", function()
-  vim.ui.select(vim.diagnostic.severity, { prompt = "Virtual Text Diagnostic Level:" }, function(sel)
-    vim.diagnostic.config({ virtual_text = { severity = sel } })
-  end)
-end, { desc = "Set [D]iagnostic [L]evel" })
-
 vim.keymap.set("n", "<leader>dd", function()
   vim.diagnostic.enable(not vim.diagnostic.is_enabled())
 end, { desc = "Toggle [D]iagnostics [D]" })

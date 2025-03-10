@@ -81,24 +81,6 @@ return {
       preset = "lazy",
     },
   },
-  { -- terminal float
-    "akinsho/toggleterm.nvim",
-    version = "*",
-    opts = {
-      open_mapping = [[<c-\>]],
-      shade_terminals = false,
-      direction = "float",
-      float_opts = vim.tbl_extend("force", settings.window, {}),
-      highlights = {
-        NormalFloat = {
-          link = "NormalFloat",
-        },
-        FloatBorder = {
-          link = "FloatBorder",
-        },
-      },
-    },
-  },
   { -- improved quickfix
     "stevearc/quicker.nvim",
     event = "FileType qf",
