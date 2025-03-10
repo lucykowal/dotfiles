@@ -53,12 +53,6 @@ vim.diagnostic.config({
 
 -- keymaps
 -- see `:help vim.keymap`
-vim.keymap.set("n", "<leader>dl", function()
-  vim.ui.select(vim.diagnostic.severity, { prompt = "Virtual Text Diagnostic Level:" }, function(sel)
-    vim.diagnostic.config({ virtual_text = { severity = sel } })
-  end)
-end, { desc = "Set [D]iagnostic [L]evel" })
-
 vim.keymap.set("n", "<leader>dd", function()
   vim.diagnostic.enable(not vim.diagnostic.is_enabled())
 end, { desc = "Toggle [D]iagnostics [D]" })
@@ -84,7 +78,7 @@ vim.api.nvim_create_autocmd("TextYankPost", { -- yank highlight
   end,
 })
 
-vim.api.nvim_create_autocmd("BufWinEnter", { -- help window placement
+vim.api.nvim_create_autocmd("BufWinEnter", {
   desc = "Force help windows to the right",
   group = vim.api.nvim_create_augroup("help-win-right", { clear = true }),
   pattern = "*/doc/*",
@@ -98,15 +92,6 @@ vim.api.nvim_create_autocmd("BufWinEnter", { -- help window placement
 
       -- allow quitting help windows with `q`
       vim.keymap.set({ "n", "v" }, "q", "<cmd>quit<CR>", { desc = "Quit", buffer = true })
-
-      -- try to push to far right
-      vim.cmd.wincmd("L")
-
-      -- if not very wide, push to bottom
-      if vim.api.nvim_win_get_config(0).width < 80 then
-        vim.cmd.wincmd("J")
-      end
-      vim.cmd.wincmd("=")
     end
   end,
 })

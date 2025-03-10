@@ -46,11 +46,12 @@ local function register_cmp()
       return comp_tbl.triggers
     end,
     complete = function(_, _, callback)
-      local items = copilot.complete_items()
-      local mapped_items = vim.tbl_map(function(i)
-        return { label = i.word, kind = cmp.lsp.CompletionItemKind.Reference }
-      end, items)
-      callback(mapped_items)
+      copilot.complete_items(function(items)
+        local mapped_items = vim.tbl_map(function(i)
+          return { label = i.word, kind = cmp.lsp.CompletionItemKind.Reference }
+        end, items)
+        callback(mapped_items)
+      end)
     end,
     execute = function(_, item, callback)
       callback(item)
@@ -140,6 +141,7 @@ return {
   },
   { -- chat with copilot
     "CopilotC-Nvim/CopilotChat.nvim",
+    version = "~3.9.1",
     dependencies = {
       { "zbirenbaum/copilot.lua" },
       { "nvim-lua/plenary.nvim", branch = "master" },
@@ -152,12 +154,18 @@ return {
 
       chat.setup({
         window = {
-          layout = "replace",
-          -- width = 0.4,
+          layout = "float",
+          relative = "win",
         },
+        auto_follow_cursor = false,
+        auto_insert_mode = false,
+        insert_at_end = false,
         highlight_headers = false,
-        insert_at_end = true,
         chat_autocomplete = false,
+        question_header = "__User__",
+        answer_header = "__Copilot__",
+        error_header = "__Error__",
+        separator = "",
         mappings = {
           complete = {
             insert = "<Tab>",
@@ -193,18 +201,35 @@ return {
 
       -- more customized open panel logic
       vim.keymap.set({ "n", "v" }, "<leader>g", function()
-        chat.open({
-          window = {
-            layout = vim.api.nvim_win_get_width(0) * 0.4 > vim.api.nvim_win_get_height(0) and "vertical"
-              or "horizontal",
-          },
-        })
+        if vim.api.nvim_win_get_config(0).width * 0.4 > 60 then
+          chat.open({
+            window = {
+              layout = "float",
+              relative = "win",
+              row = 1,
+              col = math.floor(vim.api.nvim_win_get_config(0).width * 0.6),
+              width = math.floor(vim.api.nvim_win_get_config(0).width * 0.4),
+              height = vim.api.nvim_win_get_config(0).height - 2,
+              anchor = "NE",
+            },
+          })
+        else
+          chat.open({
+            window = {
+              layout = "float",
+              relative = "win",
+              row = math.floor(vim.api.nvim_win_get_config(0).height * 0.6),
+              col = 1,
+              width = vim.api.nvim_win_get_config(0).width - 2,
+              height = math.floor(vim.api.nvim_win_get_config(0).height * 0.4),
+              anchor = "NE",
+            },
+          })
+        end
       end, { desc = "[G]oto Copilot" })
 
       vim.keymap.set("n", "<leader>ccp", function()
-        local actions = require("CopilotChat.actions")
-        -- TODO: update per deprecation
-        require("CopilotChat.integrations.telescope").pick(actions.prompt_actions())
+        require("CopilotChat").select_prompt()
       end, { desc = "CopilotChat - Prompt actions" })
     end,
   },

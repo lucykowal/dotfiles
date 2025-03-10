@@ -81,24 +81,6 @@ return {
       preset = "lazy",
     },
   },
-  { -- terminal float
-    "akinsho/toggleterm.nvim",
-    version = "*",
-    opts = {
-      open_mapping = [[<c-\>]],
-      shade_terminals = false,
-      direction = "float",
-      float_opts = vim.tbl_extend("force", settings.window, {}),
-      highlights = {
-        NormalFloat = {
-          link = "NormalFloat",
-        },
-        FloatBorder = {
-          link = "FloatBorder",
-        },
-      },
-    },
-  },
   { -- improved quickfix
     "stevearc/quicker.nvim",
     event = "FileType qf",
@@ -116,5 +98,12 @@ return {
         require("quicker").toggle({ loclist = true })
       end, { desc = "Toggle [Q]uickfix [D]iagnostics" })
     end,
+  },
+  {
+    "lucykowal/windowtest.nvim",
+    cond = vim.uv.os_uname().machine ~= "x86_64",
+    opts = {},
+    lazy = false,
+    dev = true,
   },
 }
