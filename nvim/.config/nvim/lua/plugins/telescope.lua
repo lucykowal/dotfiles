@@ -37,6 +37,10 @@ return { -- telescope, incredibly powerful fuzzy finder
   config = function()
     -- see `:help telescope` and `:help telescope.setup()`
     local telescope = require("telescope")
+    local actions = require("telescope.actions")
+    local action_state = require("telescope.actions.state")
+
+    local did_open_help = false
 
     telescope.setup({
       defaults = {
@@ -95,6 +99,24 @@ return { -- telescope, incredibly powerful fuzzy finder
         dynamic_preview_title = true,
       },
       pickers = {
+        help_tags = {
+          attach_mappings = function(prompt_bufnr, _)
+            actions.select_default:replace(function()
+              actions.close(prompt_bufnr)
+              local selection = action_state.get_selected_entry()
+              local mods = "silent noautocmd keepalt"
+              if not did_open_help then
+                vim.cmd(mods .. " help")
+                vim.cmd(mods .. " helpclose")
+                did_open_help = true
+              end
+              vim.cmd(mods .. " edit " .. vim.o.helpfile)
+              vim.bo.buftype = "help"
+              vim.cmd("help " .. selection.value)
+            end)
+            return true
+          end,
+        },
         find_files = {
           find_command = { "rg", "--files", "--hidden" },
         },
