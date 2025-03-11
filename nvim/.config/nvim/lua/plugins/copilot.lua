@@ -146,7 +146,7 @@ return {
       { "zbirenbaum/copilot.lua" },
       { "nvim-lua/plenary.nvim", branch = "master" },
     },
-    keys = { "<leader>g", nil },
+    event = "LspAttach",
     build = "make tiktoken", -- Only on MacOS or Linux
     config = function()
       local chat = require("CopilotChat")
@@ -200,7 +200,7 @@ return {
       })
 
       -- more customized open panel logic
-      vim.keymap.set({ "n", "v" }, "<leader>g", function()
+      vim.keymap.set({ "n", "v" }, "<leader>gf", function()
         if vim.api.nvim_win_get_config(0).width * 0.4 > 60 then
           chat.open({
             window = {
@@ -226,11 +226,27 @@ return {
             },
           })
         end
-      end, { desc = "[G]oto Copilot" })
+      end, { desc = "[G] CopilotChat [F]loat" })
 
-      vim.keymap.set("n", "<leader>ccp", function()
+      vim.keymap.set({ "n", "v" }, "<leader>gs", function()
+        chat.open({
+          window = {
+            layout = "horizontal",
+          },
+        })
+      end, { desc = "[G] CopilotChat [S]plit" })
+
+      vim.keymap.set({ "n", "v" }, "<leader>gv", function()
+        chat.open({
+          window = {
+            layout = "vertical",
+          },
+        })
+      end, { desc = "[G] CopilotChat [V]ertical Split" })
+
+      vim.keymap.set("n", "<leader>ggp", function()
         require("CopilotChat").select_prompt()
-      end, { desc = "CopilotChat - Prompt actions" })
+      end, { desc = "[G][G] CopilotChat - [P]rompt actions" })
     end,
   },
 }
