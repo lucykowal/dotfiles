@@ -146,7 +146,7 @@ return { -- telescope, incredibly powerful fuzzy finder
           }),
         },
         ["fidget"] = require("telescope.themes").get_dropdown({
-          use_previewer = false,
+          use_previewer = true,
           wrap_text = true,
           layout_config = {
             anchor = "N",

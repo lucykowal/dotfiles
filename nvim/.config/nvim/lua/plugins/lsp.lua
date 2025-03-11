@@ -101,6 +101,11 @@ return {
         },
         notification = {
           override_vim_notify = true,
+          configs = {
+            default = {
+              icon_on_left = true,
+            },
+          },
           view = {
             stack_upwards = false,
           },
