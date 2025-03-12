@@ -33,32 +33,112 @@ local ollama_provider = function(host)
   }
 end
 
+-- register cmp source to override complete in copilot chat
 local function register_cmp()
-  -- register cmp source to override complete
   local copilot = require("CopilotChat")
+  local utils = require("CopilotChat.utils")
   local cmp = require("cmp")
   local comp_tbl = copilot.complete_info()
-  local source = {
-    get_keyword_pattern = function()
-      return comp_tbl.pattern
+
+  -- this table is used to provide completions for chat contexts
+  local contexts = {
+    buffer = function()
+      return vim.tbl_map(
+        function(buf)
+          local data = { id = buf, name = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(buf), ":p:.") }
+          return { label = "#buffer:" .. data.id, detail = data.name }
+        end,
+        vim.tbl_filter(function(buf)
+          return utils.buf_valid(buf) and vim.fn.buflisted(buf) == 1
+        end, vim.api.nvim_list_bufs())
+      )
     end,
-    get_trigger_characters = function()
-      return comp_tbl.triggers
+    buffers = function()
+      return { { label = "#buffers:listed" }, { label = "#buffers:visible" } }
     end,
-    complete = function(_, _, callback)
-      copilot.complete_items(function(items)
-        local mapped_items = vim.tbl_map(function(i)
-          return { label = i.word, kind = cmp.lsp.CompletionItemKind.Reference }
-        end, items)
-        callback(mapped_items)
-      end)
+    file = function()
+      local cwd = vim.fn.getcwd()
+      local files = require("plenary.scandir").scan_dir(cwd, {
+        add_dirs = false,
+        respect_gitignore = true,
+        max_files = 100,
+      })
+      return vim.tbl_map(function(file)
+        return { label = "#file:" .. tostring(file) }
+      end, files)
     end,
-    execute = function(_, item, callback)
-      callback(item)
-      -- vim.api.nvim_set_option_value("buflisted", false, { buf = 0 })
+    git = function()
+      return { { label = "#git:unstaged" }, { label = "#git:staged" } }
+    end,
+    url = function()
+      return { { label = "#url:https://" } }
+    end,
+    register = function()
+      local choices = utils.kv_list({
+        ["+"] = "synchronized with the system clipboard",
+        ["*"] = "synchronized with the selection clipboard",
+        ['"'] = "last deleted, changed, or yanked content",
+        ["0"] = "last yank",
+        ["-"] = "deleted or changed content smaller than one line",
+        ["."] = "last inserted text",
+        ["%"] = "name of the current file",
+        [":"] = "most recent executed command",
+        ["#"] = "alternate buffer",
+        ["="] = "result of an expression",
+        ["/"] = "last search pattern",
+      })
+      return vim.tbl_map(function(choice)
+        return { label = "#register:" .. choice.key, detail = choice.value } -- detail or documentation?
+      end, choices)
     end,
   }
+
+  -- define the source
+  local source = {
+    -- modified pattern, adds : as a trigger
+    get_keyword_pattern = function()
+      return [[\%(@\|/\|#\|\$\|:\)\S*]]
+    end,
+
+    -- modified trigger characters, adds :
+    get_trigger_characters = function()
+      local trigs = comp_tbl.triggers
+      table.insert(trigs, ":")
+      return trigs
+    end,
+
+    -- provide completions
+    -- source, params, callback -> void
+    complete = function(_, params, callback)
+      -- are we completing a context?
+      local before = params.context.cursor_before_line
+      if vim.endswith(before, ":") then
+        -- yes: get the prefix and call the context to get completions
+        local prefix = string.match(before:reverse(), ":(.*)[@/#%$]"):reverse()
+        local context = contexts[prefix]
+        if context then
+          callback(context())
+        end
+      else
+        -- no: call copilot chat to get completions
+        copilot.complete_items(function(items)
+          local mapped_items = vim.tbl_map(function(i)
+            return { label = i.word }
+          end, items)
+          callback(mapped_items)
+        end)
+      end
+    end,
+
+    -- execute the completion
+    execute = function(_, item, callback)
+      callback(item)
+    end,
+  }
+
   cmp.register_source("copilot-chat", source)
+
+  -- additional filetype settings. configures other sources
   cmp.setup.filetype("copilot-chat", {
     sources = {
       { name = "path" },
@@ -71,6 +151,8 @@ local function register_cmp()
         name = "copilot-chat",
         keyword_length = 0,
       },
+      { name = "buffer" },
+      { name = "copilot" },
     },
   })
 end
