@@ -281,6 +281,7 @@ return {
       harper_ls = { -- check grammar
         filetypes = { "markdown" },
       },
+      glslls = {},
     }
 
     -- see :Mason to manage
@@ -300,12 +301,17 @@ return {
     -- tools beyond lspconfig for mason to install
     local ensure_installed = vim.tbl_keys(servers or {})
     vim.list_extend(ensure_installed, {
+      -- lua
       "stylua",
+      -- java
       "google-java-format",
-      "prettier",
       "java-debug-adapter",
       "java-test",
       "lombok-nightly",
+      -- python
+      "autopep8",
+      -- json, etc.
+      "prettier",
     })
     require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 
