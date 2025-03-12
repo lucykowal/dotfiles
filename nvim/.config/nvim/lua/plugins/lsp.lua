@@ -84,41 +84,6 @@ return {
 
     "mfussenegger/nvim-dap",
     "jay-babu/mason-nvim-dap.nvim",
-
-    { -- Status updates, notifications
-      "j-hui/fidget.nvim",
-      -- NOTE: check for updates once this PR is merged:
-      commit = "749744e2434ff60254c90651c18226d95decc796",
-      event = "UIEnter",
-      opts = {
-        progress = {
-          suppress_on_insert = true,
-          ignore_done_already = true,
-          display = {
-            render_limit = 8,
-            done_ttl = 1,
-          },
-        },
-        notification = {
-          override_vim_notify = true,
-          configs = {
-            default = {
-              icon_on_left = true,
-            },
-          },
-          view = {
-            stack_upwards = false,
-          },
-          window = {
-            winblend = settings.window.winblend,
-            border = settings.window.border,
-            max_width = math.floor(settings.window.width() * 0.5),
-            x_padding = 1,
-            align = "top",
-          },
-        },
-      },
-    },
     "hrsh7th/cmp-nvim-lsp",
     {
       "lucykowal/nvim-jdtls-ui",
@@ -281,7 +246,6 @@ return {
       harper_ls = { -- check grammar
         filetypes = { "markdown" },
       },
-      glslls = {},
     }
 
     -- see :Mason to manage

@@ -2,7 +2,7 @@ local settings = require("settings")
 
 return { -- telescope, incredibly powerful fuzzy finder
   "nvim-telescope/telescope.nvim",
-  event = "VimEnter",
+  event = "VeryLazy",
   branch = "0.1.x",
   dependencies = {
     "nvim-lua/plenary.nvim",
@@ -81,7 +81,7 @@ return { -- telescope, incredibly powerful fuzzy finder
         borderchars = { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
         mappings = { -- See `:help telescope.actions`
           i = {
-            ["<C-y"] = require("telescope.actions").select_default,
+            ["<C-y>"] = require("telescope.actions").select_default,
             ["<C-s>"] = require("telescope.actions").select_horizontal,
             ["<C-j>"] = require("telescope.actions").cycle_history_next,
             ["<C-k>"] = require("telescope.actions").cycle_history_prev,

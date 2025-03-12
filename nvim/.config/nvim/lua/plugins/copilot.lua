@@ -203,7 +203,7 @@ return {
       "hrsh7th/nvim-cmp",
     },
     cond = settings.ollama_host ~= nil,
-    opt = {
+    opts = {
       provider = "openai_fim_compatible",
       context_window = 512,
       n_completions = 2,
@@ -228,7 +228,7 @@ return {
       { "zbirenbaum/copilot.lua" },
       { "nvim-lua/plenary.nvim", branch = "master" },
     },
-    event = "LspAttach",
+    keys = { "<leader>gf", "<leader>gs", "<leader>gv", "<leader>ggp" },
     build = "make tiktoken", -- Only on MacOS or Linux
     config = function()
       local chat = require("CopilotChat")

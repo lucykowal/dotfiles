@@ -96,6 +96,7 @@ vim.api.nvim_create_autocmd("BufWinEnter", {
 -- filetypes
 vim.filetype.add({ extension = { frag = "glsl" } })
 vim.filetype.add({ extension = { sc = "supercollider" } })
+vim.filetype.add({ extension = { txt = "text" } })
 
 -- lazy
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
