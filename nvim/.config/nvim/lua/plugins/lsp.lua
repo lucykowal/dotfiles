@@ -233,6 +233,9 @@ return {
           },
         },
       },
+      -- python
+      pylsp = {},
+      basedpyright = {},
       gopls = {},
       yamlls = { -- NOTE: requires `yarn`
         settings = {
