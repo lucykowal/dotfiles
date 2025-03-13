@@ -55,7 +55,8 @@ return {
         lua = { "stylua" },
         markdown = { "deno_fmt" },
         go = { "gofmt" },
-        java = { "google-java-format" },
+        java = { "google-java-format", timeout_ms = 2000 },
+        python = { "autopep8", "darker", "black", stop_after_first = true, timeout_ms = 2000 },
       },
     },
   },
@@ -99,7 +100,41 @@ return {
       end, { desc = "Toggle [Q]uickfix [D]iagnostics" })
     end,
   },
-  {
+  { -- Status updates, notifications
+    "j-hui/fidget.nvim",
+    -- NOTE: check for updates once this PR is merged:
+    commit = "749744e2434ff60254c90651c18226d95decc796",
+    event = "UIEnter",
+    opts = {
+      progress = {
+        suppress_on_insert = true,
+        ignore_done_already = true,
+        display = {
+          render_limit = 8,
+          done_ttl = 1,
+        },
+      },
+      notification = {
+        override_vim_notify = true,
+        configs = {
+          default = {
+            icon_on_left = true,
+          },
+        },
+        view = {
+          stack_upwards = false,
+        },
+        window = {
+          winblend = settings.window.winblend,
+          border = settings.window.border,
+          max_width = math.floor(settings.window.width() * 0.5),
+          x_padding = 1,
+          align = "top",
+        },
+      },
+    },
+  },
+  { -- personal dev
     "lucykowal/windowtest.nvim",
     cond = vim.uv.os_uname().machine ~= "x86_64",
     opts = {},

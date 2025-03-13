@@ -2,7 +2,7 @@ local settings = require("settings")
 
 return { -- telescope, incredibly powerful fuzzy finder
   "nvim-telescope/telescope.nvim",
-  event = "VimEnter",
+  event = "VeryLazy",
   branch = "0.1.x",
   dependencies = {
     "nvim-lua/plenary.nvim",
@@ -81,7 +81,7 @@ return { -- telescope, incredibly powerful fuzzy finder
         borderchars = { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
         mappings = { -- See `:help telescope.actions`
           i = {
-            ["<C-y"] = require("telescope.actions").select_default,
+            ["<C-y>"] = require("telescope.actions").select_default,
             ["<C-s>"] = require("telescope.actions").select_horizontal,
             ["<C-j>"] = require("telescope.actions").cycle_history_next,
             ["<C-k>"] = require("telescope.actions").cycle_history_prev,
@@ -104,13 +104,12 @@ return { -- telescope, incredibly powerful fuzzy finder
             actions.select_default:replace(function()
               actions.close(prompt_bufnr)
               local selection = action_state.get_selected_entry()
-              local mods = "silent noautocmd keepalt"
+              local mods = "keepjumps silent noautocmd keepalt"
               if not did_open_help then
                 vim.cmd(mods .. " help")
                 vim.cmd(mods .. " helpclose")
                 did_open_help = true
               end
-              vim.cmd(mods .. " edit " .. vim.o.helpfile)
               vim.bo.buftype = "help"
               vim.cmd("help " .. selection.value)
             end)
@@ -147,7 +146,7 @@ return { -- telescope, incredibly powerful fuzzy finder
           }),
         },
         ["fidget"] = require("telescope.themes").get_dropdown({
-          use_previewer = false,
+          use_previewer = true,
           wrap_text = true,
           layout_config = {
             anchor = "N",

@@ -84,36 +84,6 @@ return {
 
     "mfussenegger/nvim-dap",
     "jay-babu/mason-nvim-dap.nvim",
-
-    { -- Status updates, notifications
-      "j-hui/fidget.nvim",
-      -- NOTE: check for updates once this PR is merged:
-      commit = "749744e2434ff60254c90651c18226d95decc796",
-      event = "UIEnter",
-      opts = {
-        progress = {
-          suppress_on_insert = true,
-          ignore_done_already = true,
-          display = {
-            render_limit = 8,
-            done_ttl = 1,
-          },
-        },
-        notification = {
-          override_vim_notify = true,
-          view = {
-            stack_upwards = false,
-          },
-          window = {
-            winblend = settings.window.winblend,
-            border = settings.window.border,
-            max_width = math.floor(settings.window.width() * 0.5),
-            x_padding = 1,
-            align = "top",
-          },
-        },
-      },
-    },
     "hrsh7th/cmp-nvim-lsp",
     {
       "lucykowal/nvim-jdtls-ui",
@@ -263,6 +233,9 @@ return {
           },
         },
       },
+      -- python
+      pylsp = {},
+      basedpyright = {},
       gopls = {},
       yamlls = { -- NOTE: requires `yarn`
         settings = {
@@ -295,12 +268,17 @@ return {
     -- tools beyond lspconfig for mason to install
     local ensure_installed = vim.tbl_keys(servers or {})
     vim.list_extend(ensure_installed, {
+      -- lua
       "stylua",
+      -- java
       "google-java-format",
-      "prettier",
       "java-debug-adapter",
       "java-test",
       "lombok-nightly",
+      -- python
+      "autopep8",
+      -- json, etc.
+      "prettier",
     })
     require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 

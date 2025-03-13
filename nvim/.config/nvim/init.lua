@@ -58,15 +58,14 @@ vim.keymap.set("n", "<leader>dd", function()
 end, { desc = "Toggle [D]iagnostics [D]" })
 
 vim.keymap.set("n", "<Esc>", "<cmd>nohlsearch<CR>")
+
 vim.keymap.set("t", "<Esc><Esc>", "<C-\\><C-n>", { desc = "Exit terminal mode" })
 vim.keymap.set("n", "<C-h>", "<C-w><C-h>", { desc = "Move focus to the left window" })
 vim.keymap.set("n", "<C-l>", "<C-w><C-l>", { desc = "Move focus to the right window" })
 vim.keymap.set("n", "<C-j>", "<C-w><C-j>", { desc = "Move focus to the lower window" })
 vim.keymap.set("n", "<C-k>", "<C-w><C-k>", { desc = "Move focus to the upper window" })
-vim.keymap.set("n", "<CS-H>", "<C-w>H", { desc = "Move window to the far left" })
-vim.keymap.set("n", "<CS-L>", "<C-w>L", { desc = "Move window to the far right" })
-vim.keymap.set("n", "<CS-J>", "<C-w>J", { desc = "Move window to the far top" })
-vim.keymap.set("n", "<CS-K>", "<C-w>K", { desc = "Move window to the far bottom" })
+vim.keymap.set("n", "<C-s>", "<C-w>s", { desc = "Split window" })
+vim.keymap.set("n", "<C-v>", "<C-w>v", { desc = "Vertically split window" })
 
 -- autocommands
 -- see `:help lua-guide-autocommands`
@@ -87,8 +86,6 @@ vim.api.nvim_create_autocmd("BufWinEnter", {
     local files = vim.fn.globpath(rtp, "doc/*", true, 1)
     if ev.file and vim.list_contains(files, ev.file) then
       -- entered a *new* help file
-      vim.api.nvim_set_option_value("filetype", "help", { scope = "local" })
-      vim.bo.buftype = "help"
 
       -- allow quitting help windows with `q`
       vim.keymap.set({ "n", "v" }, "q", "<cmd>quit<CR>", { desc = "Quit", buffer = true })
@@ -99,6 +96,7 @@ vim.api.nvim_create_autocmd("BufWinEnter", {
 -- filetypes
 vim.filetype.add({ extension = { frag = "glsl" } })
 vim.filetype.add({ extension = { sc = "supercollider" } })
+vim.filetype.add({ extension = { txt = "text" } })
 
 -- lazy
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
