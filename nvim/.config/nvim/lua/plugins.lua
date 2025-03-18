@@ -69,18 +69,14 @@ return {
       vim.keymap.set("n", "<leader>vs", "<cmd>LoveRun<cr>", { ft = "lua", desc = "Stop LOVE" })
     end,
   },
-  { -- render markdown
-    "MeanderingProgrammer/render-markdown.nvim",
-    dependencies = { "nvim-treesitter/nvim-treesitter", "echasnovski/mini.nvim" },
-    ---@module 'render-markdown'
-    ---@type render.md.UserConfig
-    ft = { "markdown", "copilot-chat" },
+  {
+    "OXY2DEV/markview.nvim",
+    lazy = false,
+    version = "^25.5.1",
     opts = {
-      link = {
-        render_modes = { "n" },
-      },
-      preset = "lazy",
-    },
+      typyst = { enable = false },
+      yaml = { enable = false },
+    }
   },
   { -- improved quickfix
     "stevearc/quicker.nvim",

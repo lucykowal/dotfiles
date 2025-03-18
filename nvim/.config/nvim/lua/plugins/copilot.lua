@@ -196,31 +196,6 @@ return {
       "zbirenbaum/copilot.lua",
     },
   },
-  { -- local completions
-    "milanglacier/minuet-ai.nvim",
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-      "hrsh7th/nvim-cmp",
-    },
-    cond = settings.ollama_host ~= nil,
-    opts = {
-      provider = "openai_fim_compatible",
-      context_window = 512,
-      n_completions = 2,
-      provider_options = {
-        openai_fim_compatible = {
-          api_key = "TERM",
-          name = "Ollama",
-          end_point = (settings.ollama_host or "") .. ":11434/v1/completions",
-          model = "qwen2.5-coder:1.5b-base-q3_K_S",
-          optional = {
-            max_tokens = 56,
-            top_p = 0.9,
-          },
-        },
-      },
-    },
-  },
   { -- chat with copilot
     "CopilotC-Nvim/CopilotChat.nvim",
     version = "~3.9.1",
