@@ -133,9 +133,15 @@ return {
   { -- edit browser text
     "subnut/nvim-ghost.nvim",
     version = "~0.5.4",
-    cmd = {
-      "GhostTextStart",
-    },
+    lazy = false,
+    cond = vim.g.nvim_ghost_enabled or false,
+    config = function()
+      vim.api.nvim_create_autocmd({ "User" }, {
+        group = "nvim_ghost_user_autocommands",
+        pattern = "*.github.com",
+        command = "setfiletype markdown",
+      })
+    end,
   },
   { -- personal dev
     "lucykowal/comfychat.nvim",
