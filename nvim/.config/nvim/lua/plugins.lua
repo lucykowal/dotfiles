@@ -76,7 +76,7 @@ return {
     opts = {
       typyst = { enable = false },
       yaml = { enable = false },
-    }
+    },
   },
   { -- improved quickfix
     "stevearc/quicker.nvim",
@@ -130,8 +130,15 @@ return {
       },
     },
   },
+  { -- edit browser text
+    "subnut/nvim-ghost.nvim",
+    version = "~0.5.4",
+    cmd = {
+      "GhostTextStart",
+    },
+  },
   { -- personal dev
-    "lucykowal/windowtest.nvim",
+    "lucykowal/comfychat.nvim",
     cond = vim.uv.os_uname().machine ~= "x86_64",
     opts = {},
     lazy = false,
