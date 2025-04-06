@@ -1,38 +1,6 @@
 -- co-pilot and related plugins
 local settings = require("settings")
 
--- helper to get an ollama config for any URL
-local ollama_provider = function(host)
-  return {
-    embed = "copilot_embeddings",
-    prepare_input = require("CopilotChat.config.providers").copilot.prepare_input,
-    prepare_output = require("CopilotChat.config.providers").copilot.prepare_output,
-
-    get_models = function(headers)
-      local response, err = require("CopilotChat.utils").curl_get(host .. "/api/tags", {
-        headers = headers,
-        json_response = true,
-      })
-
-      if err then
-        vim.notify(err, vim.log.levels.ERROR)
-        response = { body = { models = {} } }
-      end
-
-      return vim.tbl_map(function(model)
-        return {
-          id = model.name,
-          name = model.name,
-        }
-      end, response.body.models)
-    end,
-
-    get_url = function()
-      return host .. "/api/chat"
-    end,
-  }
-end
-
 -- register cmp source to override complete in copilot chat
 local function register_cmp()
   local copilot = require("CopilotChat")
@@ -64,14 +32,26 @@ local function register_cmp()
         max_files = 100,
       })
       return vim.tbl_map(function(file)
-        return { label = "#file:" .. tostring(file) }
+        return { label = "#file:" .. tostring(file), kind = 15 }
+      end, files)
+    end,
+    -- TODO: refactor
+    files = function()
+      local cwd = vim.fn.getcwd()
+      local files = require("plenary.scandir").scan_dir(cwd, {
+        add_dirs = false,
+        respect_gitignore = true,
+        max_files = 100,
+      })
+      return vim.tbl_map(function(file)
+        return { label = "#files:" .. tostring(file), kind = 15 }
       end, files)
     end,
     git = function()
       return { { label = "#git:unstaged" }, { label = "#git:staged" } }
     end,
     url = function()
-      return { { label = "#url:https://" } }
+      return { { label = "#url:https://", kind = 15 } }
     end,
     register = function()
       local choices = utils.kv_list({
@@ -88,8 +68,23 @@ local function register_cmp()
         ["/"] = "last search pattern",
       })
       return vim.tbl_map(function(choice)
-        return { label = "#register:" .. choice.key, detail = choice.value } -- detail or documentation?
+        return {
+          label = "#register:" .. choice.key,
+          kind = 15,
+          documentation = { kind = "plaintext", value = choice.value },
+        } -- detail or documentation?
       end, choices)
+    end,
+    system = function()
+      local cmds = {} -- TODO: would be cool to check for build tools like gradle and suggest those if relevant
+      -- other things i use are git diff, but use the git context instead for that!
+      return vim.tbl_map(function(c)
+        return {
+          label = "#system:'" .. c .. "'",
+          kind = 15,
+          documentation = { kind = "plaintext", value = "Enter command" },
+        }
+      end, cmds)
     end,
   }
 
@@ -112,21 +107,22 @@ local function register_cmp()
     complete = function(_, params, callback)
       -- are we completing a context?
       local before = params.context.cursor_before_line
-      if vim.endswith(before, ":") then
+      if before and vim.endswith(before, ":") then
         -- yes: get the prefix and call the context to get completions
-        local prefix = string.match(before:reverse(), ":(.*)[@/#%$]"):reverse()
+        local matches = string.match(before:reverse(), ":(.*)[@/#%$]")
+        local prefix = (matches or ""):reverse()
         local context = contexts[prefix]
+        vim.notify(prefix)
         if context then
           callback(context())
         end
       else
         -- no: call copilot chat to get completions
-        copilot.complete_items(function(items)
-          local mapped_items = vim.tbl_map(function(i)
-            return { label = i.word }
-          end, items)
-          callback(mapped_items)
-        end)
+        local items = copilot.complete_items()
+        local mapped_items = vim.tbl_map(function(i)
+          return { label = i.word }
+        end, items)
+        callback(mapped_items)
       end
     end,
 
@@ -198,7 +194,7 @@ return {
   },
   { -- chat with copilot
     "CopilotC-Nvim/CopilotChat.nvim",
-    version = "~3.9.1",
+    version = "~3.10.1",
     dependencies = {
       { "zbirenbaum/copilot.lua" },
       { "nvim-lua/plenary.nvim", branch = "master" },
@@ -225,7 +221,7 @@ return {
         separator = "",
         mappings = {
           complete = {
-            insert = "<Tab>",
+            insert = "<C-Space>",
             callback = function(_)
               require("cmp").complete({
                 config = {
@@ -242,18 +238,9 @@ return {
           },
         },
         model = "claude-3.5-sonnet",
-        providers = settings.ollama_host
-            and {
-              ollama = ollama_provider("http://localhost:11434"),
-              -- TODO: Add on command
-              -- ollama_ubuntu = ollama_provider(settings.ollama_host .. ":11434"),
-              github_models = nil,
-              copilot_embeddings = nil,
-            }
-          or {
-            github_models = nil,
-            copilot_embeddings = nil,
-          },
+        providers = {
+          github_models = { disabled = true },
+        },
       })
 
       -- more customized open panel logic
