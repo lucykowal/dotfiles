@@ -5,21 +5,25 @@ local function get_jdtls_root()
   return vim.fs.root(0, root_markers)
 end
 
-if false then
-  local co = coroutine.running()
-  local cb = function() end
-  if co then
-    cb = function(i)
-      coroutine.resume(co, i)
-    end
-  end
-  cb = vim.schedule_wrap(cb)
-  vim.ui.select({ "a", "b", "c" }, { prompt = "Select one" }, cb)
-  if co then
-    print(coroutine.yield(co))
-  end
+-- get my jdtls bundles from mason
+local function get_jdtls_bundles()
+  local mason_packages = require("mason.settings").current.install_root_dir .. "/packages"
+
+  local jdebug_path = mason_packages .. "/java-debug-adapter"
+  local sts_path = mason_packages .. "/spring-boot-tools"
+
+  local bundles = {
+    vim.fn.glob(jdebug_path .. "/extension/server/com.microsoft.java.debug.plugin-*.jar", true),
+    -- order based on extension.json, seems to matter
+    sts_path .. "/extension/jars/jdt-ls-commons.jar",
+    sts_path .. "/extension/jars/jdt-ls-extension.jar",
+    sts_path .. "/extension/jars/sts-gradle-tooling.jar",
+  }
+
+  return bundles
 end
 
+-- helpers to get the jdtls command, pulling in jars from mason
 local function get_jdtls_cmd()
   local home = vim.fn.getenv("HOME")
 
@@ -29,19 +33,12 @@ local function get_jdtls_cmd()
   local mason_packages = require("mason.settings").current.install_root_dir .. "/packages"
 
   local jdtls_path = mason_packages .. "/jdtls"
-  local jdebug_path = mason_packages .. "/java-debug-adapter"
-  local jtest_path = mason_packages .. "/java-test"
 
   local config_type = "/config_mac" .. (vim.uv.os_uname().machine == "x86_64" and "" or "_arm")
   local config_path = jdtls_path .. config_type
   local lombok_path = mason_packages .. "/lombok-nightly/lombok.jar"
 
   local jar_path = jdtls_path .. "/plugins/org.eclipse.equinox.launcher_1.6.900.v20240613-2009.jar"
-
-  local bundles = {
-    vim.fn.glob(jdebug_path .. "/extension/server/com.microsoft.java.debug.plugin-*.jar", true),
-  }
-  vim.list_extend(bundles, vim.split(vim.fn.glob(jtest_path .. "/extension/server/*.jar", true), "\n"))
 
   return {
     -- NOTE: you must set $JAVA_HOME to `/usr/libexec/java_home -v 21`
@@ -193,8 +190,12 @@ return {
       jdtls = {
         cmd = get_jdtls_cmd(),
         root_dir = get_jdtls_root(),
-        filetypes = { "java" },
+        filetypes = { "java", "jproperties", "yaml" },
         handlers = require("lspconfig.configs.jdtls").default_config.handlers,
+        init_options = {
+          bundles = get_jdtls_bundles(),
+          extendedClientCapabilities = require("jdtls").extendedClientCapabilities,
+        },
         settings = {
           java = {
             references = {
@@ -275,6 +276,7 @@ return {
       "java-debug-adapter",
       "java-test",
       "lombok-nightly",
+      "spring-boot-tools",
       -- python
       "autopep8",
       -- json, etc.
@@ -294,15 +296,7 @@ return {
           local server = servers["harper_ls"]
           server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
           require("lspconfig").harper_ls.setup(server)
-          -- like normal, but bump the diagnostic level
-          -- local nss = vim.diagnostic.get_namespaces()
-          -- local ns = nil
-          -- for i, d in ipairs(nss) do
-          --   if vim.startswith(d.name, "vim.lsp.harper_ls") then
-          --     ns = i
-          --   end
-          -- end
-          -- vim.diagnostic.config({ virtual_text = { severity = vim.diagnostic.severity.ERROR } }, ns)
+          -- TODO: figure out an appropriate config that isn't annoying :P
         end,
         ["jdtls"] = function(_)
           -- no-op, use autocommand instead for java
@@ -311,7 +305,7 @@ return {
     })
 
     vim.api.nvim_create_autocmd("FileType", {
-      pattern = "java",
+      pattern = { "java", "jproperties", "yaml" },
       callback = function()
         require("jdtls").start_or_attach(servers.jdtls, {
           ui = {
