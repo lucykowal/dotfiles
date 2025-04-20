@@ -130,24 +130,16 @@ return {
       },
     },
   },
-  { -- edit browser text
-    "subnut/nvim-ghost.nvim",
-    version = "~0.5.4",
-    lazy = false,
-    cond = vim.g.nvim_ghost_enabled or false,
-    config = function()
-      vim.api.nvim_create_autocmd({ "User" }, {
-        group = "nvim_ghost_user_autocommands",
-        pattern = "*.github.com",
-        command = "setfiletype markdown",
-      })
-    end,
-  },
   { -- personal dev
     "lucykowal/comfychat.nvim",
     cond = vim.uv.os_uname().machine ~= "x86_64",
     opts = {},
     lazy = false,
     dev = true,
+    config = function()
+      vim.api.nvim_create_user_command("TestChat", function()
+        require("comfychat").test()
+      end, {})
+    end,
   },
 }
