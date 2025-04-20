@@ -70,8 +70,7 @@ return {
     ft = { "java", "yaml", "jproperties" },
     dependencies = {
       {
-        "lucykowal/nvim-jdtls-ui",
-        dev = true,
+        "mfussenegger/nvim-jdtls",
         ft = { "java", "yaml", "jproperties" },
         config = function()
           require("jdtls")
@@ -317,30 +316,7 @@ return {
         pattern = { "java", "jproperties", "yaml" },
         callback = function()
           require("spring_boot").init_lsp_commands()
-          require("jdtls").start_or_attach(servers.jdtls(), {
-            ui = {
-              pick_one = function(items, prompt, label_fn)
-                local co = coroutine.running()
-                local cb = function() end
-                if co then
-                  cb = function(i)
-                    coroutine.resume(co, i)
-                  end
-                end
-                cb = vim.schedule_wrap(cb)
-                vim.ui.select(items, { prompt = prompt, label_fn = label_fn }, cb)
-                if co then
-                  return coroutine.yield(co)
-                end
-                return nil
-              end,
-              pick_one_async = function(items, prompt, label_fn, cb)
-                vim.ui.select(items, { prompt = prompt, label_fn = label_fn }, function()
-                  cb()
-                end)
-              end,
-            },
-          })
+          require("jdtls").start_or_attach(servers.jdtls(), {})
         end,
       })
     end,
