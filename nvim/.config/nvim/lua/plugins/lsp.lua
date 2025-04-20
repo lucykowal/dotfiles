@@ -10,15 +10,11 @@ local function get_jdtls_bundles()
   local mason_packages = require("mason.settings").current.install_root_dir .. "/packages"
 
   local jdebug_path = mason_packages .. "/java-debug-adapter"
-  local sts_path = mason_packages .. "/spring-boot-tools"
 
   local bundles = {
     vim.fn.glob(jdebug_path .. "/extension/server/com.microsoft.java.debug.plugin-*.jar", true),
-    -- order based on extension.json, seems to matter
-    sts_path .. "/extension/jars/jdt-ls-commons.jar",
-    sts_path .. "/extension/jars/jdt-ls-extension.jar",
-    sts_path .. "/extension/jars/sts-gradle-tooling.jar",
   }
+  vim.list_extend(bundles, require("spring_boot").java_extensions())
 
   return bundles
 end
@@ -85,6 +81,14 @@ return {
     {
       "lucykowal/nvim-jdtls-ui",
       dev = true,
+    },
+    {
+      "JavaHello/spring-boot.nvim",
+      ft = { "java", "yaml", "jproperties" },
+      dependencies = {
+        "mfussenegger/nvim-jdtls",
+      },
+      opts = {},
     },
   },
   config = function()
@@ -187,53 +191,54 @@ return {
           },
         },
       },
-      jdtls = {
-        cmd = get_jdtls_cmd(),
-        root_dir = get_jdtls_root(),
-        filetypes = { "java", "jproperties", "yaml" },
-        handlers = require("lspconfig.configs.jdtls").default_config.handlers,
-        init_options = {
-          bundles = get_jdtls_bundles(),
-          extendedClientCapabilities = require("jdtls").extendedClientCapabilities,
-        },
-        settings = {
-          java = {
-            references = {
-              includeDecompiledSources = true,
+      jdtls = function() -- lazy load, spring tools is slow to require
+        return {
+          cmd = get_jdtls_cmd(),
+          root_dir = get_jdtls_root(),
+          filetypes = { "java", "jproperties", "yaml" },
+          handlers = require("lspconfig.configs.jdtls").default_config.handlers,
+          init_options = {
+            bundles = get_jdtls_bundles(),
+          },
+          settings = {
+            java = {
+              references = {
+                includeDecompiledSources = true,
+              },
+              format = {
+                enabled = false,
+              },
+              eclipse = {
+                downloadSources = true,
+              },
+              maven = {
+                downloadSources = true,
+              },
+              signatureHelp = {
+                enabled = true,
+              },
+              filteredTypes = {
+                "com.sun.*",
+                "io.micrometer.shaded.*",
+                "java.awt.*",
+                "sun.*",
+              },
+              importOrder = {
+                "java",
+                "javax",
+                "com",
+                "org",
+              },
             },
-            format = {
-              enabled = false,
-            },
-            eclipse = {
-              downloadSources = true,
-            },
-            maven = {
-              downloadSources = true,
-            },
-            signatureHelp = {
-              enabled = true,
-            },
-            filteredTypes = {
-              "com.sun.*",
-              "io.micrometer.shaded.*",
-              "java.awt.*",
-              "sun.*",
-            },
-            importOrder = {
-              "java",
-              "javax",
-              "com",
-              "org",
+            sources = {
+              organizeImports = {
+                starThreshold = 9999,
+                staticStarThreshold = 9999,
+              },
             },
           },
-          sources = {
-            organizeImports = {
-              starThreshold = 9999,
-              staticStarThreshold = 9999,
-            },
-          },
-        },
-      },
+        }
+      end,
       -- python
       pylsp = {},
       basedpyright = {},
@@ -307,7 +312,8 @@ return {
     vim.api.nvim_create_autocmd("FileType", {
       pattern = { "java", "jproperties", "yaml" },
       callback = function()
-        require("jdtls").start_or_attach(servers.jdtls, {
+        require("spring_boot").init_lsp_commands()
+        require("jdtls").start_or_attach(servers.jdtls(), {
           ui = {
             pick_one = function(items, prompt, label_fn)
               local co = coroutine.running()
