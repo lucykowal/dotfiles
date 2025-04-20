@@ -20,18 +20,6 @@ return { -- autocomplete
         },
       },
     },
-    { -- dictionary recommendations
-      "uga-rosa/cmp-dictionary",
-      name = "cmp_dictionary",
-      ft = { "markdown", "copilot-chat" },
-      config = function()
-        require("cmp_dictionary").setup({
-          paths = { "/usr/share/dict/words" },
-          exact_length = 2,
-        })
-      end,
-    },
-
     "zbirenbaum/copilot-cmp",
     "saadparwaiz1/cmp_luasnip",
     "hrsh7th/cmp-nvim-lsp",
@@ -102,12 +90,9 @@ return { -- autocomplete
     for _, ft in ipairs(path_dict_fts) do
       cmp.setup.filetype(ft, {
         sources = {
+          { name = "nvim_lsp" },
+          { name = "luasnip" },
           { name = "path" },
-          {
-            name = "dictionary",
-            keyword_length = 2,
-            max_item_count = 5,
-          },
         },
       })
     end

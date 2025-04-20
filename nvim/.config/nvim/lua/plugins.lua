@@ -69,17 +69,13 @@ return {
       vim.keymap.set("n", "<leader>vs", "<cmd>LoveRun<cr>", { ft = "lua", desc = "Stop LOVE" })
     end,
   },
-  { -- render markdown
-    "MeanderingProgrammer/render-markdown.nvim",
-    dependencies = { "nvim-treesitter/nvim-treesitter", "echasnovski/mini.nvim" },
-    ---@module 'render-markdown'
-    ---@type render.md.UserConfig
-    ft = { "markdown", "copilot-chat" },
+  {
+    "OXY2DEV/markview.nvim",
+    lazy = false,
+    version = "^25.5.1",
     opts = {
-      link = {
-        render_modes = { "n" },
-      },
-      preset = "lazy",
+      typyst = { enable = false },
+      yaml = { enable = false },
     },
   },
   { -- improved quickfix
@@ -134,11 +130,34 @@ return {
       },
     },
   },
+  { -- smart splits
+    "christoomey/vim-tmux-navigator",
+    cmd = {
+      "TmuxNavigateLeft",
+      "TmuxNavigateDown",
+      "TmuxNavigateUp",
+      "TmuxNavigateRight",
+      "TmuxNavigatePrevious",
+      "TmuxNavigatorProcessList",
+    },
+    keys = {
+      { "<c-h>", "<cmd><C-U>TmuxNavigateLeft<cr>" },
+      { "<c-j>", "<cmd><C-U>TmuxNavigateDown<cr>" },
+      { "<c-k>", "<cmd><C-U>TmuxNavigateUp<cr>" },
+      { "<c-l>", "<cmd><C-U>TmuxNavigateRight<cr>" },
+      { "<c-\\>", "<cmd><C-U>TmuxNavigatePrevious<cr>" },
+    },
+  },
   { -- personal dev
-    "lucykowal/windowtest.nvim",
+    "lucykowal/comfychat.nvim",
     cond = vim.uv.os_uname().machine ~= "x86_64",
     opts = {},
     lazy = false,
     dev = true,
+    config = function()
+      vim.api.nvim_create_user_command("TestChat", function()
+        require("comfychat").test()
+      end, {})
+    end,
   },
 }

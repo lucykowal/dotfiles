@@ -110,6 +110,7 @@ end ---@diagnostic disable-next-line: undefined-field
 vim.opt.rtp:prepend(lazypath)
 
 require("lazy").setup("plugins", {
+  lazy = true,
   ui = {
     border = require("settings").window.border,
     backdrop = 100,
