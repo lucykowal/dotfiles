@@ -1,0 +1,25 @@
+# EditorConfig really is awesome <3
+# https://editorconfig.org
+
+# This is a top-level EditorConfig file.
+# It sets defaults for projects without their own config,
+# since editorconfig files are inherited from parent directories.
+# It also provides a good starting point for new projects.
+
+root = true
+
+# Reasonable defaults
+[*]
+end_of_line = lf
+insert_final_newline = true
+
+# Opinionated defaults
+indent_style = space
+indent_size = 2
+
+# Other useful options
+# charset = utf-8
+# trim_trailing_whitespace = true
+
+[Makefile]
+indent_style = tab
