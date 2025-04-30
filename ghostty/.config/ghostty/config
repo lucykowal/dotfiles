@@ -4,6 +4,11 @@ font-family = "CommitMono Nerd Font Mono"
 font-size = 16.0
 
 macos-option-as-alt = true
+macos-icon = retro
+macos-titlebar-proxy-icon = hidden
+
+title = " "
+
 window-step-resize = true
 window-padding-balance = true
 
