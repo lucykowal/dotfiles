@@ -1,118 +1,46 @@
 -- theme config
-
-local function darken(color, factor)
-  factor = factor or 0.95
-  return require("catppuccin.utils.colors").darken(require("catppuccin.palettes.latte")[color], factor, "#000000")
-end
-
-local function get_colors()
-  return {
-    base = darken("base"),
-    crust = darken("crust"),
-    mantle = darken("mantle"),
-    surface0 = darken("surface0"),
-    surface1 = darken("surface1"),
-    surface2 = darken("surface2"),
-  }
-end
-
-vim.api.nvim_create_user_command("ColorCompile", function()
-  vim.fn.setreg("l", vim.inspect(get_colors()))
-end, {})
-
 return {
-  "catppuccin/nvim",
-  name = "catppuccin",
+  "sonph/onehalf",
   priority = 999,
-  config = function()
-    require("catppuccin").setup({
-      flavour = "latte",
-      color_overrides = {
-        latte = {
-          base = "#E3E5E9",
-          crust = "#D1D5DC",
-          mantle = "#DBDDE3",
-          surface0 = "#C2C6CF",
-          surface1 = "#B3B6C2",
-          surface2 = "#A3A7B5",
-        },
-      },
-      custom_highlights = function(colors)
-        local sep = {
-          fg = colors.surface2,
-          bg = colors.base,
-          style = { "bold" },
-        }
-        return {
-          NormalFloat = {
-            bg = colors.base,
-          },
-          FloatBorder = sep,
-          FloatTitle = sep,
-          WinSeparator = sep,
+  config = function(plugin)
+    -- Best to fix at the source. I prefer using default highlight groups anyways.
+    vim.opt.rtp:append(plugin.dir .. "/vim")
+    vim.cmd.colorscheme("onehalflight")
 
-          SnacksInputNormal = { link = "NormalFloat" },
-          SnacksInputBorder = { link = "FloatBorder" },
-          SnacksInputTitle = { link = "FloatTitle" },
-          SnacksInputIcon = sep,
+    -- fixes most plugins
+    vim.cmd.highlight("NormalFloat", "guibg=NONE")
+    vim.cmd.highlight("StatusLine", "guibg=NONE")
+    vim.cmd.highlight("StatusLineNC", "guibg=NONE")
 
-          StatusLine = vim.tbl_deep_extend("force", sep, {
-            style = { "underline" },
-          }),
-          StatusLineNC = sep,
-          MiniStatuslineFilename = {
-            bg = colors.base,
-            fg = colors.surface2,
-            style = { "bold", "underline" },
-          }, -- active
-          MiniStatuslineInactive = {
-            fg = colors.surface2,
-            bg = colors.base,
-            style = { "underline" },
-          }, -- inactive
-          MiniStatuslineFileinfo = {
-            fg = colors.surface2,
-            bg = colors.base,
-            style = { "underline" },
-          }, -- common to both
-        }
-      end,
-      styles = {
-        comments = { "italic" },
-      },
-      integrations = {
-        cmp = true,
-        treesitter = true,
-        mason = true,
-        telescope = { enabled = true },
-        mini = { enabled = true },
-        which_key = true,
-        gitsigns = true,
-        render_markdown = true,
-        fidget = true,
-        snacks = {
-          enabled = true,
-          indent_scope_color = "text",
-        },
-        native_lsp = {
-          enabled = true,
-          virtual_text = {
-            errors = { "italic" },
-            hints = { "italic" },
-            warnings = { "italic" },
-            information = { "italic" },
-            ok = { "italic" },
-          },
-          underlines = {
-            errors = { "underline" },
-            hints = { "underline" },
-            warnings = { "underline" },
-            information = { "underline" },
-            ok = { "underline" },
-          },
-        },
-      },
-    })
-    vim.cmd.colorscheme("catppuccin-latte")
+    -- fix LSP diagnostics
+    local mapping = {
+      -- let g:terminal_color_0 = s:black.gui
+      -- let g:terminal_color_1 = s:red.gui
+      -- let g:terminal_color_2 = s:green.gui
+      -- let g:terminal_color_3 = s:yellow.gui
+      -- let g:terminal_color_4 = s:blue.gui
+      -- let g:terminal_color_5 = s:purple.gui
+      -- let g:terminal_color_6 = s:cyan.gui
+      -- let g:terminal_color_7 = s:white.gui
+      -- let g:terminal_color_8 = s:black.gui
+      -- let g:terminal_color_9 = s:red.gui
+      -- let g:terminal_color_10 = s:green.gui
+      -- let g:terminal_color_11 = s:yellow.gui
+      -- let g:terminal_color_12 = s:blue.gui
+      -- let g:terminal_color_13 = s:purple.gui
+      -- let g:terminal_color_14 = s:cyan.gui
+      -- let g:terminal_color_15 = s:white.gui
+      Ok = "terminal_color_10",
+      Hint = "terminal_color_12",
+      Info = "terminal_color_14",
+      Warn = "terminal_color_11",
+      Error = "terminal_color_9",
+      Deprecated = "terminal_color_8",
+    }
+    for k, v in pairs(mapping) do
+      v = vim.g[v]
+      vim.cmd.highlight("Diagnostic" .. k, "guifg=" .. v)
+      vim.cmd.highlight("DiagnosticUnderline" .. k, "guifg=" .. v)
+    end
   end,
 }
