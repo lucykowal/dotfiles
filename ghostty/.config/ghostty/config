@@ -8,3 +8,5 @@ window-step-resize = true
 window-padding-balance = true
 
 shell-integration-features = no-cursor
+
+keybind = global:alt+grave_accent=toggle_quick_terminal
