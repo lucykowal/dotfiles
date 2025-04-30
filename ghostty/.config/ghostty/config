@@ -7,6 +7,9 @@ macos-option-as-alt = true
 window-step-resize = true
 window-padding-balance = true
 
-shell-integration-features = no-cursor
+cursor-style = block
+cursor-style-blink = true
+cursor-invert-fg-bg = true
+adjust-cursor-thickness = 4
 
 keybind = global:alt+grave_accent=toggle_quick_terminal
