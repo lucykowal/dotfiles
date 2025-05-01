@@ -1,7 +1,10 @@
 theme = OneHalfLight
 
 font-family = "CommitMono Nerd Font Mono"
-font-size = 16.0
+font-size = 14.0
+font-thicken = true
+font-thicken-strength = 80
+adjust-overline-thickness = 25%
 
 macos-option-as-alt = true
 macos-icon = retro
@@ -15,6 +18,9 @@ window-padding-balance = true
 cursor-style = block
 cursor-style-blink = true
 cursor-invert-fg-bg = true
-adjust-cursor-thickness = 4
+adjust-cursor-thickness = 25%
+
+shell-integration = none
+shell-integration-features = false
 
 keybind = global:alt+grave_accent=toggle_quick_terminal

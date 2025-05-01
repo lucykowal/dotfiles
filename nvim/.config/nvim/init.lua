@@ -34,7 +34,7 @@ vim.schedule(function()
   vim.o.clipboard = "unnamedplus"
 end)
 
--- ui options
+-- ui options. see `:help <option name>`
 vim.o.number = true
 vim.o.signcolumn = "yes"
 vim.o.breakindent = true
@@ -45,11 +45,19 @@ vim.opt.cursorline = true
 vim.o.scrolloff = 30
 vim.o.shortmess = "ltToOCFI"
 
-vim.diagnostic.config({
-  virtual_text = {
-    virt_text_pos = "eol",
-  },
+vim.api.nvim_create_autocmd({ "VimEnter", "VimResume" }, {
+  callback = function()
+    vim.o.gcr =
+      "n-v-c-sm:block,i-ci-ve:ver25-blinkon10-blinkoff10-blinkwait5,r-cr-o:hor20-blinkon3-blinkoff1-blinkwait0"
+  end,
 })
+vim.api.nvim_create_autocmd({ "VimLeave", "VimSuspend" }, {
+  callback = function()
+    vim.o.gcr = "a:block-blinkon10-blinkoff10"
+  end,
+})
+
+vim.diagnostic.config({ virtual_text = { virt_text_pos = "eol" } })
 
 -- keymaps
 -- see `:help vim.keymap`
@@ -74,22 +82,6 @@ vim.api.nvim_create_autocmd("TextYankPost", { -- yank highlight
   group = vim.api.nvim_create_augroup("highlight-yank", { clear = true }),
   callback = function()
     vim.highlight.on_yank()
-  end,
-})
-
-vim.api.nvim_create_autocmd("BufWinEnter", {
-  desc = "Force help windows to the right",
-  group = vim.api.nvim_create_augroup("help-win-right", { clear = true }),
-  pattern = "*/doc/*",
-  callback = function(ev)
-    local rtp = vim.o.runtimepath
-    local files = vim.fn.globpath(rtp, "doc/*", true, 1)
-    if ev.file and vim.list_contains(files, ev.file) then
-      -- entered a *new* help file
-
-      -- allow quitting help windows with `q`
-      vim.keymap.set({ "n", "v" }, "q", "<cmd>quit<CR>", { desc = "Quit", buffer = true })
-    end
   end,
 })
 
