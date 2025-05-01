@@ -42,5 +42,6 @@ return {
       vim.cmd.highlight("Diagnostic" .. k, "guifg=" .. v)
       vim.cmd.highlight("DiagnosticUnderline" .. k, "guifg=" .. v)
     end
+    vim.cmd.highlight("Comment", "gui=italic")
   end,
 }
