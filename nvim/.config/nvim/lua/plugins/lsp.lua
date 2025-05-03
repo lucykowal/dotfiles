@@ -258,9 +258,11 @@ return {
         harper_ls = { -- check grammar
           filetypes = { "markdown" },
           settings = {
-            ["harper_ls"] = {
+            ["harper-ls"] = {
               linters = {
                 SentenceCapitalization = false,
+                ProperNouns = false,
+                CapitalizePersonalPronouns = false,
               },
             },
           },
