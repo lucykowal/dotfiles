@@ -198,7 +198,7 @@ return {
           return {
             cmd = get_jdtls_cmd(),
             root_dir = get_jdtls_root(),
-            filetypes = { "java", "jproperties", "yaml" },
+            filetypes = { "java", "jproperties" },
             handlers = require("lspconfig.configs.jdtls").default_config.handlers,
             init_options = {
               bundles = get_jdtls_bundles(),
@@ -257,6 +257,13 @@ return {
         html = {},
         harper_ls = { -- check grammar
           filetypes = { "markdown" },
+          settings = {
+            ["harper_ls"] = {
+              linters = {
+                SentenceCapitalization = false,
+              },
+            },
+          },
         },
       }
 
@@ -299,12 +306,6 @@ return {
             -- set capabilities with force to use above `server` configs
             server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
             require("lspconfig")[server_name].setup(server)
-          end,
-          ["harper_ls"] = function(_)
-            local server = servers["harper_ls"]
-            server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
-            require("lspconfig").harper_ls.setup(server)
-            -- TODO: figure out an appropriate config that isn't annoying :P
           end,
           ["jdtls"] = function(_)
             -- no-op, use autocommand instead for java
