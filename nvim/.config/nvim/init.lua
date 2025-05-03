@@ -114,4 +114,7 @@ require("lazy").setup("plugins", {
     path = "~/Documents/code/lua/nvim",
     fallback = true,
   },
+  change_detection = {
+    enabled = false,
+  },
 })
