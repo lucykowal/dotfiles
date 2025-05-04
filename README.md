@@ -1,8 +1,17 @@
 # lucy's dotfiles
 
-the following commands assume you've put this repository in your home directory,
-`~/dotfiles`. if that's not the case, specify home as the target with `-t ~`,
-for example, `stow -t ~ nvim`.
+set up an environment in one go[^1] with:
+
+[^1]: assuming you are on mac with at least `brew` and optionally `java` and
+    `go` installed.
+
+```shell
+ansible-playbook bootstrap.yml
+```
+
+or, use stow directly: the following commands assume you've put this repository
+in your home directory, `~/dotfiles`. if that's not the case, specify home as
+the target with `-t ~`, for example, `stow -t ~ nvim`.
 
 ### neovim
 
