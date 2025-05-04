@@ -1,0 +1,61 @@
+- name: Bootstrap Lucy's DevEnv
+  hosts: localhost
+
+  tasks:
+    # some software is needed but not managed via ansible:
+    # - brew
+    # - go
+    # - java
+    # - ruby, perl (included in mac)
+    - name: Install brew packages
+      community.general.homebrew:
+        name:
+          - bear
+          - composer
+          - deno
+          - direnv
+          - fd
+          - fzf
+          - gh
+          - git
+          - gradle
+          - jdtls
+          - julia
+          - lua
+          - luajit
+          - luarocks
+          - maven
+          - neovim
+          - node
+          - pandoc
+          - php
+          - ripgrep
+          - rust
+          - stow
+          - tmux
+          - terraform
+          - uv
+          - wget
+        state: present
+      when: ansible_distribution == "MacOSX"
+    - &stow
+      name: Stow common configurations
+      loop:
+        - editorconfig
+        - tmux
+        - nvim
+      ansible.builtin.command:
+        cmd: "stow -t {{ ansible_env.HOME }} --verbose=2 {{ item }}"
+      register: result
+      changed_when: 'result.stderr is search("LINK: ")'
+    - <<: *stow
+      name: Stow mac configurations
+      loop:
+        - ghostty
+        - zsh
+      when: ansible_distribution == "MacOSX"
+    - <<: *stow
+      name: Stow personal configurations
+      loop:
+        - git
+      when: ansible_hostname == "lucybook"
