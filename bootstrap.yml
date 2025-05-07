@@ -54,7 +54,6 @@
       vars:
         packages:
           - ghostty
-          - zsh
       when: ansible_distribution == "MacOSX"
     - name: Stow personal configurations
       include_role:
@@ -63,4 +62,7 @@
         packages:
           - git
       when: ansible_hostname == "lucybook"
-
+    - name: Create zsh initialization scripts
+      include_role:
+        name: zsh
+      when: ansible_distribution == "MacOSX"
