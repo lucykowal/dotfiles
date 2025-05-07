@@ -11,6 +11,7 @@
       community.general.homebrew:
         name:
           - bear
+          - bitwarden-cli
           - composer
           - deno
           - direnv
@@ -29,6 +30,7 @@
           - node
           - pandoc
           - php
+          - python-setuptools
           - ripgrep
           - rust
           - stow
@@ -38,24 +40,27 @@
           - wget
         state: present
       when: ansible_distribution == "MacOSX"
-    - &stow
-      name: Stow common configurations
-      loop:
-        - editorconfig
-        - tmux
-        - nvim
-      ansible.builtin.command:
-        cmd: "stow -t {{ ansible_env.HOME }} --verbose=2 {{ item }}"
-      register: result
-      changed_when: 'result.stderr is search("LINK: ")'
-    - <<: *stow
-      name: Stow mac configurations
-      loop:
-        - ghostty
-        - zsh
+    - name: Stow configurations
+      include_role:
+        name: stow
+      vars:
+        packages:
+          - editorconfig
+          - tmux
+          - nvim
+    - name: Stow mac configurations
+      include_role:
+        name: stow
+      vars:
+        packages:
+          - ghostty
+          - zsh
       when: ansible_distribution == "MacOSX"
-    - <<: *stow
-      name: Stow personal configurations
-      loop:
-        - git
+    - name: Stow personal configurations
+      include_role:
+        name: stow
+      vars:
+        packages:
+          - git
       when: ansible_hostname == "lucybook"
+
