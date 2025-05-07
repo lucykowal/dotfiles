@@ -10,9 +10,12 @@
     - name: Install brew packages
       community.general.homebrew:
         name:
+          - bat
           - bear
           - bitwarden-cli
+          - btop
           - composer
+          - coreutils
           - deno
           - direnv
           - fd
@@ -34,9 +37,11 @@
           - ripgrep
           - rust
           - stow
-          - tmux
           - terraform
+          - tmux
+          - tree
           - uv
+          - viu
           - wget
         state: present
       when: ansible_distribution == "MacOSX"
