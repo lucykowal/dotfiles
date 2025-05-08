@@ -67,11 +67,11 @@ end
 return {
   { -- java support
     "JavaHello/spring-boot.nvim",
-    ft = { "java", "yaml", "jproperties" },
+    ft = { "java", "jproperties" },
     dependencies = {
       {
         "mfussenegger/nvim-jdtls",
-        ft = { "java", "yaml", "jproperties" },
+        ft = { "java", "jproperties" },
         config = function()
           require("jdtls")
         end,
@@ -258,9 +258,11 @@ return {
         harper_ls = { -- check grammar
           filetypes = { "markdown" },
           settings = {
-            ["harper_ls"] = {
+            ["harper-ls"] = {
               linters = {
                 SentenceCapitalization = false,
+                ProperNouns = false,
+                CapitalizePersonalPronouns = false,
               },
             },
           },
@@ -314,7 +316,7 @@ return {
       })
 
       vim.api.nvim_create_autocmd("FileType", {
-        pattern = { "java", "jproperties", "yaml" },
+        pattern = { "java", "jproperties" },
         callback = function()
           require("spring_boot").init_lsp_commands()
           require("jdtls").start_or_attach(servers.jdtls(), {})

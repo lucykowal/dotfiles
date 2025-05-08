@@ -1,0 +1,52 @@
+- name: Insert/update script hook in .zshrc
+  ansible.builtin.blockinfile:
+    path: "{{ ansible_env.HOME }}/.zshrc"
+    insertbefore: BOF
+    block: |
+      source {{ ansible_env.HOME }}/.init.sh
+- name: Register common settings variables
+  ansible.builtin.set_fact:
+    script: |
+      # go config
+      export GOPATH=$HOME/go
+
+      # java config
+      export JAVA_HOME="$(/usr/libexec/java_home -v 21)"
+      export GRADLE_USER_HOME="$HOME/.gradle"
+
+      # unixy config
+      export LS_COLORS=$(gdircolors)
+      export VISUAL=nvim
+      export EDITOR=nvim
+
+      # brew config
+      export HOMEBREW_NO_ENV_HINTS=1
+
+      # helpful aliases
+      alias glog='git log --oneline --graph'
+
+      # general completion
+      autoload -U compinit; compinit
+
+      # conditional lazy loaded uv & uvx completion
+      uv() {
+              # ... but lazy load uvx (it's a bit slow)
+              unfunction uv
+              which uv &> /dev/null && eval "$(uv generate-shell-completion zsh)"
+              command uv "$@"
+      }
+      uvx() {
+              # ... but lazy load uvx (it's a bit slow)
+              unfunction uvx
+              which uvx &> /dev/null && eval "$(uvx --generate-shell-completion zsh)"
+              command uvx "$@"
+      }
+- name: Register lucybook setting variables
+  import_tasks: lucybook.yml
+  when: ansible_distribution == "MacOSX" and ansible_hostname == "lucybook"
+- name: Create templated script file
+  ansible.builtin.template:
+    dest: "{{ ansible_env.HOME }}/.init.sh"
+    src: templates/init.sh.j2
+    mode: u=rwx,g=rwx,o=rwx
+  
