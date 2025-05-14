@@ -1,7 +1,7 @@
 argument_specs:
   main:
     options:
-      packages:
+      stow_packages:
         type: list
         elements: str
         required: true

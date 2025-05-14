@@ -13,6 +13,8 @@ or, use stow directly: the following commands assume you've put this repository
 in your home directory, `~/dotfiles`. if that's not the case, specify home as
 the target with `-t ~`, for example, `stow -t ~ nvim`.
 
+Thanks to [frdmn](https://github.com/frdmn/dotfiles) for inspiration.
+
 ### neovim
 
 ```shell

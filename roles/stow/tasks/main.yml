@@ -1,5 +1,5 @@
 - name: Stow configurations
-  loop: "{{ packages }}"
+  loop: "{{ stow_packages }}"
   ansible.builtin.command:
     cmd: "stow -t {{ ansible_env.HOME }} --verbose=2 {{ item }}"
   register: result
