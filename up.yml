@@ -1,0 +1,17 @@
+- name: bootstrap lucy's devenv
+  hosts: local
+
+  vars_files: 
+    - config.common.yml
+
+  roles:
+    - role: brew
+      tags: [ "brew" ]
+      when: ansible_distribution == "MacOSX"
+
+    - role: stow
+      tags: [ "stow" ]
+
+    - role: zsh
+      tags: [ "zsh" ]
+      when: ansible_distribution == "MacOSX"

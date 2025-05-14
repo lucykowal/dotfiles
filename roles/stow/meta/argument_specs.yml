@@ -5,6 +5,6 @@ argument_specs:
         type: list
         elements: str
         required: true
-        description: Packages to stow
+        description: packages to stow
 
 

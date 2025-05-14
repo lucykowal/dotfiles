@@ -1,0 +1,46 @@
+brew_packages:
+  - bat
+  - bear
+  - bitwarden-cli
+  - btop
+  - composer
+  - coreutils
+  - deno
+  - direnv
+  - fd
+  - ffmpeg
+  - fzf
+  - gh
+  - git
+  - gradle
+  - htop
+  - jdtls
+  - julia
+  - lua
+  - luajit
+  - luarocks
+  - mas
+  - maven
+  - neovim
+  - node
+  - pandoc
+  - php
+  - python-setuptools
+  - ripgrep
+  - rust
+  - stow
+  - terraform
+  - tmux
+  - tree
+  - uv
+  - viu
+  - wget
+
+brew_casks:
+  - ghostty
+
+stow_packages:
+  - tmux
+  - nvim
+  - ghostty
+  - git # todo: make conditional
