@@ -2,16 +2,29 @@
   hosts: local
 
   vars_files: 
-    - config.common.yml
+    - config.yml
+    - [ "{{ ansible_hostname }}.config.yml", config.yml ]
 
-  roles:
-    - role: brew
-      tags: [ "brew" ]
-      when: ansible_distribution == "MacOSX"
+  tasks:
+  - name: consolidate variables
+    ansible.builtin.set_fact:
+      brew_packages: "{{ brew_packages + host_brew_packages }}"
+      brew_casks: "{{ brew_casks + host_brew_casks }}"
+      stow_packages: "{{ stow_packages + host_stow_packages }}"
 
-    - role: stow
-      tags: [ "stow" ]
+  - name: bootstrap brew packages
+    import_role:
+      name: brew
+    tags: [ "brew" ]
+    when: ansible_distribution == "MacOSX"
 
-    - role: zsh
-      tags: [ "zsh" ]
-      when: ansible_distribution == "MacOSX"
+  - name: stow configurations
+    import_role:
+      name: stow
+    tags: [ "stow" ]
+
+  - name: setup zsh
+    import_role:
+      name: zsh
+    tags: [ "zsh" ]
+    when: ansible_distribution == "MacOSX"

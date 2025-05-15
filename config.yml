@@ -43,4 +43,7 @@ stow_packages:
   - tmux
   - nvim
   - ghostty
-  - git # todo: make conditional
+
+host_brew_packages: []
+host_brew_casks: []
+host_stow_packages: []
