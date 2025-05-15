@@ -77,7 +77,14 @@ return {
         end,
       },
     },
-    opts = {},
+    opts = function()
+      return {
+        ls_path = vim.fn.glob(
+          require("mason.settings").current.install_root_dir
+            .. "/packages/spring-boot-tools/extension/language-server/spring-boot-language-server-*.jar"
+        ),
+      }
+    end,
   },
   {
     -- Main LSP Configuration
@@ -243,7 +250,6 @@ return {
           }
         end,
         -- python
-        pylsp = {},
         basedpyright = {},
         gopls = {},
         yamlls = { -- NOTE: requires `yarn`
