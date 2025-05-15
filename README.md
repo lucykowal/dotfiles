@@ -38,17 +38,6 @@ based on a split-heavy post-IDE workflow. perma-zen mode & fuzzy finders. i'm
 very particular about my tools. i need a level of consistency, so that's what
 i've tried to set up here. expect consistent ui and ux where ever possible.
 
-### zsh
-
-```shell
-stow zsh
-```
-
-i use `zsh` because it is default. so far i've set up a `.zsh_profile` that can
-be sourced from `.zshrc` to get allow for some environment isolation.
-
-i use completions via `compsys`.
-
 ### ghostty
 
 ```shell
@@ -81,3 +70,10 @@ stow git
 ```
 
 sets up some reasonable config defaults.
+
+### zsh
+
+i use `zsh` because it is default. i use completions via `compsys`. it works!
+
+my `.zshrc` is controlled via `ansible` by inserting a managed block. this
+allows for per-workstation additions with minimal headache.
