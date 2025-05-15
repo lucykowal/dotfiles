@@ -4,7 +4,6 @@ host_brew_packages: []
 host_brew_casks: []
 host_npm_packages: []
 host_stow_packages: []
-host_script: ""
 
 brew_packages:
   - autopep8
@@ -68,42 +67,47 @@ npm_packages:
   - vscode-langservers-extracted # html-lsp, css-lsp
   - dot-language-server
 
-script: |
-  eval "$(direnv hook zsh)"
+zshrc:
+  script: |
+    eval "$(direnv hook zsh)"
 
-  setopt PROMPT_SUBST
-  PROMPT="[%B%F{{ '{#ea76cb}' }}%2~%f%b] => "
-  RPROMPT=""
+    setopt PROMPT_SUBST
+    PROMPT="[%B%F{{ '{#ea76cb}' }}%2~%f%b] => "
+    RPROMPT=""
 
-  # go config
-  export GOPATH=$HOME/go
+    # go config
+    export GOPATH=$HOME/go
 
-  # java config
-  export JAVA_HOME="$(/usr/libexec/java_home -v 21)"
-  export GRADLE_USER_HOME="$HOME/.gradle"
+    # java config
+    export JAVA_HOME="$(/usr/libexec/java_home -v 21)"
+    export GRADLE_USER_HOME="$HOME/.gradle"
 
-  # unixy config
-  export LS_COLORS=$(gdircolors)
-  export VISUAL=nvim
-  export EDITOR=nvim
+    # unixy config
+    export LS_COLORS=$(gdircolors)
+    export VISUAL=nvim
+    export EDITOR=nvim
 
-  # brew config
-  export HOMEBREW_NO_ENV_HINTS=1
+    # brew config
+    export HOMEBREW_NO_ENV_HINTS=1
 
-  # helpful aliases
-  alias glog='git log --oneline --graph'
+    # helpful aliases
+    alias glog='git log --oneline --graph'
 
-  # general completion
-  autoload -U compinit; compinit
+    # general completion
+    autoload -U compinit; compinit
 
-  # conditional lazy loaded uv & uvx completion
-  uv() {
-          unfunction uv
-          which uv &> /dev/null && eval "$(uv generate-shell-completion zsh)"
-          command uv "$@"
-  }
-  uvx() {
-          unfunction uvx
-          which uvx &> /dev/null && eval "$(uvx --generate-shell-completion zsh)"
-          command uvx "$@"
-  }
+    # conditional lazy loaded uv & uvx completion
+    uv() {
+            unfunction uv
+            which uv &> /dev/null && eval "$(uv generate-shell-completion zsh)"
+            command uv "$@"
+    }
+    uvx() {
+            unfunction uvx
+            which uvx &> /dev/null && eval "$(uvx --generate-shell-completion zsh)"
+            command uvx "$@"
+    }
+
+zprofile:
+  script: |
+    export PATH="$PATH:$HOME/.local/bin"
