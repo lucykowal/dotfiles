@@ -1,19 +1,26 @@
 # lucy's dotfiles
 
-set up an environment in one go[^1] with:
+bootstrap an environment in one go[^1] with:
 
 [^1]: assuming you are on mac with at least `brew` and optionally `java` and
     `go` installed.
 
 ```shell
-ansible-playbook bootstrap.yml
+ansible-playbook up.yml
 ```
 
-or, use stow directly: the following commands assume you've put this repository
-in your home directory, `~/dotfiles`. if that's not the case, specify home as
-the target with `-t ~`, for example, `stow -t ~ nvim`.
+use `--tags` or `--skip-tags` to only execute a subset of tasks. for example:
 
-Thanks to [frdmn](https://github.com/frdmn/dotfiles) for inspiration.
+```shell
+ansible-playbook --tags stow up.yml
+ansible-playbook --skip-tags brew up.yml
+```
+
+or, use stow directly: `stow <package>`, assuming you've put this repository in
+your home directory, `~/dotfiles`. if that's not the case, specify home as the
+target with `-t ~`, for example, `stow -t ~ nvim`.
+
+thanks to [frdmn](https://github.com/frdmn/dotfiles) for ansible inspiration.
 
 ### neovim
 
@@ -25,17 +32,11 @@ a distant relative of [kickstart](https://github.com/nvim-lua/kickstart.nvim)
 with many mutations.
 
 some external tools needed. in general `:checkhealth` helps identify any missing
-programs.
+programs. most of these can be installed via the brew task in the playbook.
 
 based on a split-heavy post-IDE workflow. perma-zen mode & fuzzy finders. i'm
 very particular about my tools. i need a level of consistency, so that's what
 i've tried to set up here. expect consistent ui and ux where ever possible.
-copilot integration for chat and completions, supercollider support, etc.
-
-**to-do**:
-
-- improve handling of supercollider help buffers
-- fork Copilot Chat to make some UI tweaks
 
 ### zsh
 
