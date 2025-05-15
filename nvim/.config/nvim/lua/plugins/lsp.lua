@@ -67,17 +67,24 @@ end
 return {
   { -- java support
     "JavaHello/spring-boot.nvim",
-    ft = { "java", "yaml", "jproperties" },
+    ft = { "java", "jproperties" },
     dependencies = {
       {
         "mfussenegger/nvim-jdtls",
-        ft = { "java", "yaml", "jproperties" },
+        ft = { "java", "jproperties" },
         config = function()
           require("jdtls")
         end,
       },
     },
-    opts = {},
+    opts = function()
+      return {
+        ls_path = vim.fn.glob(
+          require("mason.settings").current.install_root_dir
+            .. "/packages/spring-boot-tools/extension/language-server/spring-boot-language-server-*.jar"
+        ),
+      }
+    end,
   },
   {
     -- Main LSP Configuration
@@ -198,7 +205,7 @@ return {
           return {
             cmd = get_jdtls_cmd(),
             root_dir = get_jdtls_root(),
-            filetypes = { "java", "jproperties", "yaml" },
+            filetypes = { "java", "jproperties" },
             handlers = require("lspconfig.configs.jdtls").default_config.handlers,
             init_options = {
               bundles = get_jdtls_bundles(),
@@ -243,7 +250,6 @@ return {
           }
         end,
         -- python
-        pylsp = {},
         basedpyright = {},
         gopls = {},
         yamlls = { -- NOTE: requires `yarn`
@@ -313,7 +319,7 @@ return {
       })
 
       vim.api.nvim_create_autocmd("FileType", {
-        pattern = { "java", "jproperties", "yaml" },
+        pattern = { "java", "jproperties" },
         callback = function()
           require("spring_boot").init_lsp_commands()
           require("jdtls").start_or_attach(servers.jdtls(), {})
