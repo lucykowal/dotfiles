@@ -1,4 +1,5 @@
 - name: install npm packages
+  become: true
   community.general.npm:
     name: "{{ item }}"
     global: true
