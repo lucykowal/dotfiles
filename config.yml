@@ -2,6 +2,7 @@
 # or default.config.yml to extend lists/script
 host_brew_packages: []
 host_brew_casks: []
+host_npm_packages: []
 host_stow_packages: []
 host_script: ""
 
@@ -38,10 +39,12 @@ brew_packages:
   - node
   - pandoc
   - php
+  - pipx
   - prettier
   - python-setuptools
   - qutebrowser
   - ripgrep
+  - ruby-install
   - rust
   - stow
   - stylua

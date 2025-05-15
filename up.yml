@@ -11,6 +11,8 @@
       brew_packages: "{{ brew_packages + host_brew_packages }}"
       brew_casks: "{{ brew_casks + host_brew_casks }}"
       stow_packages: "{{ stow_packages + host_stow_packages }}"
+      host_npm_packages: "{{ npm_packages + host_npm_packages }}"
+      script: "{{ script ~ host_script }}"
     tags: [ "always" ]
 
   - name: bootstrap brew packages
