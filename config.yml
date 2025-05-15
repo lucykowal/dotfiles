@@ -26,6 +26,7 @@ brew_packages:
   - pandoc
   - php
   - python-setuptools
+  - qutebrowser
   - ripgrep
   - rust
   - stow
