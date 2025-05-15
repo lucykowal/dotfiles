@@ -19,6 +19,11 @@
     tags: [ "brew" ]
     when: ansible_distribution == "MacOSX"
 
+  - name: install npm packages
+    import_role:
+      name: npm
+    tags: [ " npm" ]
+
   - name: stow configurations
     import_role:
       name: stow

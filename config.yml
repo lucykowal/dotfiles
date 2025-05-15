@@ -6,6 +6,8 @@ host_stow_packages: []
 host_script: ""
 
 brew_packages:
+  - autopep8
+  - basedpyright
   - bat
   - bear
   - bitwarden-cli
@@ -19,11 +21,15 @@ brew_packages:
   - fzf
   - gh
   - git
+  - google-java-format
+  - gopls
   - gradle
+  - harper
   - htop
   - jdtls
   - julia
   - lua
+  - lua-language-server
   - luajit
   - luarocks
   - mas
@@ -32,17 +38,20 @@ brew_packages:
   - node
   - pandoc
   - php
+  - prettier
   - python-setuptools
   - qutebrowser
   - ripgrep
   - rust
   - stow
+  - stylua
   - terraform
   - tmux
   - tree
   - uv
   - viu
   - wget
+  - yaml-language-server
 
 brew_casks:
   - ghostty
@@ -52,6 +61,9 @@ stow_packages:
   - nvim
   - ghostty
 
+npm_packages:
+  - vscode-langservers-extracted # html-lsp, css-lsp
+  - dot-language-server
 
 script: |
   eval "$(direnv hook zsh)"
