@@ -23,7 +23,7 @@
   - name: install npm packages
     import_role:
       name: npm
-    tags: [ " npm" ]
+    tags: [ "npm" ]
 
   - name: stow configurations
     import_role:

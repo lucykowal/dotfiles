@@ -58,14 +58,15 @@ brew_packages:
 brew_casks:
   - ghostty
 
+npm_packages:
+  - vscode-langservers-extracted # html-lsp, css-lsp
+  - dot-language-server
+
 stow_packages:
   - tmux
   - nvim
   - ghostty
-
-npm_packages:
-  - vscode-langservers-extracted # html-lsp, css-lsp
-  - dot-language-server
+  - direnv
 
 zshrc:
   script: |
