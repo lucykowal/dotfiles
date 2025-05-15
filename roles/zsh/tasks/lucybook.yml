@@ -1,6 +1,0 @@
-- name: Template script file
-  vars:
-    more_script: |
-      # this only shows up on local!
-  ansible.builtin.set_fact:
-    script: "{{ script ~ more_script }}"
