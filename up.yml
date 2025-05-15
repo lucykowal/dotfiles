@@ -10,8 +10,9 @@
     ansible.builtin.set_fact:
       brew_packages: "{{ brew_packages + host_brew_packages }}"
       brew_casks: "{{ brew_casks + host_brew_casks }}"
-      stow_packages: "{{ stow_packages + host_stow_packages }}"
       npm_packages: "{{ npm_packages + host_npm_packages }}"
+      gems: "{{ gems + host_gems }}"
+      stow_packages: "{{ stow_packages + host_stow_packages }}"
     tags: [ "always" ]
 
   - name: bootstrap brew packages
@@ -24,6 +25,11 @@
     import_role:
       name: npm
     tags: [ "npm" ]
+
+  - name: install ruby gems
+    import_role:
+      name: gem
+    tags: [ "gem" ]
 
   - name: stow configurations
     import_role:

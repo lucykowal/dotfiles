@@ -3,6 +3,7 @@
 host_brew_packages: []
 host_brew_casks: []
 host_npm_packages: []
+host_gems: []
 host_stow_packages: []
 
 brew_packages:
@@ -61,6 +62,9 @@ brew_casks:
 npm_packages:
   - vscode-langservers-extracted # html-lsp, css-lsp
   - dot-language-server
+
+gems:
+  - bundler
 
 stow_packages:
   - tmux
