@@ -1,65 +1,57 @@
 # lucy's dotfiles
 
-everything is catppuccin latte. i'd explore other themes but i like how
-catppuccin has pretty reliable ready-to-go configs for almost everything. i have
-made some changes, though. the background is dimmed slightly, using the `colors`
-module from the `catppuccin` neovim plugin. overriding in neovim and tmux
-doesn't require changing the plugins, but i did have to modify the alacritty
-theme.
+bootstrap an environment in one go[^1] with:
 
-the following commands assume you've put this repository in your home directory,
-`~/dotfiles`. if that's not the case, specify home as the target with `-t ~`,
-for example, `stow -t ~ nvim`.
+[^1]: assuming you are on mac with at least `brew` and optionally `java` and
+    `go` installed.
+
+```shell
+ansible-playbook up.yml
+```
+
+use `--tags` or `--skip-tags` to only execute a subset of tasks. for example:
+
+```shell
+ansible-playbook --tags stow up.yml
+ansible-playbook --skip-tags brew up.yml
+```
+
+or, use stow directly: `stow <package>`, assuming you've put this repository in
+your home directory, `~/dotfiles`. if that's not the case, specify home as the
+target with `-t ~`, for example, `stow -t ~ nvim`.
+
+thanks to [frdmn](https://github.com/frdmn/dotfiles) for ansible inspiration.
 
 ### neovim
 
 ```shell
-stow -t ~/.config/nvim -S nvim
+stow nvim
 ```
 
 a distant relative of [kickstart](https://github.com/nvim-lua/kickstart.nvim)
 with many mutations.
 
 some external tools needed. in general `:checkhealth` helps identify any missing
-programs.
+programs. most of these can be installed via the brew task in the playbook.
 
 based on a split-heavy post-IDE workflow. perma-zen mode & fuzzy finders. i'm
 very particular about my tools. i need a level of consistency, so that's what
 i've tried to set up here. expect consistent ui and ux where ever possible.
-copilot integration for chat and completions, supercollider support,
 
-**to-do**:
-
-- improve handling of supercollider help buffers
-- fork Copilot Chat to make some UI tweaks
-
-### zsh
+### ghostty
 
 ```shell
-stow -t ~ -S zsh
+stow ghostty
 ```
 
-i use zsh because it is default.
-
-i use completions via `compsys`.
-
-### alacritty
-
-```shell
-stow -t ~/.config/alacritty -S alacritty
-```
-
-current terminal emulator. kiss.
+trying this over alacritty now, mostly for the quick terminal. still tmux-bound,
+though.
 
 ### tmux
 
 ```shell
-stow -t ~ tmux
+stow tmux
 ```
-
-i'm using the [catppuccin theme](https://github.com/catppuccin/tmux). normally
-you'd keep this as a git repository, but i'm tracking it locally so that it
-plays nice with `stow`.
 
 i have a slightly modified key mapping set up to emulate something between
 `zellij` and `vim`:
@@ -69,5 +61,19 @@ C-g           - leader
 C-g [h|j|k|l] - to left/below/above/right pane
 C-g s         - split pane
 C-g v         - vsplit pane
-M-\           - open floating terminal
 ```
+
+### git
+
+```shell
+stow git
+```
+
+sets up some reasonable config defaults.
+
+### zsh
+
+i use `zsh` because it is default. i use completions via `compsys`. it works!
+
+my `.zshrc` is controlled via `ansible` by inserting a managed block. this
+allows for per-workstation additions with minimal headache.

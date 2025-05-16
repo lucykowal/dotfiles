@@ -1,0 +1,13 @@
+- name: Insert/update script hook in .zshrc
+  ansible.builtin.blockinfile:
+    path: "{{ ansible_env.HOME }}/.zshrc"
+    insertbefore: BOF
+    block: |
+      {{ zshrc.script }}
+
+- name: Insert/update script hook in .zprofile
+  ansible.builtin.blockinfile:
+    path: "{{ ansible_env.HOME }}/.zprofile"
+    insertbefore: EOF
+    block: |
+      {{ zprofile.script }}

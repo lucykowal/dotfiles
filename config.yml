@@ -1,0 +1,125 @@
+# override the host_* keys in {{ ansible_hostname }}.config.yml
+# or default.config.yml to extend lists/script
+host_brew_packages: []
+host_brew_casks: []
+host_npm_packages: []
+host_gems: []
+host_mvn_artifacts: []
+host_stow_packages: []
+
+brew_packages:
+  - autopep8
+  - basedpyright
+  - bat
+  - bear
+  - bitwarden-cli
+  - btop
+  - composer
+  - coreutils
+  - deno
+  - direnv
+  - fd
+  - ffmpeg
+  - fzf
+  - gh
+  - git
+  - go
+  - google-java-format
+  - gopls
+  - gpatch
+  - gradle
+  - harper
+  - htop
+  - jdtls
+  - julia
+  - lua
+  - lua-language-server
+  - luajit
+  - luarocks
+  - mas
+  - maven
+  - neovim
+  - node
+  - pandoc
+  - php
+  - pipx
+  - prettier
+  - python-setuptools
+  - qutebrowser
+  - ripgrep
+  - ruby-install
+  - rust
+  - stow
+  - stylua
+  - terraform
+  - tmux
+  - tree
+  - uv
+  - viu
+  - wget
+  - yaml-language-server
+
+brew_casks:
+  - ghostty
+
+npm_packages:
+  - vscode-langservers-extracted # html-lsp, css-lsp
+  - dot-language-server
+
+gems:
+  - bundler
+
+mvn_artifacts:
+  - group_id: org.projectlombok
+    artifact_id: lombok
+
+stow_packages:
+  - tmux
+  - nvim
+  - ghostty
+  - direnv
+
+zshrc:
+  script: |
+    eval "$(direnv hook zsh)"
+
+    setopt PROMPT_SUBST
+    PROMPT="[%B%F{{ '{#ea76cb}' }}%2~%f%b] => "
+    RPROMPT=""
+
+    # go config
+    export GOPATH=$HOME/go
+
+    # java config
+    export JAVA_HOME="$(/usr/libexec/java_home -v 21)"
+    export GRADLE_USER_HOME="$HOME/.gradle"
+
+    # unixy config
+    export LS_COLORS=$(gdircolors)
+    export VISUAL=nvim
+    export EDITOR=nvim
+
+    # brew config
+    export HOMEBREW_NO_ENV_HINTS=1
+
+    # helpful aliases
+    alias glog='git log --oneline --graph'
+
+    # general completion
+    autoload -U compinit; compinit
+
+    # conditional lazy loaded uv & uvx completion
+    uv() {
+            unfunction uv
+            which uv &> /dev/null && eval "$(uv generate-shell-completion zsh)"
+            command uv "$@"
+    }
+    uvx() {
+            unfunction uvx
+            which uvx &> /dev/null && eval "$(uvx --generate-shell-completion zsh)"
+            command uvx "$@"
+    }
+
+zprofile:
+  script: |
+    export PATH="$PATH:$HOME/.local/bin"

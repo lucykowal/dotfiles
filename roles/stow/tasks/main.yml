@@ -1,0 +1,6 @@
+- name: Stow configurations
+  loop: "{{ stow_packages }}"
+  ansible.builtin.command:
+    cmd: "stow -t {{ ansible_env.HOME }} --verbose=2 {{ item }}"
+  register: result
+  changed_when: 'result.stderr is search("LINK: ")'

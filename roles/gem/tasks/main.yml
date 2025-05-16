@@ -1,0 +1,4 @@
+- name: install ruby gems
+  community.general.gem:
+    name: "{{ item }}"
+  loop: "{{ gems }}"

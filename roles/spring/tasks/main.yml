@@ -1,0 +1,11 @@
+- name: clone spring tools repository
+  ansible.builtin.git:
+    repo: https://github.com/spring-projects/spring-tools.git
+    dest: "{{ ansible_env.HOME }}/.local/share/spring-tools"
+    update: no
+
+- name: build spring tools
+  ansible.builtin.command:
+    chdir: "{{ ansible_env.HOME }}/.local/share/spring-tools/headless-services/spring-boot-language-server"
+    cmd: sh build.sh
+    creates: "{{ ansible_env.HOME }}/.local/share/spring-tools/headless-services/spring-boot-language-server/target/spring-boot-language-server*.jar"
