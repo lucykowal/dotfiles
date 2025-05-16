@@ -37,6 +37,11 @@
       name: mvn
     tags: [ "mvn" ]
 
+  - name: download and build spring tools
+    import_role:
+      name: spring
+    tags: [ "spring" ]
+
   - name: stow configurations
     import_role:
       name: stow
