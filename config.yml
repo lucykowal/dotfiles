@@ -23,6 +23,7 @@ brew_packages:
   - fzf
   - gh
   - git
+  - go
   - google-java-format
   - gopls
   - gpatch
