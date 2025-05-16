@@ -25,6 +25,7 @@ brew_packages:
   - git
   - google-java-format
   - gopls
+  - gpatch
   - gradle
   - harper
   - htop
