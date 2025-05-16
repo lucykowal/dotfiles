@@ -12,6 +12,7 @@
       brew_casks: "{{ brew_casks + host_brew_casks }}"
       npm_packages: "{{ npm_packages + host_npm_packages }}"
       gems: "{{ gems + host_gems }}"
+      mvn_artifacts: "{{ mvn_artifacts + host_mvn_artifacts }}"
       stow_packages: "{{ stow_packages + host_stow_packages }}"
     tags: [ "always" ]
 
@@ -30,6 +31,11 @@
     import_role:
       name: gem
     tags: [ "gem" ]
+
+  - name: install maven artifacts
+    import_role:
+      name: mvn
+    tags: [ "mvn" ]
 
   - name: stow configurations
     import_role:

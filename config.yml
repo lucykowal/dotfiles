@@ -4,6 +4,7 @@ host_brew_packages: []
 host_brew_casks: []
 host_npm_packages: []
 host_gems: []
+host_mvn_artifacts: []
 host_stow_packages: []
 
 brew_packages:
@@ -65,6 +66,10 @@ npm_packages:
 
 gems:
   - bundler
+
+mvn_artifacts:
+  - group_id: org.projectlombok
+    artifact_id: lombok
 
 stow_packages:
   - tmux

@@ -1,0 +1,13 @@
+- name: install lxml prerequisite
+  ansible.builtin.pip:
+    name: lxml
+    state: present 
+
+- name: download maven artifact to ~/.local/share/maven
+  community.general.maven_artifact:
+    group_id: "{{ item.group_id }}"
+    artifact_id: "{{ item.artifact_id }}"
+    dest: "{{ ansible_env.HOME }}/.local/share/maven/"
+    version: latest
+    keep_name: true
+  loop: "{{ mvn_artifacts }}"
