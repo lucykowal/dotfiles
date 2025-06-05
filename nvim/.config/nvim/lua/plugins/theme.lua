@@ -15,6 +15,7 @@ return {
     -- fix LSP diagnostics
     local mapping = {
       -- let g:terminal_color_0 = s:black.gui
+      --
       -- let g:terminal_color_1 = s:red.gui
       -- let g:terminal_color_2 = s:green.gui
       -- let g:terminal_color_3 = s:yellow.gui
@@ -42,8 +43,31 @@ return {
       vim.cmd.highlight("Diagnostic" .. k, "guifg=" .. v)
       vim.cmd.highlight("DiagnosticUnderline" .. k, "guifg=" .. v)
     end
+
+    -- italic comments
     vim.cmd.highlight("Comment", "gui=italic")
-    vim.cmd.highlight("Normal", "guibg=NONE ctermbg=NONE")
-    vim.cmd.highlight("LineNr", "guibg=NONE")
+
+    -- transparent background
+    local no_guibg = {
+      "Normal",
+      "LineNr",
+      "GitGutterAdd",
+      "GitGutterAdd",
+      "GitGutterChange",
+      "GitGutterDelete",
+      "GitGutterChangeDelete",
+      "GitSignsUntracked",
+      "GitSignsUntrackedLn",
+      "GitSignsUntrackedNr",
+      "GitSignsUntrackedCul",
+      "GitSignsStagedUntracked",
+      "GitSignsStagedUntrackedLn",
+      "GitSignsStagedUntrackedNr",
+      "GitSignsStagedUntrackedCul",
+      "GitSignsCurrentLineBlame",
+    }
+    for _, group in ipairs(no_guibg) do
+      vim.cmd.highlight(group, "guibg=NONE ctermbg=NONE")
+    end
   end,
 }
