@@ -43,5 +43,7 @@ return {
       vim.cmd.highlight("DiagnosticUnderline" .. k, "guifg=" .. v)
     end
     vim.cmd.highlight("Comment", "gui=italic")
+    vim.cmd.highlight("Normal", "guibg=NONE ctermbg=NONE")
+    vim.cmd.highlight("LineNr", "guibg=NONE")
   end,
 }

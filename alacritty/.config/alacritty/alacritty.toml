@@ -1,0 +1,57 @@
+[font]
+normal = { family = "CommitMono Nerd Font Mono", style = "Regular" }
+size = 14.0
+
+[window]
+option_as_alt = "Both"
+dynamic_padding = true
+title = ""
+opacity = 0.92
+blur = true
+resize_increments = true
+
+[bell]
+animation = "EaseOutCubic"
+duration = 10
+color = "0xfafafa"
+
+[colors]
+primary.background = "0xfafafa"
+primary.foreground = "0x383a42"
+
+normal.black = "0x383a42"
+normal.red = "0xe45649"
+normal.green = "0x50a14f"
+normal.yellow = "0xc18401"
+normal.blue = "0x0184bc"
+normal.magenta = "0xa626a4"
+normal.cyan = "0x0997b3"
+normal.white = "0xfafafa"
+
+bright.black = "0x383a42"
+bright.red = "0xe45649"
+bright.green = "0x50a14f"
+bright.yellow = "0xc18401"
+bright.blue = "0x0184bc"
+bright.magenta = "0xa626a4"
+bright.cyan = "0x0997b3"
+bright.white = "0xfafafa"
+
+[cursor]
+style.blinking = "On"
+blink_timeout = 0
+
+[mouse]
+hide_when_typing = true
+
+[hints]
+enabled = []
+
+[keyboard]
+bindings = [
+{ key = "Space", mods = "Shift|Control", action = "ReceiveChar"},
+{ key = "F", mods = "Command", action = "ReceiveChar"},
+{ key = "B", mods = "Command", action = "ReceiveChar"},
+{ key = "T", mods = "Command", action = "ReceiveChar"},
+]
+

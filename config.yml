@@ -45,7 +45,6 @@ brew_packages:
   - pipx
   - prettier
   - python-setuptools
-  - qutebrowser
   - ripgrep
   - ruby-install
   - rust
@@ -60,7 +59,7 @@ brew_packages:
   - yaml-language-server
 
 brew_casks:
-  - ghostty
+  - alacritty
 
 npm_packages:
   - vscode-langservers-extracted # html-lsp, css-lsp
@@ -74,6 +73,7 @@ mvn_artifacts:
     artifact_id: lombok
 
 stow_packages:
+  - alacritty
   - tmux
   - nvim
   - ghostty
