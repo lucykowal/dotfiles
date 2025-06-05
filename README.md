@@ -38,14 +38,14 @@ based on a split-heavy post-IDE workflow. perma-zen mode & fuzzy finders. i'm
 very particular about my tools. i need a level of consistency, so that's what
 i've tried to set up here. expect consistent ui and ux where ever possible.
 
-### ghostty
+### alacritty
 
 ```shell
-stow ghostty
+stow alacritty
 ```
 
-trying this over alacritty now, mostly for the quick terminal. still tmux-bound,
-though.
+back to alacritty! it's a smaller binary and i don't use the fancy features of
+ghostty or kitty.
 
 ### tmux
 
