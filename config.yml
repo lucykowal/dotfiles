@@ -45,10 +45,10 @@ brew_packages:
   - pipx
   - prettier
   - python-setuptools
-  - qutebrowser
   - ripgrep
   - ruby-install
   - rust
+  - sox
   - stow
   - stylua
   - terraform
