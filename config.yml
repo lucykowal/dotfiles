@@ -76,7 +76,6 @@ stow_packages:
   - alacritty
   - tmux
   - nvim
-  - ghostty
   - direnv
 
 zshrc:
