@@ -94,9 +94,18 @@ zshrc:
     # fzf hook
     zvm_after_init_commands+=('source <(fzf --zsh)')
 
+    # git status
+    chmod +x $(brew --prefix)/etc/bash_completion.d/git-prompt.sh
+    . $(brew --prefix)/etc/bash_completion.d/git-prompt.sh
+    export GIT_PS1_SHOWDIRTYSTATE=true
+    export GIT_PS1_SHOWUPSTREAM="auto"
+
     setopt PROMPT_SUBST
-    PROMPT="[%B%F{{ '{cyan}' }}%2~%f%b] ➜ "
-    RPROMPT=""
+    PROMPT="[%B%F{cyan}%2~%f%b] ➜ "
+    RPROMPT="$(__git_ps1 '%s' | awk '{ printf "%s[%%F{{ '\{cyan\}' }}%s%%f]", $2, $1 }')"
+    precmd() {
+      RPROMPT="$(__git_ps1 '%s' | awk '{ printf "%s[%%F{{ '\{cyan\}' }}%s%%f]", $2, $1 }')"
+    }
 
     # go config
     export GOPATH=$HOME/go
