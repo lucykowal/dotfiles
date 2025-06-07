@@ -92,7 +92,7 @@ zshrc:
     export ZVM_VI_HIGHLIGHT_FOREGROUND=white
 
     # fzf hook
-    source <(fzf --zsh)
+    zvm_after_init_commands+=('source <(fzf --zsh)')
 
     setopt PROMPT_SUBST
     PROMPT="[%B%F{{ '{cyan}' }}%2~%f%b] ➜ "
