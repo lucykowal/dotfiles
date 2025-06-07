@@ -40,6 +40,7 @@ bright.white = "0xfafafa"
 [cursor]
 style.blinking = "On"
 blink_timeout = 0
+thickness = 0.3
 
 [mouse]
 hide_when_typing = true
