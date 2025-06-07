@@ -84,7 +84,7 @@ zshrc:
     eval "$(direnv hook zsh)"
 
     setopt PROMPT_SUBST
-    PROMPT="[%B%F{{ '{#ea76cb}' }}%2~%f%b] => "
+    PROMPT="[%B%F{{ '{cyan}' }}%2~%f%b] => "
     RPROMPT=""
 
     # go config
