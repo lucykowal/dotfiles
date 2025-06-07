@@ -58,6 +58,7 @@ brew_packages:
   - viu
   - wget
   - yaml-language-server
+  - zsh-vi-mode
 
 brew_casks:
   - alacritty
@@ -81,7 +82,14 @@ stow_packages:
 
 zshrc:
   script: |
+    # hook in direnv
     eval "$(direnv hook zsh)"
+
+    # set up vi mode plugin
+    source $(brew --prefix)/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
+    export ZVM_INSERT_MODE_CURSOR=$ZVM_CURSOR_BLINKING_BEAM
+    export ZVM_VI_HIGHLIGHT_BACKGROUND=cyan
+    export ZVM_VI_HIGHLIGHT_FOREGROUND=white
 
     setopt PROMPT_SUBST
     PROMPT="[%B%F{{ '{cyan}' }}%2~%f%b] => "
