@@ -22,6 +22,22 @@ target with `-t ~`, for example, `stow -t ~ nvim`.
 
 thanks to [frdmn](https://github.com/frdmn/dotfiles) for ansible inspiration.
 
+### fzf integrations
+
+tmux-only binds are prefixed with my leader key, `C-g`. note that the others
+won't work outside of the shell - they're only valid in `vicmd` or `viins` mode.
+i've made some custom binds:
+
+- `C-g C-w`: select a pane from the text contents
+- `C-g C-u`: select and open a URL from the current pane
+- `C-u`: select and open a URL from safari history
+
+default zsh integrations are set up too:
+
+- `C-r`: pick from command history and put at cursor
+- `C-t`: pick file and put at cursor
+- `M-c`: cd to a folder
+
 ### neovim
 
 ```shell
