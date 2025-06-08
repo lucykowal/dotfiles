@@ -95,6 +95,8 @@ zshrc:
     # fzf hook
     zvm_after_init_commands+=('source <(fzf --zsh)')
 
+    export PATH="$HOME/.local/share/scripts:$PATH"
+
     setopt PROMPT_SUBST
     PROMPT="[%B%F{cyan}%2~%f%b] ➜ "
     RPROMPT=
