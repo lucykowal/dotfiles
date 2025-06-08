@@ -93,10 +93,26 @@ zshrc:
     export ZVM_VI_HIGHLIGHT_FOREGROUND=white
 
     # fzf hook
-    zvm_after_init_commands+=('source <(fzf --zsh)')
+    init_fzf() {
+      FZF_ALT_C_COMMAND="--reverse --walker=dir,follow --scheme=path"
+      FZF_CTRL_T_OPTS="--preview='bat -n --color=always {}' --preview-window='right:60%:right' --walker-skip='.git'"
+      source <(fzf --zsh)
+    }
+    zvm_after_init_commands+=(init_fzf)
 
+    # bat config
+    export BAT_THEME="OneHalfLight"
+
+    # scripts setup
     export PATH="$HOME/.local/share/scripts:$PATH"
+    fzf-safari-history() {
+      . fzf-safari-history.sh
+    }
+    zle -N fzf-safari-history
+    bindkey -M vicmd '^U' fzf-safari-history
+    bindkey -M viins '^U' fzf-safari-history
 
+    # prompt settings
     setopt PROMPT_SUBST
     PROMPT="[%B%F{cyan}%2~%f%b] ➜ "
     RPROMPT=
