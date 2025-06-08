@@ -79,6 +79,7 @@ stow_packages:
   - tmux
   - nvim
   - direnv
+  - scripts
 
 zshrc:
   script: |
