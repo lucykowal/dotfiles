@@ -30,6 +30,7 @@ i've made some custom binds:
 
 - `C-g C-w`: select a pane from the text contents
 - `C-g C-u`: select and open a URL from the current pane
+- `C-g C-v`: select a variable from the current pane and put at cursor
 - `C-u`: select and open a URL from safari history
 
 default zsh integrations are set up too:
