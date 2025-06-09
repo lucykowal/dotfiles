@@ -111,6 +111,7 @@ zshrc:
     zle -N fzf-safari-history
     bindkey -M vicmd '^U' fzf-safari-history
     bindkey -M viins '^U' fzf-safari-history
+    source fzf-git.sh
 
     # prompt settings
     setopt PROMPT_SUBST
