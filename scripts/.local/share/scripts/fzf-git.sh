@@ -162,15 +162,21 @@ if [[ $- =~ i ]] || [[ $1 = --run ]]; then # ----------------------------------
 if [[ $__fzf_git_fzf ]]; then
   eval "$__fzf_git_fzf"
 else
-  # Redefine this function to change the options
   _fzf_git_fzf() {
     fzf --layout=reverse --style=full:sharp \
-      --color=border:black,pointer:blue,info:black,prompt:blue,label:blue \
-      --height 50% --tmux 60%,border-native \
-      --multi --min-height 20+ --border \
-      --no-separator --header-border horizontal \
-      --border-label-pos 2 \
-      --preview-window 'right,50%' --preview-border line \
+      --color=fg:gray:italic,bg:-1,hl+:cyan,input-label:cyan \
+      --color=fg+:green:regular:bold,bg+:-1,gutter:-1 \
+      --color=selected-bg:-1,selected-fg:cyan:regular \
+      --color=header:gray:italic:dim,marker:cyan,pointer:green \
+      --color=prompt:gray,info:gray:italic \
+      --height 50% --tmux center,60%,border-native \
+      --pointer='>' --marker='+' --layout reverse \
+      --multi --min-height 20+ --keep-right \
+      --list-border bold --input-border bold \
+      --margin 0,1 --padding 0 \
+      --preview-border bold --header-border none \
+      --no-separator --no-scrollbar \
+      --preview-window 'right,50%' \
       --bind 'ctrl-/:change-preview-window(down,50%|hidden|)' "$@"
   }
 fi
@@ -194,7 +200,7 @@ _fzf_git_files() {
   (git -c color.status=$(__fzf_git_color) status --short --no-branch
   git ls-files "$root" | grep -vxFf <(git status -s | grep '^[^?]' | cut -c4-; echo :) | sed 's/^/   /') |
   _fzf_git_fzf -m --ansi --nth 2..,.. \
-    --border-label ' Files ' \
+    --input-label ' Files ' \
     --header 'CTRL-O (open in browser) ╱ ALT-E (open in editor)' \
     --bind "ctrl-o:execute-silent:bash \"$__fzf_git\" --list file {-1}" \
     --bind "alt-e:execute:${EDITOR:-vim} {-1} > /dev/tty" \
@@ -214,7 +220,7 @@ _fzf_git_branches() {
     --border-label ' Branches ' \
     --header-lines 2 \
     --tiebreak begin \
-    --preview-window down,border-top,40% \
+    --preview-window down,40% \
     --color hl:underline,hl+:underline \
     --no-hscroll \
     --bind 'ctrl-/:change-preview-window(down,70%|hidden|)' \
@@ -287,7 +293,7 @@ _fzf_git_each_ref() {
     --tiebreak begin \
     --border-label ' Each ref ' \
     --header-lines 1 \
-    --preview-window down,border-top,40% \
+    --preview-window down,40% \
     --color hl:underline,hl+:underline \
     --no-hscroll \
     --bind 'ctrl-/:change-preview-window(down,70%|hidden|)' \
