@@ -100,6 +100,21 @@ zshrc:
     }
     zvm_after_init_commands+=(init_fzf)
 
+    export FZF_DEFAULT_OPTS="--layout=reverse --style=full:sharp \
+      --color=fg:gray:italic,bg:-1,hl+:cyan,input-label:cyan \
+      --color=fg+:green:regular:bold,bg+:-1,gutter:-1 \
+      --color=selected-bg:-1,selected-fg:cyan:regular \
+      --color=header:gray:italic:dim,marker:cyan,pointer:green \
+      --color=prompt:gray,info:gray:italic \
+      --height 50% --tmux center,60%,border-native \
+      --pointer='>' --marker='+' --layout reverse \
+      --multi --min-height 20+ --keep-right \
+      --list-border bold --input-border bold \
+      --margin 0,1 --padding 0 \
+      --preview-border bold --header-border none \
+      --no-separator --no-scrollbar \
+      --preview-window 'right,50%'"
+
     # bat config
     export BAT_THEME="OneHalfLight"
 
