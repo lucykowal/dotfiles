@@ -45,6 +45,7 @@ brew_packages:
   - pipx
   - prettier
   - python-setuptools
+  - rakudo-star
   - ripgrep
   - ruby-install
   - rust
