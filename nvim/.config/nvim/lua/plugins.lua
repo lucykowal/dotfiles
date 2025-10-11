@@ -76,8 +76,6 @@ return {
   },
   { -- Status updates, notifications
     "j-hui/fidget.nvim",
-    -- NOTE: check for updates once this PR is merged:
-    commit = "749744e2434ff60254c90651c18226d95decc796",
     event = "UIEnter",
     opts = {
       progress = {
@@ -125,17 +123,5 @@ return {
       { "<c-l>", "<cmd><C-U>TmuxNavigateRight<cr>" },
       { "<c-\\>", "<cmd><C-U>TmuxNavigatePrevious<cr>" },
     },
-  },
-  { -- personal dev
-    "lucykowal/comfychat.nvim",
-    cond = vim.uv.os_uname().machine ~= "x86_64",
-    opts = {},
-    lazy = false,
-    dev = true,
-    config = function()
-      vim.api.nvim_create_user_command("TestChat", function()
-        require("comfychat").test()
-      end, {})
-    end,
   },
 }
