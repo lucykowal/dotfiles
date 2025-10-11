@@ -69,15 +69,6 @@ return {
       vim.keymap.set("n", "<leader>vs", "<cmd>LoveRun<cr>", { ft = "lua", desc = "Stop LOVE" })
     end,
   },
-  {
-    "OXY2DEV/markview.nvim",
-    lazy = false,
-    version = "^25.5.1",
-    opts = {
-      typyst = { enable = false },
-      yaml = { enable = false },
-    },
-  },
   { -- improved quickfix
     "stevearc/quicker.nvim",
     event = "FileType qf",
