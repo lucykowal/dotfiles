@@ -145,19 +145,6 @@ return { -- telescope, incredibly powerful fuzzy finder
             },
           }),
         },
-        ["fidget"] = require("telescope.themes").get_dropdown({
-          use_previewer = true,
-          wrap_text = true,
-          layout_config = {
-            anchor = "N",
-          },
-          borderchars = {
-            { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
-            prompt = { "─", "│", " ", "│", "┌", "┐", "│", "│" },
-            results = { "─", "│", "─", "│", "├", "┤", "┘", "└" },
-            preview = { "─", "│", "─", "│", "┌", "┐", "┘", "└" },
-          },
-        }),
         ["scdoc"] = {},
       },
     })
@@ -168,7 +155,6 @@ return { -- telescope, incredibly powerful fuzzy finder
     pcall(telescope.load_extension, "file_browser")
     pcall(telescope.load_extension, "frecency")
     pcall(telescope.load_extension, "scdoc")
-    pcall(telescope.load_extension, "fidget")
 
     -- keymaps
     local builtin = require("telescope.builtin")
@@ -193,7 +179,5 @@ return { -- telescope, incredibly powerful fuzzy finder
         prompt_title = "Live Grep in Open Files",
       })
     end, { desc = "[S]earch [/] in Open Files" })
-
-    vim.keymap.set("n", "<leader>sn", telescope.extensions.fidget.fidget, { desc = "[S]earch [N]otifications" })
   end,
 }
