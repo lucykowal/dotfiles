@@ -13,10 +13,6 @@ return { -- collection of various small independent plugins/modules
     -- - sr)'  - [S]urround [R]eplace [)] [']
     require("mini.surround").setup()
 
-    -- move selection or line up/down
-    -- - <M-hjkl> to move, where M is Alt
-    require("mini.move").setup()
-
     -- autopairs
     require("mini.pairs").setup()
 
