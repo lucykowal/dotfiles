@@ -6,7 +6,7 @@ size = 14.0
 option_as_alt = "Both"
 dynamic_padding = true
 title = ""
-opacity = 0.9
+opacity = 1.0
 blur = true
 resize_increments = true
 
