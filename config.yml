@@ -45,6 +45,7 @@ brew_packages:
   - pipx
   - prettier
   - python-setuptools
+  - rakudo-star
   - ripgrep
   - ruby-install
   - rust
@@ -58,6 +59,7 @@ brew_packages:
   - viu
   - wget
   - yaml-language-server
+  - zsh-vi-mode
 
 brew_casks:
   - alacritty
@@ -78,14 +80,59 @@ stow_packages:
   - tmux
   - nvim
   - direnv
+  - scripts
 
 zshrc:
   script: |
+    # hook in direnv
     eval "$(direnv hook zsh)"
 
+    # set up vi mode plugin
+    source $(brew --prefix)/opt/zsh-vi-mode/share/zsh-vi-mode/zsh-vi-mode.plugin.zsh
+    export ZVM_INSERT_MODE_CURSOR=$ZVM_CURSOR_BLINKING_BEAM
+    export ZVM_VI_HIGHLIGHT_BACKGROUND=cyan
+    export ZVM_VI_HIGHLIGHT_FOREGROUND=white
+
+    # fzf hook
+    init_fzf() {
+      FZF_ALT_C_COMMAND="--reverse --walker=dir,follow --scheme=path"
+      FZF_CTRL_T_OPTS="--preview='bat -n --color=always {}' --preview-window='right:60%:right' --walker-skip='.git'"
+      source <(fzf --zsh)
+    }
+    zvm_after_init_commands+=(init_fzf)
+
+    export FZF_DEFAULT_OPTS="--layout=reverse --style=full:sharp \
+      --color=fg:gray:italic,bg:-1,hl+:cyan,input-label:cyan \
+      --color=fg+:green:regular:bold,bg+:-1,gutter:-1 \
+      --color=selected-bg:-1,selected-fg:cyan:regular \
+      --color=header:gray:italic:dim,marker:cyan,pointer:green \
+      --color=prompt:gray,info:gray:italic \
+      --height 50% \
+      --pointer='>' --marker='+' --layout reverse \
+      --multi --min-height 20+ --keep-right \
+      --list-border bold --input-border bold \
+      --margin 0,1 --padding 0 \
+      --preview-border bold --header-border none \
+      --no-separator --no-scrollbar \
+      --preview-window 'right,50%'"
+
+    # bat config
+    export BAT_THEME="OneHalfLight"
+
+    # scripts setup
+    export PATH="$HOME/.local/share/scripts:$PATH"
+    fzf-safari-history() {
+      . fzf-safari-history.sh
+    }
+    zle -N fzf-safari-history
+    bindkey -M vicmd '^U' fzf-safari-history
+    bindkey -M viins '^U' fzf-safari-history
+    source fzf-git.sh
+
+    # prompt settings
     setopt PROMPT_SUBST
-    PROMPT="[%B%F{{ '{#ea76cb}' }}%2~%f%b] => "
-    RPROMPT=""
+    PROMPT="[%B%F{cyan}%2~%f%b] ➜ "
+    RPROMPT=
 
     # go config
     export GOPATH=$HOME/go
