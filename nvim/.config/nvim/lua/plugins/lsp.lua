@@ -110,12 +110,12 @@ return {
             vim.keymap.set(mode, keys, func, { buffer = attach_event.buf, desc = "LSP: " .. desc })
           end
 
-          map("gd", require("telescope.builtin").lsp_definitions, "[G]oto [D]efinition")
-          map("gr", require("telescope.builtin").lsp_references, "[G]oto [R]eferences")
-          map("gI", require("telescope.builtin").lsp_implementations, "[G]oto [I]mplementation")
-          map("<leader>D", require("telescope.builtin").lsp_type_definitions, "Type [D]efinition")
-          map("<leader>cd", require("telescope.builtin").lsp_document_symbols, "[C]ode [D]ocument symbols")
-          map("<leader>cw", require("telescope.builtin").lsp_dynamic_workspace_symbols, "[C]ode [W]orkspace symbols")
+          -- map("gd", require("telescope.builtin").lsp_definitions, "[G]oto [D]efinition")
+          -- map("gr", require("telescope.builtin").lsp_references, "[G]oto [R]eferences")
+          -- map("gI", require("telescope.builtin").lsp_implementations, "[G]oto [I]mplementation")
+          -- map("<leader>D", require("telescope.builtin").lsp_type_definitions, "Type [D]efinition")
+          -- map("<leader>cd", require("telescope.builtin").lsp_document_symbols, "[C]ode [D]ocument symbols")
+          -- map("<leader>cw", require("telescope.builtin").lsp_dynamic_workspace_symbols, "[C]ode [W]orkspace symbols")
           map("<leader>rn", vim.lsp.buf.rename, "[R]e[n]ame")
 
           -- Usually apply to errors
@@ -313,7 +313,7 @@ return {
             local server = servers[server_name] or {}
             -- set capabilities with force to use above `server` configs
             server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
-            require("lspconfig")[server_name].setup(server)
+            require("lspconfig")[server_name].setup(server) -- TODO: fix
           end,
           ["jdtls"] = function(_)
             -- no-op, use autocommand instead for java
