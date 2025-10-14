@@ -1,5 +1,10 @@
 local settings = require("settings")
 
+-- ========================================================
+-- | jdtls helpers                                        |
+-- ========================================================
+
+-- helper to get the jdtls root directory
 local function get_jdtls_root()
   local root_markers = { ".git", "mvnw", "gradlew", "pom.xml", "build.gradle" }
   return vim.fs.root(0, root_markers)
@@ -87,14 +92,15 @@ return {
     end,
   },
   {
-    -- Main LSP Configuration
+    -- ========================================================
+    -- | Main LSP Configuration                               |
+    -- ========================================================
     "neovim/nvim-lspconfig",
     dependencies = {
       { -- NOTE: Must be loaded before dependants
         "williamboman/mason.nvim",
         config = true,
       },
-      "williamboman/mason-lspconfig.nvim",
       "WhoIsSethDaniel/mason-tool-installer.nvim",
 
       "mfussenegger/nvim-dap",
@@ -126,7 +132,7 @@ return {
           -- Setup symbol highlights on cursor hold
           -- See `:help CursorHold`
           local client = vim.lsp.get_client_by_id(attach_event.data.client_id)
-          if client and client.supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
+          if client and client:supports_method(vim.lsp.protocol.Methods.textDocument_documentHighlight) then
             local highlight_augroup = vim.api.nvim_create_augroup("lsp-highlight", { clear = false })
             vim.api.nvim_create_autocmd({ "CursorHold", "CursorHoldI" }, {
               buffer = attach_event.buf,
@@ -188,7 +194,7 @@ return {
       --  - cmd (table): Command to start server
       --  - filetypes (table): filetypes to attach to the server
       --  - capabilities (table): change capabilities
-      --  - settings (table): default settings - i.e. args
+      --  - settings (table): default settings - i.e. lsp args
       local servers = {
         -- See `:help lspconfig-all` for a list of all the pre-configured LSPs
         lua_ls = {
@@ -305,21 +311,28 @@ return {
         -- json, etc.
         "prettier",
       })
+      -- change some names to mason package names
+      local lsp_to_mason = {
+        lua_ls = "lua-language-server",
+        yamlls = "yaml-language-server",
+        cssls = "css-lsp",
+        html = "html-lsp",
+        harper_ls = "harper-ls",
+      }
+      ensure_installed = vim.tbl_map(function(server)
+        return lsp_to_mason[server] or server
+      end, ensure_installed)
       require("mason-tool-installer").setup({ ensure_installed = ensure_installed })
 
-      require("mason-lspconfig").setup({
-        handlers = {
-          function(server_name)
-            local server = servers[server_name] or {}
-            -- set capabilities with force to use above `server` configs
-            server.capabilities = vim.tbl_deep_extend("force", {}, capabilities, server.capabilities or {})
-            require("lspconfig")[server_name].setup(server) -- TODO: fix
-          end,
-          ["jdtls"] = function(_)
-            -- no-op, use autocommand instead for java
-          end,
-        },
-      })
+      for server, config in pairs(servers) do
+        -- set capabilities with force to use above `server` configs
+        if vim.is_callable(config) then
+          config = config()
+        end
+        config.capabilities = vim.tbl_deep_extend("force", {}, capabilities, config.capabilities or {})
+        vim.lsp.config(server, config)
+        vim.lsp.enable(server)
+      end
 
       vim.api.nvim_create_autocmd("FileType", {
         pattern = { "java", "jproperties" },

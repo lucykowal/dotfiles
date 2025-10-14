@@ -47,15 +47,6 @@ return {
       },
     },
   },
-  { -- for love2d
-    "S1M0N38/love2d.nvim",
-    cmd = "LoveRun",
-    opts = {},
-    config = function()
-      vim.keymap.set("n", "<leader>vv", "<cmd>LoveRun<cr>", { ft = "lua", desc = "Run LOVE" })
-      vim.keymap.set("n", "<leader>vs", "<cmd>LoveRun<cr>", { ft = "lua", desc = "Stop LOVE" })
-    end,
-  },
   { -- improved quickfix
     "stevearc/quicker.nvim",
     event = "FileType qf",
