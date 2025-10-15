@@ -204,6 +204,10 @@ return {
                 callSnippet = "Replace",
               },
               diagnostics = { disable = { "missing-fields" } },
+              workspace = {
+                userThirdParty = { os.getenv("HOME") .. ".local/share/LuaAddons" },
+                checkThirdParty = "Apply",
+              },
             },
           },
         },
