@@ -44,7 +44,9 @@ return {
     vim.g.fzf_action = {
       ["ctrl-s"] = "split",
       ["ctrl-v"] = "vsplit",
-      ["esc"] = "bell",
+      ["esc"] = function()
+        vim.notify("Use <ctrl>+c instead of <esc>")
+      end,
     }
   end,
 }

@@ -1,5 +1,4 @@
 --- Snack.nvim configuration
----@return snacks.Config
 local function snack_options()
   return {
     bigfile = { enabled = false },
