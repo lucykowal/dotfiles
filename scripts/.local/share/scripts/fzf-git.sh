@@ -169,7 +169,6 @@ else
       --color=selected-bg:-1,selected-fg:cyan:regular \
       --color=header:gray:italic:dim,marker:cyan,pointer:green \
       --color=prompt:gray,info:gray:italic \
-      --height 50% --tmux center,60%,border-native \
       --pointer='>' --marker='+' --layout reverse \
       --multi --min-height 20+ --keep-right \
       --list-border bold --input-border bold \

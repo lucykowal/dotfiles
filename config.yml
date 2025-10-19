@@ -92,6 +92,7 @@ zshrc:
     export ZVM_INSERT_MODE_CURSOR=$ZVM_CURSOR_BLINKING_BEAM
     export ZVM_VI_HIGHLIGHT_BACKGROUND=cyan
     export ZVM_VI_HIGHLIGHT_FOREGROUND=white
+    export ZVM_SYSTEM_CLIPBOARD_ENABLED=true
 
     # fzf hook
     init_fzf() {
@@ -110,11 +111,12 @@ zshrc:
       --height 50% \
       --pointer='>' --marker='+' --layout reverse \
       --multi --min-height 20+ --keep-right \
-      --list-border bold --input-border bold \
+      --list-border sharp --input-border sharp \
       --margin 0,1 --padding 0 \
-      --preview-border bold --header-border none \
+      --preview-border sharp --header-border none \
       --no-separator --no-scrollbar \
-      --preview-window 'right,50%'"
+      --preview-window 'right,50%' --wrap \
+      --bind 'ctrl-w:toggle-wrap'"
 
     # bat config
     export BAT_THEME="OneHalfLight"

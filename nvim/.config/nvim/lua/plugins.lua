@@ -14,19 +14,6 @@ return {
     "tpope/vim-sleuth",
     event = "VimEnter",
   },
-  { -- adds git related signs to the gutter, as well as utilities for managing changes
-    "lewis6991/gitsigns.nvim",
-    opts = {
-      signs = {
-        add = { text = "+" },
-        change = { text = "~" },
-        delete = { text = "_" },
-        topdelete = { text = "‾" },
-        changedelete = { text = "~" },
-        untracked = { text = "┆" },
-      },
-    },
-  },
   { -- lsp bootstrap
     "folke/lazydev.nvim",
     ft = "lua",
@@ -60,24 +47,6 @@ return {
       },
     },
   },
-  { -- for love2d
-    "S1M0N38/love2d.nvim",
-    cmd = "LoveRun",
-    opts = {},
-    config = function()
-      vim.keymap.set("n", "<leader>vv", "<cmd>LoveRun<cr>", { ft = "lua", desc = "Run LOVE" })
-      vim.keymap.set("n", "<leader>vs", "<cmd>LoveRun<cr>", { ft = "lua", desc = "Stop LOVE" })
-    end,
-  },
-  {
-    "OXY2DEV/markview.nvim",
-    lazy = false,
-    version = "^25.5.1",
-    opts = {
-      typyst = { enable = false },
-      yaml = { enable = false },
-    },
-  },
   { -- improved quickfix
     "stevearc/quicker.nvim",
     event = "FileType qf",
@@ -96,40 +65,6 @@ return {
       end, { desc = "Toggle [Q]uickfix [D]iagnostics" })
     end,
   },
-  { -- Status updates, notifications
-    "j-hui/fidget.nvim",
-    -- NOTE: check for updates once this PR is merged:
-    commit = "749744e2434ff60254c90651c18226d95decc796",
-    event = "UIEnter",
-    opts = {
-      progress = {
-        suppress_on_insert = true,
-        ignore_done_already = true,
-        display = {
-          render_limit = 8,
-          done_ttl = 1,
-        },
-      },
-      notification = {
-        override_vim_notify = true,
-        configs = {
-          default = {
-            icon_on_left = true,
-          },
-        },
-        view = {
-          stack_upwards = false,
-        },
-        window = {
-          winblend = settings.window.winblend,
-          border = settings.window.border,
-          max_width = math.floor(settings.window.width() * 0.5),
-          x_padding = 1,
-          align = "top",
-        },
-      },
-    },
-  },
   { -- smart splits
     "christoomey/vim-tmux-navigator",
     cmd = {
@@ -147,17 +82,5 @@ return {
       { "<c-l>", "<cmd><C-U>TmuxNavigateRight<cr>" },
       { "<c-\\>", "<cmd><C-U>TmuxNavigatePrevious<cr>" },
     },
-  },
-  { -- personal dev
-    "lucykowal/comfychat.nvim",
-    cond = vim.uv.os_uname().machine ~= "x86_64",
-    opts = {},
-    lazy = false,
-    dev = true,
-    config = function()
-      vim.api.nvim_create_user_command("TestChat", function()
-        require("comfychat").test()
-      end, {})
-    end,
   },
 }

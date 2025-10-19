@@ -36,7 +36,6 @@ fi
 selected=$(cat "$temp_file" | fzf \
     --delimiter='|' \
     --with-nth=2,3 \
-    --tmux 60%,border-native \
     --preview='tmux capture-pane -t {1} -p' \
     --preview-window='right:60%:wrap' \
     --ansi \

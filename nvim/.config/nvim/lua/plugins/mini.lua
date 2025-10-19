@@ -13,15 +13,28 @@ return { -- collection of various small independent plugins/modules
     -- - sr)'  - [S]urround [R]eplace [)] [']
     require("mini.surround").setup()
 
-    -- move selection or line up/down
-    -- - <M-hjkl> to move, where M is Alt
-    require("mini.move").setup()
-
     -- autopairs
     require("mini.pairs").setup()
 
-    -- - gcc - comment line
+    -- gcc - comment line
     require("mini.comment").setup()
+
+    -- git (for statusline)
+    require("mini.git").setup()
+
+    -- diff blocks
+    require("mini.diff").setup({
+      view = {
+        style = "sign",
+        signs = { add = "+", change = "~", delete = "-" },
+      },
+      mappings = {
+        apply = "",
+        reset = "",
+        textobject = "",
+        goto_first = "",
+      },
+    })
 
     -- statusline
     local function get_line(accent)
@@ -29,11 +42,15 @@ return { -- collection of various small independent plugins/modules
         local git = MiniStatusline.section_git({ trunc_width = 40 })
         local filename = MiniStatusline.section_filename({ trunc_width = 100 })
         local diagnostics = MiniStatusline.section_diagnostics({ 80 })
-        local location = "%l %c"
+        local search_count = MiniStatusline.section_searchcount({
+          trunc_width = 5,
+          options = { recompute = false },
+        })
+        local location = "%c|%l"
 
         return MiniStatusline.combine_groups({
           { hl = accent, strings = { git, filename } },
-          { hl = "MiniStatuslineFileinfo", strings = { "%<", "%=", diagnostics, location } },
+          { hl = "MiniStatuslineFileinfo", strings = { "%<", "%=", search_count, diagnostics, location } },
         })
       end
     end
