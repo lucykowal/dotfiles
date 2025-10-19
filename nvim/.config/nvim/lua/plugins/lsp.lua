@@ -266,6 +266,7 @@ return {
         -- python
         basedpyright = {},
         gopls = {},
+        jsonls = {},
         yamlls = { -- NOTE: requires `yarn`
           settings = {
             redhat = {
@@ -322,6 +323,7 @@ return {
       -- change some names to mason package names
       local lsp_to_mason = {
         lua_ls = "lua-language-server",
+        jsonls = "json-lsp",
         yamlls = "yaml-language-server",
         cssls = "css-lsp",
         html = "html-lsp",
