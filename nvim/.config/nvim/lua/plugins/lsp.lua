@@ -205,8 +205,12 @@ return {
               },
               diagnostics = { disable = { "missing-fields" } },
               workspace = {
-                userThirdParty = { os.getenv("HOME") .. ".local/share/LuaAddons" },
+                userThirdParty = { os.getenv("HOME") .. "/.local/share/LuaAddons" },
                 checkThirdParty = "Apply",
+                library = {
+                  -- add Love2D support
+                  "${3rd}/love2d/library",
+                },
               },
             },
           },
