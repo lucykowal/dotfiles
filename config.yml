@@ -120,7 +120,7 @@ zshrc:
       --bind 'ctrl-w:toggle-wrap'"
 
     # bat config
-    export BAT_THEME="OneHalfLight"
+    export BAT_THEME="ansi"
 
     # scripts setup
     export PATH="$HOME/.local/share/scripts:$PATH"
