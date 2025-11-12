@@ -54,6 +54,20 @@ return {
     local no_guibg = {
       "Normal",
       "LineNr",
+      "GitGutterAdd",
+      "GitGutterAdd",
+      "GitGutterChange",
+      "GitGutterDelete",
+      "GitGutterChangeDelete",
+      "GitSignsUntracked",
+      "GitSignsUntrackedLn",
+      "GitSignsUntrackedNr",
+      "GitSignsUntrackedCul",
+      "GitSignsStagedUntracked",
+      "GitSignsStagedUntrackedLn",
+      "GitSignsStagedUntrackedNr",
+      "GitSignsStagedUntrackedCul",
+      "GitSignsCurrentLineBlame",
     }
     for _, group in ipairs(no_guibg) do
       vim.cmd.highlight(group, "guibg=NONE ctermbg=NONE")
