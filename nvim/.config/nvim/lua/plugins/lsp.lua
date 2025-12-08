@@ -96,6 +96,7 @@ return {
     -- | Main LSP Configuration                               |
     -- ========================================================
     "neovim/nvim-lspconfig",
+    event = "BufReadPost",
     dependencies = {
       { -- NOTE: Must be loaded before dependants
         "williamboman/mason.nvim",
