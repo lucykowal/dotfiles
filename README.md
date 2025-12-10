@@ -22,6 +22,10 @@ target with `-t ~`, for example, `stow -t ~ nvim`.
 
 thanks to [frdmn](https://github.com/frdmn/dotfiles) for ansible inspiration.
 
+__TODO__
+
+- Replace `fzf` with `fzf-lua`
+
 ### fzf integrations
 
 tmux-only binds are prefixed with my leader key, `C-g`. note that the others
