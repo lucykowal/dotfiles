@@ -79,7 +79,6 @@ stow_packages:
   - alacritty
   - tmux
   - nvim
-  - opencode
   - direnv
   - scripts
 

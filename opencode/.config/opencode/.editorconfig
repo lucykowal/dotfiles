@@ -1,9 +1,0 @@
-root = false
-
-[*]
-end_of_line = lf
-insert_final_newline = true
-
-[*.{json,jsonc}]
-indent_style = space
-indent_size = 2
