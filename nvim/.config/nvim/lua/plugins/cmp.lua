@@ -3,10 +3,12 @@ local settings = require("settings")
 
 return { -- autocomplete
   "hrsh7th/nvim-cmp",
+  branch = "main",
   event = "InsertEnter",
   dependencies = {
     { -- snippets in nvim-cmp
       "L3MON4D3/LuaSnip",
+      version = "^2.4.1",
       build = (function()
         -- build for regex support in snippets
         return "make install_jsregexp"
@@ -68,9 +70,9 @@ return { -- autocomplete
           name = "lazydev",
           group_index = 0, -- skip loading completions
         },
-        { name = "copilot" },
-        { name = "nvim_lsp" },
-        { name = "luasnip" },
+        { name = "copilot", priority = 0.5 },
+        { name = "nvim_lsp", priority = 2 },
+        { name = "luasnip", priority = 1 },
       },
       window = {
         completion = cmp.config.window.bordered({
