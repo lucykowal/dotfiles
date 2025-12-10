@@ -81,7 +81,7 @@ vim.api.nvim_create_autocmd("TextYankPost", { -- yank highlight
   desc = "Highlight when yanking (copying) text",
   group = vim.api.nvim_create_augroup("highlight-yank", { clear = true }),
   callback = function()
-    vim.highlight.on_yank()
+    vim.hl.on_yank()
   end,
 })
 
@@ -116,5 +116,8 @@ require("lazy").setup("plugins", {
   },
   change_detection = {
     enabled = false,
+  },
+  defaults = {
+    version = "*",
   },
 })

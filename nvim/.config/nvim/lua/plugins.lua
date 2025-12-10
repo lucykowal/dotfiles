@@ -9,13 +9,9 @@ end, { desc = "[Q]uickfix [D]iagnostics" })
 
 -- all plugins/*.lua get merged with this return spec
 return {
-  { -- detect tabstop and shiftwidth automatically
-    -- *very* nice with https://editorconfig.org/
-    "tpope/vim-sleuth",
-    event = "VimEnter",
-  },
   { -- lsp bootstrap
     "folke/lazydev.nvim",
+    version = "^1.10.0",
     ft = "lua",
     opts = {
       library = {
@@ -27,9 +23,9 @@ return {
       end,
     },
   },
-  { "Bilal2453/luvit-meta", lazy = true },
   { -- autoformat
     "stevearc/conform.nvim",
+    version = "^9.1.0",
     event = { "BufWritePre" },
     cmd = { "ConformInfo" },
     opts = {
@@ -49,6 +45,7 @@ return {
   },
   { -- improved quickfix
     "stevearc/quicker.nvim",
+    version = "^1.4.0",
     event = "FileType qf",
     config = function()
       require("quicker").setup({
@@ -67,6 +64,7 @@ return {
   },
   { -- smart splits
     "christoomey/vim-tmux-navigator",
+    commit = "c45243d",
     cmd = {
       "TmuxNavigateLeft",
       "TmuxNavigateDown",
