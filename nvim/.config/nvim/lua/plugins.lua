@@ -9,11 +9,6 @@ end, { desc = "[Q]uickfix [D]iagnostics" })
 
 -- all plugins/*.lua get merged with this return spec
 return {
-  { -- detect tabstop and shiftwidth automatically
-    -- *very* nice with https://editorconfig.org/
-    "tpope/vim-sleuth",
-    event = "VimEnter",
-  },
   { -- lsp bootstrap
     "folke/lazydev.nvim",
     ft = "lua",
