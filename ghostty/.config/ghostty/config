@@ -1,0 +1,63 @@
+# Terminal
+font-family = "CommitMono Nerd Font Mono"
+font-size = 14
+theme = "One Half Light"
+
+cursor-color = cell-foreground
+cursor-opacity = 0.6
+adjust-cursor-thickness = 4
+
+# Window
+mouse-hide-while-typing = true
+window-padding-balance = true
+window-show-tab-bar = always
+macos-titlebar-style = tabs
+
+macos-icon = retro
+
+unfocused-split-opacity = 0.7
+unfocused-split-fill = gray
+split-divider-color = black
+
+# Prefix key: ctrl+g (then use s, v, h/j/k/l, etc.)
+# Splits (with prefix)
+keybind = ctrl+g>s=new_split:down
+keybind = ctrl+g>v=new_split:right
+
+# Navigation (with prefix, vim-tmux-navigator style)
+keybind = ctrl+g>ctrl+h=goto_split:left
+keybind = ctrl+g>ctrl+j=goto_split:down
+keybind = ctrl+g>ctrl+k=goto_split:up
+keybind = ctrl+g>ctrl+l=goto_split:right
+
+# Resize (with prefix)
+keybind = ctrl+g>shift+h=resize_split:left,5
+keybind = ctrl+g>shift+j=resize_split:down,5
+keybind = ctrl+g>shift+k=resize_split:up,5
+keybind = ctrl+g>shift+l=resize_split:right,5
+
+# Tabs (with prefix)
+keybind = ctrl+g>n=next_tab
+keybind = ctrl+g>p=previous_tab
+keybind = ctrl+g>t=new_tab
+keybind = ctrl+g>w=close_tab
+
+# Tabs by number (with prefix)
+keybind = ctrl+g>1=goto_tab:1
+keybind = ctrl+g>2=goto_tab:2
+keybind = ctrl+g>3=goto_tab:3
+keybind = ctrl+g>4=goto_tab:4
+keybind = ctrl+g>5=goto_tab:5
+keybind = ctrl+g>6=goto_tab:6
+keybind = ctrl+g>7=goto_tab:7
+keybind = ctrl+g>8=goto_tab:8
+keybind = ctrl+g>9=goto_tab:9
+
+# Utilities
+keybind = ctrl+g>r=reload_config
+
+# Search (pager-like bindings)
+keybind = ctrl+g>slash=start_search
+keybind = performable:n=navigate_search:next
+keybind = performable:p=navigate_search:previous
+keybind = performable:escape=end_search
