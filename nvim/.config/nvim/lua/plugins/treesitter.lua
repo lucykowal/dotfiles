@@ -18,12 +18,14 @@ return { -- highlight, edit, navigate
       "vim",
       "vimdoc",
       "java",
+      "tmux",
     },
     auto_install = true,
     highlight = {
       enable = true,
+      disable = { "tmux" },
       additional_vim_regex_highlighting = { "ruby" },
     },
-    indent = { enable = true, disable = { "ruby" } },
+    indent = { enable = false, disable = { "ruby" } },
   },
 }

@@ -268,6 +268,9 @@ return {
         },
         cssls = {}, -- NOTE: requires `npm`
         html = {},
+        ts_ls = {
+          filetypes = { "typescript", "typescriptreact", "javascript" },
+        },
         harper_ls = { -- check grammar
           filetypes = { "markdown" },
           settings = {
@@ -319,6 +322,7 @@ return {
         yamlls = "yaml-language-server",
         cssls = "css-lsp",
         html = "html-lsp",
+        ts_ls = "typescript-language-server",
         harper_ls = "harper-ls",
       }
       ensure_installed = vim.tbl_map(function(server)
